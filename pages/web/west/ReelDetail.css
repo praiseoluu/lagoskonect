@@ -1,0 +1,992 @@
+/**
+ * Lagos Konect — Reel Detail Page Styles
+ * ============================================================
+ * Shared across all three regions (north / central / south).
+ *
+ * Layout overview:
+ *   DESKTOP (> 768px)
+ *     Video height fills the content area; width follows 9:16.
+ *     Comments closed → video centred.
+ *     Comments open   → video shifts left, panel fills right.
+ *
+ *   MOBILE (≤ 768px)
+ *     Full-width video on top.
+ *     Comments drawer slides up from below; video shrinks to make room.
+ *
+ * Sections:
+ *   1.  Page wrapper
+ *   2.  Back link
+ *   3.  Desktop layout
+ *   4.  Video column
+ *   5.  Player shell
+ *   6.  Tap overlay & flash icon
+ *   7.  Action buttons (right rail)
+ *   8.  Bottom overlay (author, caption, controls)
+ *   9.  Progress bar
+ *   10. Mute button
+ *   11. Comments panel (desktop)
+ *   12. Comments internals
+ *   13. Comment input
+ *   14. Report modal
+ *   15. Not-found state
+ *   16. Skeleton
+ *   17. Mobile overrides  (≤ 768px)
+ *   18. Small mobile      (≤ 480px)
+ *   19. Reduced motion
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. PAGE WRAPPER
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail {
+  height: calc(100vh - var(--topbar-height) - var(--space-10) - var(--space-5));
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5) var(--space-6) 0;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. BACK LINK
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  margin-bottom: var(--space-4);
+  flex-shrink: 0;
+}
+
+.reel-detail__back:hover { color: var(--color-primary); }
+
+.reel-detail__back:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. DESKTOP LAYOUT
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail__layout {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-6);
+  min-height: 0;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. VIDEO COLUMN
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail__video-col {
+  height: 100%;
+  width: calc(100% * 9 / 16);
+  max-width: 420px;
+  flex-shrink: 0;
+  transition: max-width var(--transition-slow);
+}
+
+/* Shrink video column when comments panel opens */
+.reel-detail__layout--comments-open .reel-detail__video-col {
+  max-width: 340px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. PLAYER SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  background: #000;
+}
+
+.reel-player__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. TAP OVERLAY & FLASH ICON
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-player__tap-area {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.reel-player__tap-area:focus-visible {
+  /* Inset ring so it stays inside the rounded player */
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: -4px;
+  border-radius: var(--radius-2xl);
+}
+
+.reel-player__tap-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  /* Drop-shadow so icon is legible on any frame */
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+
+.reel-player__tap-icon--flash {
+  animation: tap-flash 0.6s ease forwards;
+}
+
+@keyframes tap-flash {
+  0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1);   }
+  60%  { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(1.4); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. ACTION BUTTONS (right rail)
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-player__actions {
+  position: absolute;
+  right: var(--space-3);
+  bottom: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  z-index: 2;
+}
+
+.reel-player__action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: white;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  position: relative;
+  z-index: 2;
+}
+
+.reel-player__action-btn:hover { transform: scale(1.15); }
+
+.reel-player__action-btn:active { transform: scale(0.95); }
+
+.reel-player__action-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.reel-player__action-btn--liked {
+  /* Subtle scale pulse when liked state is applied */
+  animation: like-pop 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes like-pop {
+  0%   { transform: scale(1);    }
+  50%  { transform: scale(1.35); }
+  100% { transform: scale(1);    }
+}
+
+.reel-player__action-count {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  /* Prevent layout shift when count changes length */
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. BOTTOM OVERLAY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/*
+ * pointer-events: none on the container so taps fall through to the
+ * tap-area. Individual interactive children re-enable pointer events.
+ */
+.reel-player__bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.82) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Re-enable pointer events on interactive children */
+.reel-player__controls-row,
+.reel-player__mute-btn,
+.reel-player__progress-bar,
+.reel-player__author-name,
+.reel-player__bell-btn {
+  pointer-events: all;
+}
+
+/* Author row */
+.reel-player__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);        /* single correct token — var(--spacing-2) removed */
+}
+
+.reel-player__author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.reel-player__author-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: all;
+  transition: text-decoration var(--transition-fast);
+}
+
+.reel-player__author-name:hover {
+  text-decoration: underline;
+}
+
+.reel-player__author-name:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.reel-player__author-handle {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Bell / subscribe button */
+.reel-player__bell-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: white;
+  opacity: 0.85;
+  transition: opacity 0.15s ease,
+              transform 0.15s ease;
+  pointer-events: all;
+}
+
+.reel-player__bell-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.reel-player__bell-btn:active {
+  transform: scale(0.95);
+}
+
+.reel-player__bell-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 3px;
+  border-radius: var(--radius-full);
+}
+
+.reel-player__bell-btn--subscribed {
+  opacity: 1;
+}
+
+.reel-player__bell-btn--subscribed svg {
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.7));
+}
+
+/* Caption */
+.reel-player__caption {
+  font-size: var(--font-size-sm);
+  color: #fff;
+  line-height: var(--line-height-normal);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  pointer-events: all;       /* was missing — needed for hashtag interaction */
+}
+
+.reel-player__hashtag {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.reel-player__hashtag:hover {
+  text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. PROGRESS BAR
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-player__controls-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.reel-player__progress-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.reel-player__progress-bar {
+  width: 100%;
+  height: 4px;                /* increased from 3px — easier to hit */
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  cursor: pointer;
+  transition: height var(--transition-fast);
+}
+
+/* Taller hit area on hover for precision scrubbing */
+.reel-player__progress-bar:hover {
+  height: 6px;
+}
+
+.reel-player__progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.25s linear;
+}
+
+.reel-player__timestamps {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  /* Monospace so digits don't shift layout */
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. MUTE BUTTON
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-player__mute-btn {
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  border-radius: var(--radius-full);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.reel-player__mute-btn:hover {
+  background: rgba(0, 0, 0, 0.68);
+  transform: scale(1.08);
+}
+
+.reel-player__mute-btn:active {
+  transform: scale(0.95);
+}
+
+.reel-player__mute-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. COMMENTS PANEL (desktop)
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail__comments-panel {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+
+  /* Hidden state — width collapses to 0 */
+  opacity: 0;
+  pointer-events: none;
+  max-width: 0;
+  overflow: hidden;
+  padding-inline: 0;
+
+  transition: opacity       var(--transition-base),
+              max-width     var(--transition-slow),
+              padding-inline var(--transition-slow);
+}
+
+.reel-detail__comments-panel--open {
+  opacity: 1;
+  pointer-events: auto;
+  max-width: 420px;
+  padding-inline: var(--space-5);
+  overflow: hidden;           /* contain the scrollable list */
+}
+
+/* Drawer handle — desktop: hidden */
+.reel-detail__drawer-handle { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. COMMENTS INTERNALS
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail__comments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.reel-detail__comments-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.reel-detail__comments-count {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  background: var(--color-primary-15);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.reel-detail__comments-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-right: var(--space-1);
+  min-height: 0;
+  overscroll-behavior: contain;   /* prevents page scroll bleed on mobile */
+}
+
+/* Slim scrollbar */
+.reel-detail__comments-list::-webkit-scrollbar       { width: 4px; }
+.reel-detail__comments-list::-webkit-scrollbar-track { background: transparent; }
+.reel-detail__comments-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.reel-detail__comments-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  padding: var(--space-6) 0;
+  text-align: center;
+}
+
+/* Individual comment */
+.reel-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  transition: opacity var(--transition-base);
+}
+
+.reel-comment--muted { opacity: 0.45; }
+
+.reel-comment__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.reel-comment__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.reel-comment__name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.reel-comment__time {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.reel-comment__text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+  margin: 0;
+  word-break: break-word;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. COMMENT INPUT
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail__comment-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--space-3);
+  flex-shrink: 0;
+}
+
+.reel-detail__comment-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition-fast),
+              box-shadow   var(--transition-fast);
+}
+
+.reel-detail__comment-input::placeholder { color: var(--color-text-muted); }
+
+.reel-detail__comment-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.reel-detail__comment-submit {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast),
+              transform   var(--transition-fast);
+}
+
+.reel-detail__comment-submit:hover {
+  background: var(--color-primary-90);
+  transform: scale(1.06);
+}
+
+.reel-detail__comment-submit:active {
+  transform: scale(0.96);
+}
+
+.reel-detail__comment-submit:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   14. REPORT MODAL
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-report-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  padding: var(--space-4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.reel-report-backdrop--open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.reel-report-modal {
+  background: var(--color-bg);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-2xl);
+
+  /* Slide up on open */
+  transform: translateY(12px);
+  transition: transform var(--transition-base);
+}
+
+.reel-report-backdrop--open .reel-report-modal {
+  transform: translateY(0);
+}
+
+.reel-report-modal__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.reel-report-modal__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: calc(-1 * var(--space-2)) 0 0;
+}
+
+.reel-report-modal__reasons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.reel-report-reason {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: border-color var(--transition-fast),
+              background   var(--transition-fast),
+              color        var(--transition-fast);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+
+.reel-report-reason:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-15);
+  color: var(--color-text);
+}
+
+.reel-report-reason:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-lg);
+}
+
+.reel-report-reason--selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-15);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Custom radio indicator */
+.reel-report-reason__radio {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  flex-shrink: 0;
+  transition: border-color var(--transition-fast),
+              background   var(--transition-fast);
+}
+
+.reel-report-reason--selected .reel-report-reason__radio {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  box-shadow: inset 0 0 0 3px var(--color-bg);
+}
+
+/* Additional details textarea */
+.reel-report-modal__details {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-family: inherit;
+  background: var(--color-bg);
+  resize: none;
+  outline: none;
+  transition: border-color var(--transition-fast),
+              box-shadow   var(--transition-fast);
+  line-height: var(--line-height-relaxed);
+}
+
+.reel-report-modal__details:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.reel-report-modal__details::placeholder { color: var(--color-text-muted); }
+
+.reel-report-modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   15. NOT-FOUND STATE
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail__not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-8) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   16. SKELETON
+   ═══════════════════════════════════════════════════════════════════════ */
+.reel-detail__layout--skeleton { pointer-events: none; }
+
+/* Shared shimmer base */
+.reel-detail__skeleton-back,
+.reel-detail__skeleton-player,
+.reel-detail__skeleton-heading,
+.reel-detail__skeleton-avatar,
+.reel-detail__skeleton-line {
+  background: linear-gradient(
+    90deg,
+    var(--color-border-light) 25%,
+    var(--color-surface)      50%,
+    var(--color-border-light) 75%
+  );
+  background-size: 200% 100%;
+  animation: reel-detail-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* Skeleton element sizes */
+.reel-detail__skeleton-back    { height: 16px; width: 100px; margin-bottom: var(--space-4); }
+.reel-detail__skeleton-player  {
+  height: 100%;
+  width: calc(100vh * 9 / 16);
+  max-width: 420px;
+  border-radius: var(--radius-2xl);
+}
+.reel-detail__skeleton-heading { height: 24px; width: 160px; }
+
+/* Skeleton comment row */
+.reel-detail__skeleton-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.reel-detail__skeleton-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.reel-detail__skeleton-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-1);
+}
+
+.reel-detail__skeleton-line       { height: 12px; }
+.reel-detail__skeleton-line--short { width: 60%; }
+
+@keyframes reel-detail-shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   17. MOBILE OVERRIDES (≤ 768px)
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .reel-detail {
+    height: calc(100dvh - var(--topbar-height));
+    padding: var(--space-4) var(--space-4) 0;
+    overflow: hidden;
+  }
+
+  .reel-detail__layout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    justify-content: flex-start;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .reel-detail__video-col {
+    width: 100%;
+    max-width: none;
+    flex-shrink: 1;
+    flex-grow: 1;
+    min-height: 0;
+    aspect-ratio: 9 / 16;
+    max-height: 100%;
+    overflow: hidden;
+    transition: flex-grow var(--transition-slow);
+  }
+
+  /* Video shrinks when drawer opens */
+  .reel-detail__layout--comments-open .reel-detail__video-col {
+    flex-grow: 0;
+    max-width: none;
+    width: 100%;
+  }
+
+  /* Comments panel becomes a bottom drawer */
+  .reel-detail__comments-panel {
+    position: static;
+    width: 100%;
+    max-width: none;
+    border: none;
+    border-top: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    max-height: 0;
+    padding-block: 0;
+    padding-inline: var(--space-5);
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    box-shadow: var(--shadow-xl);
+    transition: max-height    var(--transition-slow),
+                opacity       var(--transition-base),
+                padding-block var(--transition-slow);
+  }
+
+  .reel-detail__comments-panel--open {
+    max-height: 55vh;
+    padding-block: var(--space-2) var(--space-5);
+    opacity: 1;
+    pointer-events: auto;
+    overflow: hidden;
+  }
+
+  /* Mobile swipe handle — visible on mobile only */
+  .reel-detail__drawer-handle {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-2) 0 var(--space-1);
+    cursor: grab;
+    flex-shrink: 0;
+    touch-action: pan-y;
+    /* Extend touch target */
+    margin-inline: calc(-1 * var(--space-5));
+    padding-inline: var(--space-5);
+  }
+
+  .reel-detail__drawer-pill {
+    width: 36px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-border);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   18. SMALL MOBILE (≤ 480px)
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .reel-detail {
+    padding: var(--space-3) var(--space-3) 0;
+  }
+
+  .reel-player__actions {
+    right: var(--space-2);
+    bottom: 100px;
+    gap: var(--space-4);
+  }
+
+  .reel-detail__comments-panel--open {
+    max-height: 60vh;
+  }
+
+  .reel-report-modal {
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   19. REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .reel-player__tap-icon--flash,
+  .reel-player__action-btn--liked,
+  .reel-detail__skeleton-back,
+  .reel-detail__skeleton-player,
+  .reel-detail__skeleton-heading,
+  .reel-detail__skeleton-avatar,
+  .reel-detail__skeleton-line {
+    animation: none !important;
+  }
+
+  .reel-detail__comments-panel,
+  .reel-detail__video-col,
+  .reel-player__progress-fill,
+  .reel-report-modal {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/ngcatt/public_html
+    - /bin/cp -r $REPOSITORY_ROOT/. $DEPLOYPATH

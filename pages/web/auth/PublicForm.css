@@ -1,0 +1,350 @@
+/* ── Public Form Pages ──────────────────────────────────────────────────── */
+
+/*
+ * Shared styles for ForgotPassword, VerifyIdentity, ResetCredentials.
+ * Each page slots into PublicLayout (nav + footer via _PublicLayout.css).
+ *
+ * Layout pattern across all three:
+ *  – Centred column on a white background with a soft green radial
+ *    glow in the bottom-left corner.
+ *  – Circular icon sits above the heading, both centred.
+ *  – A white bordered card contains the actual form fields.
+ *  – ResetCredentials: heading lives OUTSIDE the card; card = fields only.
+ */
+
+/* ── Page section wrapper ─────────────────────────────────────────────── */
+.public-form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-6);
+  background: var(--color-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft green radial glow — bottom-left */
+.public-form-section::before {
+  content: '';
+  position: absolute;
+  bottom: -120px;
+  left: -120px;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6,137,39,0.07) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+/* ── Outer column (icon + heading + card stacked) ─────────────────────── */
+.public-form-outer {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Page icon ────────────────────────────────────────────────────────── */
+.public-form-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--color-success-bg);
+  border: 2px solid var(--color-primary-40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Solid green — used on ResetCredentials */
+.public-form-icon--solid {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* ── Heading block (outside the card) ────────────────────────────────── */
+.public-form-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.public-form-heading__title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+/* All-caps bold variant — ResetCredentials */
+.public-form-heading__title--caps {
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  font-weight: var(--font-weight-black);
+}
+
+.public-form-heading__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+  margin: 0;
+}
+
+/* ── White bordered card ─────────────────────────────────────────────── */
+.public-form-card {
+  width: 100%;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative right-angle corner — VerifyIdentity top-right */
+.public-form-card--accent::after {
+  content: '';
+  position: absolute;
+  top: -250px;
+  right: -180px;
+  width: 350px;
+  height: 350px;
+  background-color: var(--color-primary-40);
+  border-radius: 0 var(--radius-xl) 0 var(--radius-full);
+  pointer-events: none;
+}
+
+.public-form{
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Form field label (Forgot Password — uppercase small label) ───────── */
+.public-form__field-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+
+/* ── Submit button ────────────────────────────────────────────────────── */
+.public-form__submit .ktg-btn,
+.public-form__full-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ── Below-card links (Try email / Return to sign in) ─────────────────── */
+.public-form__links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.public-form__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.public-form__link:hover { opacity: 0.75; }
+
+.public-form__link--back {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.public-form__link--back:hover { color: var(--color-text); opacity: 1; }
+
+/* ── OTP box row (4 boxes, centred) ──────────────────────────────────── */
+.public-form__otp-row {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.public-form__otp-box {
+  width: 56px;
+  height: 56px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  caret-color: var(--color-primary);
+}
+
+.public-form__otp-box:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+  background: var(--color-bg);
+}
+
+.public-form__otp-box.is-error { border-color: var(--color-error); }
+
+/* ── Expiry timer pill ────────────────────────────────────────────────── */
+.public-form__timer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  align-self: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-3);
+}
+
+/* ── Resend link ─────────────────────────────────────────────────────── */
+.public-form__resend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.public-form__resend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-family);
+  transition: opacity var(--transition-fast);
+}
+
+.public-form__resend-btn:hover { opacity: 0.75; }
+
+.public-form__resend-btn:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* ── OTP inline error ─────────────────────────────────────────────────── */
+.public-form__error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  text-align: center;
+  min-height: 1.2em;
+}
+
+/* ── Password strength bar (ResetCredentials) ─────────────────────────── */
+.public-form__strength-bar {
+  display: flex;
+  gap: 4px;
+}
+
+.public-form__strength-segment {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  transition: background var(--transition-base);
+}
+
+.public-form__strength-segment--filled {
+  background: var(--color-primary);
+}
+
+/* ── Password requirement chips ───────────────────────────────────────── */
+.public-form__requirements {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.public-form__req {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.public-form__req-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.public-form__req--met .public-form__req-icon {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.public-form__req--met { color: var(--color-text-secondary); }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .public-form-section {
+    align-items: flex-start;
+    padding: var(--space-10) var(--space-5);
+  }
+
+  .public-form-card {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .public-form-heading__title { font-size: var(--font-size-2xl); }
+
+  .public-form__otp-box {
+    width: 46px;
+    height: 46px;
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .public-form-section {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .public-form-outer { max-width: 100%; }
+
+  .public-form__requirements { gap: var(--space-2); }
+}

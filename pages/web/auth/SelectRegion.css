@@ -1,0 +1,679 @@
+/**
+ * Lagos Konect — Region Selection Page Styles
+ * ============================================================
+ * Single-viewport dark-green landing screen.
+ * Everything fits within 100vh — no scrolling on desktop.
+ *
+ * Visual hierarchy (top → bottom):
+ *   Nav          — slim, anchored identity bar
+ *   Intro        — compact headline + one-liner
+ *   Zone cards   — THE HERO — largest, most prominent element
+ *   Responsibility — understated supporting strip
+ *   Footer       — single-line legal
+ *
+ * Sections:
+ *   1.  Design tokens
+ *   2.  Base / reset
+ *   3.  Full-viewport flex layout
+ *   4.  Navigation
+ *   5.  Region picker (intro + cards)
+ *   6.  Zone cards
+ *   7.  Responsibility strip
+ *   8.  Footer
+ *   9.  Scroll-reveal
+ *   10. Responsive (tablet + mobile get scroll back)
+ *   11. Reduced motion
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-site {
+  --ak-ink:        #10231f;
+  --ak-cream:      #f7f2e8;
+  --ak-green:      #0f6b4f;
+  --ak-green-dark: #074435;
+  --ak-green-deep: #052e24;
+  --ak-gold:       #e2a93b;
+
+  --ak-shadow-sm:  0 2px 8px  rgba(0, 0, 0, 0.15);
+  --ak-shadow-md:  0 8px 28px rgba(0, 0, 0, 0.22);
+  --ak-shadow-lg:  0 20px 60px rgba(0, 0, 0, 0.30);
+
+  --ak-ease:     cubic-bezier(0.22, 1, 0.36, 1);
+  --ak-dur:      0.22s;
+  --ak-dur-slow: 0.45s;
+
+  --ak-nav-h: 54px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. BASE / RESET
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-site {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+               BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color:       #ffffff;
+  background:  var(--ak-green-dark);
+  line-height: 1.5;
+  box-sizing:  border-box;
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.ak-site *,
+.ak-site *::before,
+.ak-site *::after {
+  box-sizing: inherit;
+  margin: 0;
+}
+
+.ak-site a  { color: inherit; text-decoration: none; }
+.ak-site h1,
+.ak-site h2,
+.ak-site h3,
+.ak-site p  { margin-top: 0; }
+
+.ak-site :focus-visible {
+  outline: 2px solid var(--ak-gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.ak-site :focus:not(:focus-visible) { outline: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. FULL-VIEWPORT FLEX LAYOUT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-site {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.ak-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--ak-green-dark);
+  overflow: hidden;
+  min-height: 0;
+}
+
+/*
+ * The picker section gets the lion's share of the space.
+ * Responsibility is a slim supporting band at the bottom.
+ */
+.ak-pick {
+  flex: 1;                     /* takes all remaining space */
+  display: flex;
+  align-items: center;
+  min-height: 0;
+}
+
+.ak-resp {
+  flex-shrink: 0;              /* holds its natural compact height */
+}
+
+.ak-container {
+  width: 100%;
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. NAVIGATION
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-nav {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+  background: var(--ak-green-deep);
+  color: #ffffff;
+  box-shadow: var(--ak-shadow-sm);
+}
+
+.ak-nav__inner {
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--ak-nav-h);
+  gap: 24px;
+}
+
+.ak-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  font-size: 15px;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.ak-brand__mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  background: var(--ak-gold);
+  color: var(--ak-green-deep);
+  font-weight: 900;
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: transform var(--ak-dur) var(--ak-ease);
+}
+
+.ak-brand:hover .ak-brand__mark { transform: scale(1.08); }
+
+.ak-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ak-nav__links a {
+  position: relative;
+  opacity: 0.82;
+  transition: opacity var(--ak-dur);
+  padding-bottom: 2px;
+}
+
+.ak-nav__links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--ak-gold);
+  border-radius: 2px;
+  transition: width var(--ak-dur) var(--ak-ease);
+}
+
+.ak-nav__links a:hover        { opacity: 1; }
+.ak-nav__links a:hover::after { width: 100%; }
+
+.ak-nav__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background var(--ak-dur);
+  flex-shrink: 0;
+}
+
+.ak-nav__toggle:hover { background: rgba(255, 255, 255, 0.14); }
+
+.ak-mobile-menu {
+  display: flex;
+  flex-direction: column;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.32s var(--ak-ease),
+              opacity     0.28s var(--ak-ease),
+              padding     0.28s var(--ak-ease);
+  border-top: 1px solid rgba(255, 255, 255, 0);
+}
+
+.ak-mobile-menu--open {
+  max-height: 200px;
+  opacity: 1;
+  padding: 8px 0 12px;
+  border-top-color: rgba(255, 255, 255, 0.10);
+}
+
+.ak-mobile-menu a {
+  display: block;
+  padding: 9px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.88);
+  transition: color        var(--ak-dur),
+              padding-left var(--ak-dur) var(--ak-ease);
+}
+
+.ak-mobile-menu a:hover {
+  color: var(--ak-gold);
+  padding-left: 30px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. REGION PICKER — intro + cards
+   The intro is intentionally compact so the zone cards dominate.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-pick__intro {
+  margin-bottom: 20px;
+  max-width: 680px;
+}
+
+.ak-pick__kicker {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ak-gold);
+}
+
+.ak-pick__heading {
+  font-size: clamp(20px, 2.8vw, 30px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.ak-pick__sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.55;
+  margin-bottom: 0;
+}
+
+/* ── Zone grid ────────────────────────────────────────────────────────── */
+
+.ak-zone-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. ZONE CARDS — the hero element of the page
+   Generous padding relative to everything else. These are the
+   primary interactive targets and need to feel clickable.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-zone-card {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 20px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(2px);
+  color: #ffffff;
+  transition:
+    transform    var(--ak-dur)      var(--ak-ease),
+    box-shadow   var(--ak-dur)      var(--ak-ease),
+    border-color var(--ak-dur)      var(--ak-ease),
+    background   var(--ak-dur)      var(--ak-ease);
+}
+
+.ak-zone-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ak-gold), var(--ak-green));
+  border-radius: 12px 12px 0 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ak-dur-slow) var(--ak-ease);
+}
+
+.ak-zone-card:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(226, 169, 59, 0.55);
+  box-shadow: var(--ak-shadow-md);
+  transform: translateY(-3px);
+}
+
+.ak-zone-card:hover::before { transform: scaleX(1); }
+
+.ak-zone-card:active {
+  transform: translateY(-1px);
+  box-shadow: var(--ak-shadow-sm);
+}
+
+.ak-zone-card__num {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  background: var(--ak-gold);
+  color: var(--ak-green-deep);
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+  transition: transform var(--ak-dur) var(--ak-ease);
+}
+
+.ak-zone-card:hover .ak-zone-card__num { transform: scale(1.1); }
+
+.ak-zone-card__title {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.ak-zone-card__desc {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.55;
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.ak-zone-card__cta {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ak-gold);
+  letter-spacing: 0.01em;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity   var(--ak-dur) var(--ak-ease),
+              transform var(--ak-dur) var(--ak-ease);
+}
+
+.ak-zone-card:hover .ak-zone-card__cta {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. RESPONSIBILITY — compact supporting strip
+   This is NOT a second hero. It's an understated ribbon that adds
+   credibility without competing with the region cards above.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-resp {
+  position: relative;
+  padding: 16px 0 14px;
+  border-top: 1px solid rgba(226, 169, 59, 0.18);
+}
+
+/* Remove the old ::before divider — using border-top instead */
+.ak-resp::before {
+  display: none;
+}
+
+/*
+ * Single-row layout: the heading sits inline-left,
+ * three compact pill-like commitment items sit right.
+ * This keeps the section slim — just one visual line.
+ */
+.ak-resp__top {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  margin-bottom: 10px;
+}
+
+.ak-resp__left {
+  flex-shrink: 0;
+}
+
+.ak-resp__kicker {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ak-gold);
+}
+
+.ak-resp__heading {
+  font-size: clamp(13px, 1.5vw, 16px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.ak-resp__body {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.55;
+  margin-bottom: 0;
+  padding-top: 0;
+}
+
+/* ── Commitment cards — slim inline pills ─────────────────────────────── */
+
+.ak-resp__cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.ak-resp__card {
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  transition: background    var(--ak-dur),
+              border-color  var(--ak-dur),
+              transform     var(--ak-dur) var(--ak-ease);
+}
+
+.ak-resp__card:hover {
+  background:   rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+.ak-resp__card h3 {
+  margin-bottom: 3px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--ak-gold);
+}
+
+.ak-resp__card p {
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.45;
+  margin-bottom: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. FOOTER — single slim line
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-footer {
+  flex-shrink: 0;
+  padding: 10px 0;
+  background: var(--ak-green-deep);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ak-footer__inner {
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. SCROLL-REVEAL ANIMATIONS
+   Everything is in-viewport on load so threshold is low.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ak-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity   0.45s var(--ak-ease),
+              transform 0.45s var(--ak-ease);
+}
+
+.ak-zone-grid .ak-reveal:nth-child(1)  { transition-delay: 0.00s; }
+.ak-zone-grid .ak-reveal:nth-child(2)  { transition-delay: 0.07s; }
+.ak-zone-grid .ak-reveal:nth-child(3)  { transition-delay: 0.14s; }
+
+.ak-resp__cards .ak-reveal:nth-child(1) { transition-delay: 0.00s; }
+.ak-resp__cards .ak-reveal:nth-child(2) { transition-delay: 0.07s; }
+.ak-resp__cards .ak-reveal:nth-child(3) { transition-delay: 0.14s; }
+
+.ak-reveal--in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/*
+ * ── Tablet (≤ 860px) ──────────────────────────────────────────────────
+ * Stacking cards into a single column means content exceeds 100vh.
+ * We gracefully restore scrolling and give the layout room to breathe.
+ */
+@media (max-width: 860px) {
+  .ak-site {
+    height: auto;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .ak-main { overflow: visible; }
+
+  .ak-pick {
+    flex: none;
+    display: block;
+    padding: 36px 0 28px;
+  }
+
+  .ak-resp {
+    flex-shrink: unset;
+    display: block;
+    padding: 20px 0 24px;
+  }
+
+  .ak-zone-grid       { grid-template-columns: 1fr; gap: 14px; }
+  .ak-resp__cards      { grid-template-columns: 1fr; gap: 10px; }
+
+  .ak-resp__top {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .ak-resp__heading { white-space: normal; }
+  .ak-resp__body    { padding-top: 0; }
+
+  .ak-pick__intro { margin-bottom: 24px; }
+  .ak-pick__heading { font-size: clamp(24px, 5vw, 32px); }
+  .ak-pick__sub     { font-size: 14px; }
+
+  .ak-zone-card {
+    padding: 20px 18px;
+    gap: 10px;
+  }
+
+  .ak-zone-card__title { font-size: 18px; }
+  .ak-zone-card__desc  { font-size: 13px; }
+
+  .ak-footer { padding: 16px 0; font-size: 12px; }
+}
+
+/*
+ * ── Small mobile (≤ 520px) ────────────────────────────────────────────
+ */
+@media (max-width: 520px) {
+  .ak-nav__links  { display: none; }
+  .ak-nav__toggle { display: flex; }
+
+  .ak-container,
+  .ak-nav__inner,
+  .ak-footer__inner {
+    padding-inline: 16px;
+  }
+
+  .ak-pick { padding: 28px 0 22px; }
+
+  .ak-pick__heading { font-size: 22px; }
+  .ak-pick__sub     { font-size: 13px; }
+  .ak-pick__intro   { margin-bottom: 18px; }
+
+  .ak-zone-card {
+    padding: 16px 14px;
+    gap: 8px;
+  }
+
+  .ak-zone-card__num {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .ak-zone-card__title { font-size: 16px; }
+  .ak-zone-card__desc  { font-size: 12px; }
+
+  .ak-resp { padding: 16px 0 18px; }
+  .ak-resp__heading { font-size: 13px; }
+  .ak-resp__body    { font-size: 10.5px; }
+  .ak-resp__card    { padding: 9px 10px; }
+  .ak-resp__card h3 { font-size: 11px; }
+  .ak-resp__card p  { font-size: 10px; }
+
+  .ak-footer__inner {
+    flex-direction: column;
+    gap: 3px;
+    text-align: center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .ak-site *,
+  .ak-site *::before,
+  .ak-site *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+  }
+
+  .ak-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

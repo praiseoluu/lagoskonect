@@ -1,0 +1,21 @@
+[02-Jul-2026 15:47:33 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[02-Jul-2026 15:48:31 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[02-Jul-2026 15:58:03 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'notif_new_login' in 'SELECT'
+[02-Jul-2026 15:58:08 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'notif_new_login' in 'SELECT'
+[02-Jul-2026 15:58:24 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'notif_new_login' in 'SELECT'
+[02-Jul-2026 16:07:47 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[02-Jul-2026 16:08:43 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[02-Jul-2026 16:08:53 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[02-Jul-2026 16:19:08 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[06-Jul-2026 09:24:10 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[06-Jul-2026 10:04:04 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[06-Jul-2026 10:05:59 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[06-Jul-2026 10:06:12 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[06-Jul-2026 10:22:43 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'notif_new_login' in 'SELECT'
+[06-Jul-2026 11:50:40 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'chairman_name' in 'SELECT'
+[06-Jul-2026 11:52:46 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'notif_new_login' in 'SELECT'
+[06-Jul-2026 11:54:02 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'notif_new_login' in 'SELECT'
+[06-Jul-2026 11:54:17 UTC] DB Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'notif_new_login' in 'SELECT'
+[08-Jul-2026 15:52:55 UTC] [Email] Resend API error 403: {"statusCode":403,"message":"The adamawakonect.com domain is not verified. Please, add and verify your domain on https://resend.com/domains","name":"validation_error"}
+[21-Jul-2026 15:05:05 UTC] [WhatsApp] Missing WHATSAPP_PHONE_NUMBER_ID or WHATSAPP_ACCESS_TOKEN
+[24-Jul-2026 16:24:42 UTC] [WhatsApp] Missing WHATSAPP_PHONE_NUMBER_ID or WHATSAPP_ACCESS_TOKEN

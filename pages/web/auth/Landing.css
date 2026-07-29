@@ -1,0 +1,311 @@
+/* ── Landing Page ────────────────────────────────────────────────────────── */
+
+/*
+ * Page-specific styles for the landing page.
+ * Nav, footer, and shell styles live in _PublicLayout.css.
+ */
+
+/* ── Billboard ad carousel ────────────────────────────────────────────────── */
+
+.landing-carousel {
+  position: relative;
+  /* Lifts the strip above the hero so a zoomed card is not painted over. */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-1) var(--space-6);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.landing-carousel__wrap {
+  position: relative;
+  width: 100%;
+  min-height: 160px;
+}
+
+/*
+ * Contains the marquee track, which is `width: max-content` and therefore far
+ * wider than the page.
+ *
+ * This MUST be `overflow: hidden`. clip-path was tried here so a hovered card
+ * could grow past the strip, but clip-path only clips *painting* — it does not
+ * establish a scroll container, so the oversized track escaped and dragged a
+ * horizontal scrollbar onto the whole document.
+ *
+ * overflow clips at the padding box, so the padding below is what gives a
+ * zoomed card room to grow into; the matching negative margin keeps that
+ * padding from changing the strip's layout height.
+ */
+.landing-carousel__viewport {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  padding-bottom: 56px;
+  margin-bottom: -56px;
+}
+
+/*
+ * Infinite marquee.
+ * The track holds two identical sets of billboards laid end to end. One cycle
+ * travels exactly one set-width, so when the keyframe wraps back to 0 the
+ * second set is sitting precisely where the first began — no visible jump.
+ *
+ * The translate is `-50% - half a gap` because the flex gap sits *between*
+ * items: half the track's width falls half a gap short of one whole set.
+ *
+ * --lc-duration is set from JS so the speed stays constant as card widths
+ * change across breakpoints.
+ */
+.landing-carousel__track {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  will-change: transform;
+  animation: lc-marquee var(--lc-duration, 40s) linear infinite;
+}
+
+.landing-carousel:hover .landing-carousel__track {
+  animation-play-state: paused;
+}
+
+@keyframes lc-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-50% - 6px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-carousel__track {
+    animation: none;
+  }
+
+  /* Zoom still works, it just snaps rather than animating. */
+  .landing-billboard {
+    transition: none;
+  }
+}
+
+.landing-carousel__static {
+  display: flex;
+  gap: 12px;
+  padding: var(--space-1) var(--space-6);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.landing-carousel__static .landing-billboard {
+  flex: 1;
+}
+
+/* Display-only — billboards are not links, so no pointer affordance. */
+.landing-billboard {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background-image: var(--billboard-bg);
+  background-size: cover;
+  background-position: center;
+  background-color: var(--color-primary-15);
+  border-radius: var(--radius-xl);
+  text-decoration: none;
+  cursor: default;
+  overflow: hidden;
+  /*
+   * `top`, not the default `center`: the sticky nav sits directly above this
+   * strip with a much higher z-index, so a card growing upward is painted
+   * over by it. Anchoring the top edge sends all the growth downward over the
+   * hero instead, which nothing paints above.
+   */
+  transform-origin: center top;
+  transition:
+          transform  var(--billboard-zoom-speed, 0.35s) cubic-bezier(0.4, 0, 0.2, 1),
+          box-shadow var(--billboard-zoom-speed, 0.35s) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * Hover-to-read zoom.
+ *
+ * The marquee pauses on hover (see .landing-carousel:hover above), so the
+ * card holds still while enlarged.
+ *
+ * The transform itself is applied from JS (_lcApplyZoom), not from a :hover
+ * rule, because a card near the strip's edge must be nudged *inward* as it
+ * grows — scaling in place would drive it straight into the clip boundary and
+ * it would come out sliced. JS measures the card against the viewport and
+ * folds that correction into the transform. This rule owns everything that
+ * does not depend on position.
+ */
+.landing-billboard--zoomed {
+  z-index: 5;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+}
+
+.landing-billboard--no-img {
+  background-image: none;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0f7a36 100%);
+}
+
+.landing-billboard--placeholder {
+  background-image: none;
+  background: var(--color-surface, #f5f5f5);
+  border: 2px dashed var(--color-border, #ddd);
+  cursor: default;
+  pointer-events: none;
+}
+
+.landing-billboard__title--placeholder {
+  height: 1em;
+  width: 60%;
+  border-radius: 4px;
+  background: linear-gradient(
+          90deg,
+          var(--color-border, #ddd) 25%,
+          var(--color-surface-alt, #ececec) 50%,
+          var(--color-border, #ddd) 75%
+  );
+  background-size: 200% 100%;
+  animation: billboard-shimmer 1.6s infinite;
+  color: transparent;
+}
+
+@keyframes billboard-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.landing-billboard__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+          to right,
+          rgba(0, 0, 0, 0.55) 0%,
+          rgba(0, 0, 0, 0.25) 60%,
+          rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+.landing-billboard--no-img .landing-billboard__overlay {
+  background: none;
+}
+
+.landing-billboard__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.landing-billboard__sponsored {
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.landing-billboard__advertiser {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: var(--font-weight-medium);
+}
+
+.landing-billboard__title {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+  margin: 0;
+  line-height: 1.25;
+  max-width: 480px;
+}
+
+.landing-billboard__cta {
+  display: inline-block;
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: #fff;
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-full);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  align-self: flex-start;
+}
+
+/*
+ * The CTA is decorative now that billboards do not navigate — no hover
+ * shift, which would otherwise read as "click me to go somewhere".
+ */
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+
+.landing__hero {
+  padding: var(--space-16) var(--space-6) var(--space-20);
+  background: linear-gradient(
+          #0000004F,
+          #0000004F
+  ), url(/assets/images/auth/hero--img.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  height: calc(80vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing__hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: var(--space-16);
+  align-items: center;
+  justify-content: center;
+}
+
+.landing__hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.landing__hero-heading {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: var(--font-weight-black);
+  color: var(--color-bg);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-align: center;
+}
+
+/* ── Region landing tagline ───────────────────────────────────────────── */
+
+.rl-tagline {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.82);
+  text-align: center;
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.01em;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .landing-carousel { padding: var(--space-3) var(--space-4); }
+  .landing-carousel__wrap { min-height: 140px; }
+  .landing-billboard { height: 140px; }
+  .landing-billboard__content { padding: 0 var(--space-5); }
+  .landing-billboard__title { font-size: 1rem; }
+
+  .landing__hero-inner {
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+}

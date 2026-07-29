@@ -1,0 +1,341 @@
+/**
+ * Lagos Konect — Table Styles
+ * ============================================================
+ * All values reference design tokens from tokens.css.
+ *
+ * Sections:
+ *   1.  Wrapper & scroll container
+ *   2.  Table element
+ *   3.  Header — <thead>
+ *   4.  Header — sort affordances
+ *   5.  Body — rows & cells
+ *   6.  Row actions
+ *   7.  Skeleton loading
+ *   8.  Empty state
+ *   9.  Pagination bar
+ *   10. Pagination — page buttons
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. WRAPPER & SCROLL CONTAINER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.adm-table-scroll {
+  overflow-x: auto;
+  /* Smooth inertia scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. TABLE ELEMENT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  /* Prevent the table collapsing narrower than its content */
+  min-width: 600px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. HEADER — <thead>
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table__head {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.adm-table__th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.adm-table__th--actions {
+  text-align: right;
+  width: 100px;
+}
+
+.adm-table__th-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. HEADER — SORT AFFORDANCES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table__th--sortable {
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.adm-table__th--sortable:hover {
+  color: var(--color-text-secondary);
+}
+
+.adm-table__th--active {
+  color: var(--color-primary);
+}
+
+.adm-table__sort-icon {
+  display: flex;
+  align-items: center;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+}
+
+.adm-table__th--active .adm-table__sort-icon {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. BODY — ROWS & CELLS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table__row {
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background-color var(--transition-fast);
+}
+
+.adm-table__row:last-child {
+  border-bottom: none;
+}
+
+.adm-table__row:hover {
+  background-color: var(--color-surface);
+}
+
+.adm-table__row--clickable {
+  cursor: pointer;
+}
+
+.adm-table__td {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.adm-table__td--actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. ROW ACTIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table__actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
+.adm-table__action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  transition:
+    background-color var(--transition-fast),
+    color            var(--transition-fast);
+}
+
+.adm-table__action-btn svg {
+  width: 15px;
+  height: 15px;
+  /* Prevent SVGs from blocking the delegated click on data-action */
+  pointer-events: none;
+}
+
+.adm-table__action-btn:hover {
+  background-color: var(--color-primary-15);
+  color: var(--color-primary);
+}
+
+.adm-table__action-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.adm-table__action-btn--danger:hover {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. SKELETON LOADING
+   Shimmer animation moves a highlight from right to left across each cell.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table__skeleton {
+  height: 14px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-border-light) 25%,
+    var(--color-surface)      50%,
+    var(--color-border-light) 75%
+  );
+  background-size: 200% 100%;
+  animation: adm-table-shimmer 1.4s infinite;
+}
+
+@keyframes adm-table-shimmer {
+  from { background-position:  200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. EMPTY STATE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table__empty-cell {
+  padding: var(--space-16) var(--space-8);
+}
+
+.adm-table__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.adm-table__empty-icon {
+  color: var(--color-text-muted);
+}
+
+.adm-table__empty-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.adm-table__empty-msg {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  max-width: 320px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. PAGINATION BAR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+  background: var(--color-surface);
+}
+
+.adm-table__pagination-info {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.adm-table__pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. PAGINATION — PAGE BUTTONS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-table__page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color var(--transition-fast),
+    border-color     var(--transition-fast),
+    color            var(--transition-fast);
+}
+
+.adm-table__page-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-15);
+  color: var(--color-primary);
+}
+
+.adm-table__page-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.adm-table__page-btn--active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Keep active button readable on hover — use higher specificity
+   rather than !important for easier future overrides */
+.adm-table__page-btn--active:hover:not(:disabled) {
+  background-color: var(--color-primary-90);
+  border-color: var(--color-primary-90);
+  color: #ffffff;
+}
+
+.adm-table__page-btn--nav {
+  color: var(--color-text-muted);
+}
+
+.adm-table__page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.adm-table__page-ellipsis {
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  user-select: none;
+}

@@ -1,0 +1,28 @@
+Options -Indexes
+
+# Block direct access to sensitive files
+<FilesMatch "\.(sql|md|sh|env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block direct access to PHP files except index.php
+<FilesMatch "^(?!index\.php$).*\.php$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Route everything through index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Allow direct access to uploads
+    RewriteCond %{REQUEST_URI} ^/api/uploads/ [NC]
+    RewriteRule ^ - [L]
+
+    # Route all /api/v1/* requests to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/v1/(.*)$ api/index.php [QSA,L]
+</IfModule>

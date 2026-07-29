@@ -1,0 +1,360 @@
+/**
+ * Lagos Konect — Language Switcher Styles
+ * ============================================================
+ * Self-contained dropdown styling driven entirely by design tokens.
+ * Works on light navs, dark footers, and the in-app topbar via
+ * variant / align / direction modifiers.
+ *
+ * Sections:
+ *   1.  Root wrapper
+ *   2.  Trigger button
+ *   3.  Compact mode (short badge only)
+ *   4.  Ghost variant (borderless trigger)
+ *   5.  Dropdown menu
+ *   6.  Menu header
+ *   7.  Option rows
+ *   8.  Reduced motion
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. ROOT WRAPPER
+   ═══════════════════════════════════════════════════════════════════════ */
+.lang-switcher {
+  position: relative;
+  display: inline-flex;
+  font-family: var(--font-family);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. TRIGGER BUTTON
+   ═══════════════════════════════════════════════════════════════════════ */
+.lang-switcher__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background     var(--transition-fast),
+              border-color   var(--transition-fast),
+              box-shadow     var(--transition-fast),
+              color          var(--transition-fast);
+}
+
+.lang-switcher__trigger:hover {
+  background: var(--color-surface);
+  border-color: var(--color-primary-40);
+}
+
+.lang-switcher__trigger:active {
+  background: var(--color-surface-hover);
+}
+
+.lang-switcher__trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+/* Trigger open state */
+.lang-switcher--open .lang-switcher__trigger {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+/* Globe icon */
+.lang-switcher__globe {
+  display: inline-flex;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* Full native name (visible in default mode) */
+.lang-switcher__current {
+  white-space: nowrap;
+}
+
+/* Short code badge (visible in compact mode only) */
+.lang-switcher__badge {
+  display: none;           /* overridden in compact mode */
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  padding: 0 var(--space-1);
+  height: 1.25rem;
+  background: var(--color-primary-15);
+  color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Chevron rotates when open */
+.lang-switcher__chevron {
+  display: inline-flex;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform var(--transition-base);
+}
+
+.lang-switcher--open .lang-switcher__chevron {
+  transform: rotate(180deg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. COMPACT MODE
+   ═══════════════════════════════════════════════════════════════════════ */
+.lang-switcher--compact .lang-switcher__current {
+  display: none;
+}
+
+.lang-switcher--compact .lang-switcher__badge {
+  display: inline-flex;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. GHOST VARIANT
+   ═══════════════════════════════════════════════════════════════════════ */
+.lang-switcher--ghost .lang-switcher__trigger {
+  background: transparent;
+  border-color: transparent;
+}
+
+.lang-switcher--ghost .lang-switcher__trigger:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.lang-switcher--ghost.lang-switcher--open .lang-switcher__trigger {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. DROPDOWN MENU
+   ═══════════════════════════════════════════════════════════════════════ */
+.lang-switcher__menu {
+  position: absolute;
+  min-width: 15rem;
+  padding: var(--space-2);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+
+  /* Hidden state */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity    var(--transition-fast),
+              transform  var(--transition-fast),
+              visibility var(--transition-fast);
+}
+
+/* Alignment */
+.lang-switcher--align-end   .lang-switcher__menu { right: 0; }
+.lang-switcher--align-start .lang-switcher__menu { left: 0;  }
+
+/* Direction — down */
+.lang-switcher--down .lang-switcher__menu {
+  top: calc(100% + var(--space-2));
+}
+
+/* Direction — up */
+.lang-switcher--up .lang-switcher__menu {
+  bottom: calc(100% + var(--space-2));
+  top: auto;
+  transform: translateY(6px);
+}
+
+/* Open state */
+.lang-switcher--open .lang-switcher__menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. MENU HEADER
+   ═══════════════════════════════════════════════════════════════════════ */
+.lang-switcher__menu-head {
+  padding: var(--space-1) var(--space-2) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-text-muted);
+}
+
+.lang-switcher__options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. OPTION ROWS
+   ═══════════════════════════════════════════════════════════════════════ */
+.lang-switcher__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  text-align: left;
+  cursor: pointer;
+  color: var(--color-text);
+  font-family: inherit;
+  transition: background var(--transition-fast),
+              color      var(--transition-fast);
+}
+
+.lang-switcher__option:hover {
+  background: var(--color-surface-hover);
+}
+
+.lang-switcher__option:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  /* inset so the ring is visible within the rounded menu */
+  outline-offset: -2px;
+}
+
+.lang-switcher__option:active {
+  background: var(--color-surface-hover);
+}
+
+.lang-switcher__option.is-active {
+  background: var(--color-primary-15);
+}
+
+/* Language code badge */
+.lang-switcher__opt-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 var(--space-1);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+  transition: background var(--transition-fast),
+              color      var(--transition-fast);
+}
+
+.lang-switcher__option.is-active .lang-switcher__opt-badge {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Text column */
+.lang-switcher__opt-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.lang-switcher__opt-native {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-snug);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lang-switcher__option.is-active .lang-switcher__opt-native {
+  color: var(--color-primary);
+}
+
+.lang-switcher__opt-name {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-snug);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Check icon */
+.lang-switcher__opt-check {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--color-primary);
+  /* Reserve space even when empty so columns stay aligned */
+  min-width: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .lang-switcher__menu,
+  .lang-switcher__chevron,
+  .lang-switcher__trigger,
+  .lang-switcher__option,
+  .lang-switcher__opt-badge {
+    transition: none !important;
+  }
+}
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. RESPONSIVE — MOBILE & TABLET
+   Fixes the dropdown clipping / overflow issues on mobile, tablet, and the
+   Create Account screen at all viewport sizes.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Ensure the dropdown never escapes the viewport on small screens */
+@media (max-width: 768px) {
+  /* The wrapper needs relative positioning so the absolute menu is anchored
+     to it, not to a distant ancestor that may have overflow:hidden */
+  [data-lang-switcher] {
+    position: relative;
+  }
+
+  .lang-switcher__menu {
+    min-width: 13rem;
+    max-width: calc(100vw - var(--space-6));
+    /* Always open from the right edge of the trigger on mobile */
+    right: 0;
+    left: auto;
+  }
+
+  /* Larger touch targets for option rows */
+  .lang-switcher__option {
+    padding: var(--space-3) var(--space-2);
+    min-height: 44px;
+  }
+}
+
+/* Laptop / large tablet: cap menu width */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .lang-switcher__menu {
+    min-width: 14rem;
+  }
+}

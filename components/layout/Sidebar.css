@@ -1,0 +1,641 @@
+/**
+ * Lagos Konect — Sidebar Styles
+ * ============================================================
+ * Shared base sidebar used by both the web app and admin dashboard.
+ *
+ * Sections:
+ *   1.  Layout offset (pushes main content right of the sidebar)
+ *   2.  Sidebar shell
+ *   3.  Brand / logo
+ *   4.  Collapse button
+ *   5.  Navigation list
+ *   6.  Nav links & active state
+ *   7.  Badge
+ *   8.  Footer / user card
+ *   9.  Mobile drawer + overlay
+ *   10. Reduced motion
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. LAYOUT OFFSET
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+  .ktg-layout {
+    margin-left: var(--sidebar-width);
+    transition: margin-left var(--transition-slow);
+  }
+
+  body:has(.ktg-sidebar--collapsed) .ktg-layout {
+    margin-left: var(--sidebar-width-collapsed);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. SIDEBAR SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--color-sidebar-bg);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  overflow: hidden;
+  transition: width var(--transition-slow);
+  will-change: width;
+}
+
+.ktg-sidebar--collapsed {
+  width: var(--sidebar-width-collapsed);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. BRAND / LOGO
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-sidebar__brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+  min-height: var(--topbar-height);
+}
+
+.ktg-sidebar__logo {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+}
+
+.ktg-sidebar__logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  white-space: nowrap;
+}
+
+.ktg-sidebar__logo-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.ktg-sidebar__logo-icon img {
+  display: block;
+}
+
+.ktg-sidebar__brand-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.ktg-sidebar__brand-text {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity var(--transition-slow), width var(--transition-slow);
+}
+
+.ktg-sidebar__brand-sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity var(--transition-slow), width var(--transition-slow);
+}
+
+/* Fade text labels out when collapsed */
+.ktg-sidebar--collapsed .ktg-sidebar__brand-text,
+.ktg-sidebar--collapsed .ktg-sidebar__brand-sub {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. COLLAPSE BUTTON
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-sidebar__collapse-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast),
+              color            var(--transition-fast),
+              border-color     var(--transition-fast),
+              transform        var(--transition-fast);
+}
+
+.ktg-sidebar__collapse-btn:hover {
+  background-color: var(--color-primary-15);
+  color: var(--color-primary);
+  border-color: var(--color-primary-40);
+}
+
+.ktg-sidebar__collapse-btn:active {
+  transform: scale(0.94);
+}
+
+.ktg-sidebar__collapse-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. NAVIGATION LIST
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-4) var(--space-3);
+  scrollbar-width: none;
+}
+
+.ktg-sidebar__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.ktg-sidebar__nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ktg-sidebar__nav-item {
+  list-style: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. NAV LINKS & ACTIVE STATE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Reset <button> used for modal triggers to look identical to <a> links */
+.ktg-sidebar__nav-item button.ktg-sidebar__nav-link {
+  width: 100%;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+}
+
+.ktg-sidebar__nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: background-color var(--transition-fast),
+              color            var(--transition-fast);
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  min-height: 40px;
+}
+
+.ktg-sidebar__nav-link:hover {
+  background-color: var(--color-primary-15);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.ktg-sidebar__nav-link:active {
+  background-color: var(--color-primary-20, rgba(15, 107, 79, 0.15));
+}
+
+.ktg-sidebar__nav-link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  border-radius: var(--radius-md);
+}
+
+/* Active state */
+.ktg-sidebar__nav-link--active {
+  background-color: var(--color-primary-15);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Left accent bar */
+.ktg-sidebar__nav-link--active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 3px;
+  background: var(--color-primary);
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+}
+
+/* Icon */
+.ktg-sidebar__nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+/* Label */
+.ktg-sidebar__nav-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity var(--transition-slow), width var(--transition-slow);
+}
+
+.ktg-sidebar--collapsed .ktg-sidebar__nav-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. BADGE
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-sidebar__badge {
+  background: var(--color-error);
+  color: #fff;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  padding: 1px 5px;
+  border-radius: var(--radius-full);
+  line-height: 1.4;
+  flex-shrink: 0;
+  transition: opacity var(--transition-slow);
+  /* Ensure the count text doesn't push layout */
+  min-width: 18px;
+  text-align: center;
+}
+
+/* In collapsed mode — become a simple dot */
+.ktg-sidebar--collapsed .ktg-sidebar__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  font-size: 0;
+  min-width: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. FOOTER / USER CARD
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-sidebar__footer {
+  padding: var(--space-3);
+  border-top: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+}
+
+.ktg-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  overflow: hidden;
+  padding: var(--space-2) var(--space-1);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.ktg-sidebar__user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-15);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.ktg-sidebar__user-avatar--admin {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+.ktg-sidebar__user-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  transition: opacity var(--transition-slow), width var(--transition-slow);
+}
+
+.ktg-sidebar--collapsed .ktg-sidebar__user-info,
+.ktg-sidebar--collapsed .ktg-sidebar__logout {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ktg-sidebar__user-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.ktg-sidebar__user-lga {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.ktg-sidebar__logout {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast),
+              color            var(--transition-fast),
+              transform        var(--transition-fast);
+}
+
+.ktg-sidebar__logout:hover {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.ktg-sidebar__logout:active {
+  transform: scale(0.92);
+}
+
+.ktg-sidebar__logout:focus-visible {
+  outline: 2px solid var(--color-error);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. MOBILE DRAWER + OVERLAY
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .ktg-sidebar {
+    width: 260px !important;   /* full-width regardless of collapsed state */
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s ease;
+    box-shadow: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .ktg-sidebar__collapse-btn {
+    display: none;   /* collapse makes no sense on mobile */
+  }
+
+  /* Slide in */
+  .ktg-sidebar--mobile-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.22);
+  }
+
+  /*
+   * Backdrop overlay.
+   * z-index: 99998 — always below the sidebar (99999)
+   *                  so the sidebar remains interactive.
+   */
+  body.ktg-sidebar-overlay-visible::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 99998;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    animation: sidebarOverlayIn 0.25s ease forwards;
+  }
+
+  @keyframes sidebarOverlayIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .ktg-sidebar,
+  .ktg-sidebar__nav-link,
+  .ktg-sidebar__nav-label,
+  .ktg-sidebar__brand-text,
+  .ktg-sidebar__brand-sub,
+  .ktg-sidebar__user-info,
+  .ktg-sidebar__logout,
+  .ktg-sidebar__collapse-btn {
+    transition: none !important;
+  }
+
+  body.ktg-sidebar-overlay-visible::before {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. ADMIN REGION SELECTOR
+   ═══════════════════════════════════════════════════════════════════════ */
+.admin-region-selector {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+}
+
+.admin-region-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.admin-region-tabs {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.admin-region-tab {
+  flex: 1;
+  padding: var(--space-2) var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-region-tab:hover {
+  background: var(--color-primary-5);
+  border-color: var(--color-primary-30);
+  color: var(--color-primary);
+}
+
+.admin-region-tab--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.admin-region-tab--active:hover {
+  background: var(--color-primary-dark, var(--color-primary));
+  color: #fff;
+}
+
+.admin-region-tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Hide region selector when sidebar is collapsed */
+.ktg-sidebar--collapsed .admin-region-selector {
+  display: none;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .admin-region-selector {
+    padding: var(--space-3);
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   PREMIUM ENHANCEMENTS — Sidebar
+   Desktop: elevated brand, glowing active item.
+   Mobile: same treatment in drawer mode.
+   ══════════════════════════════════════════════════ */
+
+/* Brand area: subtle warm gradient base */
+.ktg-sidebar__brand {
+  background: linear-gradient(180deg, #fff 80%, rgba(6,137,39,0.03) 100%);
+}
+.ktg-sidebar__brand-text {
+  letter-spacing: -0.02em;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Nav link: slide-in on hover */
+.ktg-sidebar__nav-link {
+  letter-spacing: -0.01em;
+  transition: background-color var(--transition-fast),
+              color            var(--transition-fast),
+              transform        var(--transition-fast),
+              box-shadow       var(--transition-fast);
+}
+.ktg-sidebar__nav-link:hover {
+  background-color: var(--color-primary-15);
+  color: var(--color-primary);
+  transform: translateX(2px);
+}
+
+/* Active: gradient bg + glowing left bar */
+.ktg-sidebar__nav-link--active {
+  background: linear-gradient(90deg, rgba(6,137,39,0.13) 0%, rgba(6,137,39,0.04) 100%);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+.ktg-sidebar__nav-link--active::before {
+  width: 3px;
+  box-shadow: 2px 0 8px rgba(6,137,39,0.45);
+}
+.ktg-sidebar__nav-link--active .ktg-sidebar__nav-icon {
+  filter: drop-shadow(0 0 4px rgba(6,137,39,0.4));
+}
+
+/* Footer: elevated */
+.ktg-sidebar__footer {
+  border-top: 1px solid var(--color-border-light);
+  background: linear-gradient(180deg, var(--color-surface) 0%, #fff 100%);
+}
+
+/* Badge: green glow */
+.ktg-sidebar__badge {
+  box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(220,38,38,0.4);
+}
+
+/* Create Reel button styling boost */
+.ktg-sidebar__create-btn,
+.ktg-sidebar__nav-link[data-modal] {
+  background: var(--gradient-brand, linear-gradient(135deg,#068927 0%,#0aab32 100%)) !important;
+  color: #fff !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: 0 4px 12px rgba(6,137,39,0.3) !important;
+  margin: var(--space-2) var(--space-3) !important;
+  width: calc(100% - 1.5rem) !important;
+  justify-content: center !important;
+  font-weight: var(--font-weight-semibold) !important;
+}
+.ktg-sidebar__nav-link[data-modal]:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(6,137,39,0.38) !important;
+  color: #fff !important;
+}
+.ktg-sidebar--collapsed .ktg-sidebar__nav-link[data-modal] {
+  margin: var(--space-2) auto !important;
+  width: 40px !important;
+  padding: 0 !important;
+  border-radius: var(--radius-md) !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ktg-sidebar__nav-link { transition: none !important; }
+}

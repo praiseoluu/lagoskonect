@@ -1,0 +1,123 @@
+/* ── Admin Platform Settings ─────────────────────────────────────────────── */
+
+.admin-settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-bottom: var(--space-16);
+  max-width: 760px;
+}
+
+/* ── Page header ─────────────────────────────────────────────────────────── */
+
+.as-page-header {
+  margin-bottom: var(--space-2);
+}
+
+.as-page-header__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+}
+
+.as-page-header__sub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: var(--space-1) 0 0;
+}
+
+/* ── Tabs spacing ────────────────────────────────────────────────────────── */
+
+#settings-tabs-mount { margin-bottom: var(--space-2); }
+
+/* ── Section card ────────────────────────────────────────────────────────── */
+
+.settings-section {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+}
+
+.settings-section__header {
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.settings-section__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ── Setting row ─────────────────────────────────────────────────────────── */
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background var(--transition-fast);
+}
+
+.settings-row:last-child { border-bottom: none; }
+.settings-row:hover      { background: var(--color-surface); }
+
+.settings-row__label-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-row__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.settings-row__desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+}
+
+/* ── Danger row (maintenance mode) ──────────────────────────────────────── */
+
+.settings-row--danger                          { background: #fff5f5; }
+.settings-row--danger .settings-row__label    { color: var(--color-error); }
+.settings-row--danger:hover                    { background: #fee2e2; }
+
+/* ── Coming soon badge ───────────────────────────────────────────────────── */
+
+.settings-coming-soon {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 3px var(--space-3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .settings-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+}

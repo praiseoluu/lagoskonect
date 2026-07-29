@@ -1,0 +1,294 @@
+/**
+ * Lagos Konect — Button Styles
+ * ============================================================
+ * All colours, radii, spacing and typography values are sourced
+ * exclusively from design tokens (tokens.css) so dark-mode and
+ * theme changes propagate automatically.
+ *
+ * Sections:
+ *   1. Base shell
+ *   2. Sizes
+ *   3. Full-width modifier
+ *   4. Icon-only modifier
+ *   5. Variants  — primary / secondary / ghost / danger / icon
+ *   6. Disabled state
+ *   7. Loading state
+ *   8. Spinner animation
+ *   9. Icon sizing
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. BASE SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  text-decoration: none !important;
+  white-space: nowrap;
+  user-select: none;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--transition-fast),
+    border-color     var(--transition-fast),
+    color            var(--transition-fast),
+    box-shadow       var(--transition-fast),
+    transform        var(--transition-fast);
+}
+
+.adm-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. SIZES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-btn--sm {
+  height: 32px;
+  padding: 0 var(--space-3);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+}
+
+.adm-btn--md {
+  height: 40px;
+  padding: 0 var(--space-5);
+  font-size: var(--font-size-sm);
+}
+
+.adm-btn--lg {
+  height: 48px;
+  padding: 0 var(--space-6);
+  font-size: var(--font-size-base);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. FULL-WIDTH MODIFIER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-btn--full {
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. ICON-ONLY MODIFIER
+   Square dimensions match the height of each size tier; padding is removed.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-btn--icon-only.adm-btn--sm {
+  width: 32px;
+  padding: 0;
+}
+
+.adm-btn--icon-only.adm-btn--md {
+  width: 40px;
+  padding: 0;
+}
+
+.adm-btn--icon-only.adm-btn--lg {
+  width: 48px;
+  padding: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. VARIANTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Primary ──────────────────────────────────────────────────────────── */
+
+.adm-btn--primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.adm-btn--primary:hover:not(:disabled) {
+  background-color: var(--color-primary-90);
+  border-color: var(--color-primary-90);
+  box-shadow: var(--shadow-primary);
+}
+
+.adm-btn--primary:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* ── Secondary ────────────────────────────────────────────────────────── */
+
+.adm-btn--secondary {
+  background-color: transparent;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.adm-btn--secondary:hover:not(:disabled) {
+  background-color: var(--color-primary-15);
+}
+
+.adm-btn--secondary:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* ── Ghost ────────────────────────────────────────────────────────────── */
+
+.adm-btn--ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-text-secondary);
+}
+
+.adm-btn--ghost:hover:not(:disabled) {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.adm-btn--ghost:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* ── Danger ───────────────────────────────────────────────────────────── */
+
+.adm-btn--danger {
+  background-color: transparent;
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.adm-btn--danger:hover:not(:disabled) {
+  background-color: var(--color-error-bg);
+}
+
+.adm-btn--danger:focus-visible {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+/* ── Icon ─────────────────────────────────────────────────────────────── */
+/*    Visually identical to ghost but always square; used for toolbar      */
+/*    icon buttons where a text label is unnecessary.                      */
+
+.adm-btn--icon {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+}
+
+.adm-btn--icon:hover:not(:disabled) {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.adm-btn--icon:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. DISABLED STATE
+   Pointer-events are removed so tooltips on a wrapper can still fire.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-btn:disabled,
+.adm-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. LOADING STATE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-btn--loading {
+  cursor: wait;
+  pointer-events: none;
+}
+
+/* Dim content while spinner is visible so it doesn't compete visually */
+.adm-btn--loading .adm-btn__label,
+.adm-btn--loading .adm-btn__icon {
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. SPINNER ANIMATION
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-btn__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.8;
+  animation: adm-btn-spin 0.65s linear infinite;
+}
+
+@keyframes adm-btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. ICON SIZING
+   SVG icons scale with the button size tier.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.adm-btn--sm .adm-btn__icon svg { width: 14px; height: 14px; }
+.adm-btn--md .adm-btn__icon svg { width: 16px; height: 16px; }
+.adm-btn--lg .adm-btn__icon svg { width: 18px; height: 18px; }
+
+/* ══════════════════════════════════════════════════════
+   PREMIUM ENHANCEMENTS — Buttons
+   Primary glow, secondary lift, refined radius.
+   ══════════════════════════════════════════════════ */
+
+/* Primary: branded glow */
+.adm-btn--primary {
+  box-shadow: var(--shadow-primary-glow, 0 4px 16px rgba(6,137,39,0.30));
+  letter-spacing: 0.01em;
+  background: var(--gradient-brand, linear-gradient(135deg,#068927 0%,#0aab32 100%));
+}
+.adm-btn--primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(6,137,39,0.40), 0 2px 6px rgba(6,137,39,0.22);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg,#057a22 0%,#08962b 100%);
+}
+.adm-btn--primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-primary-glow, 0 4px 16px rgba(6,137,39,0.30));
+}
+
+/* Secondary: subtle lift */
+.adm-btn--secondary {
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.05));
+}
+.adm-btn--secondary:hover:not(:disabled) {
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.08));
+  transform: translateY(-1px);
+}
+
+/* Refined shapes */
+.adm-btn--lg {
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm-btn { transition: none !important; transform: none !important; }
+}

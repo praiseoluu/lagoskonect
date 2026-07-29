@@ -1,0 +1,107 @@
+/* ── Admin Inline-style Replacements ────────────────────────────────────── */
+/* Replaces all static style="..." attributes that were causing CSP errors.  */
+
+/* Layout helpers used in Settings, Users, News, Chat, ContentPages */
+.adm-row-spaced   { display:flex; align-items:center; justify-content:space-between; gap:var(--space-4); }
+.adm-col-pad      { padding: var(--space-5); display:flex; flex-direction:column; gap:var(--space-4); }
+.adm-col-pad-top0 { padding: var(--space-5); padding-top:0; display:flex; flex-direction:column; gap:var(--space-4); }
+.adm-row-pad      { padding: var(--space-5); display:flex; align-items:center; gap:var(--space-4); border-bottom:1px solid var(--color-border-light); }
+.adm-footer-row   { display:flex; justify-content:flex-end; padding-top:var(--space-2); border-top:1px solid var(--color-border-light); }
+.adm-row-gap2     { display:flex; align-items:center; gap:var(--space-2); }
+.adm-row-gap3     { display:flex; align-items:center; gap:var(--space-3); }
+.adm-mb4          { margin-bottom:var(--space-4); }
+.adm-mb5          { margin-bottom:var(--space-5); }
+.adm-mb6          { margin-bottom:var(--space-6); }
+.adm-mt3          { margin-top:var(--space-3); }
+.adm-pad8         { padding:var(--space-8); }
+.adm-w160         { width:160px; }
+.adm-flex1        { flex:1; min-width:0; }
+
+/* Typography helpers replacing inline font/color styles */
+.adm-text-success   { color:var(--color-success); }
+.adm-text-warning   { color:var(--color-warning); }
+.adm-text-error     { color:var(--color-error); }
+.adm-text-primary   { color:var(--color-primary); }
+.adm-text-muted     { color:var(--color-text-muted); font-size:var(--font-size-xs); }
+.adm-text-muted-sm  { color:var(--color-text-muted); font-size:var(--font-size-sm); }
+.adm-text-muted-cap { color:var(--color-text-muted); font-size:var(--font-size-xs); text-transform:capitalize; }
+.adm-profile-name   { font-size:var(--font-size-lg); font-weight:var(--font-weight-bold); color:var(--color-text); }
+.adm-profile-email  { font-size:var(--font-size-sm); color:var(--color-text-muted); }
+.adm-profile-role   { font-size:var(--font-size-xs); color:var(--color-primary); margin-top:var(--space-1); text-transform:capitalize; }
+.adm-badge-you      { font-size:var(--font-size-xs); color:var(--color-primary); font-weight:400; margin-left:4px; }
+.adm-member-name    { font-size:var(--font-size-sm); font-weight:var(--font-weight-semibold); color:var(--color-text); }
+.adm-verified-yes   { color:var(--color-success); display:flex; align-items:center; gap:4px; }
+.adm-verified-no    { color:var(--color-warning); }
+
+/* Analytics / Traffic static layout helpers */
+.adm-analytics-sub    { display:flex; flex-direction:column; gap:var(--space-5); padding-top:var(--space-2); }
+.adm-heatmap-day-row  { margin-bottom:var(--space-1); }
+.adm-heatmap-legend   { display:flex; align-items:center; gap:var(--space-2); margin-top:var(--space-3); justify-content:flex-end; }
+.adm-legend-dot       { width:16px; height:16px; border-radius:3px; }
+.adm-legend-label     { font-size:10px; color:var(--color-text-muted); }
+.adm-heatmap-day-label{ width:28px; height:16px; font-size:10px; color:var(--color-text-muted); text-align:center; display:flex; align-items:center; justify-content:center; }
+
+/* Traffic page static layout */
+.adm-traffic-bars     { height:180px; position:relative; }
+.adm-traffic-bar-wrap { position:relative; }
+.adm-traffic-legend   { display:flex; gap:var(--space-4); margin-top:var(--space-3); }
+.adm-legend-item      { display:flex; align-items:center; gap:var(--space-2); }
+.adm-legend-swatch    { width:12px; height:12px; border-radius:2px; }
+.adm-legend-swatch--views    { background:var(--color-primary-60); }
+.adm-legend-swatch--visitors { background:var(--color-info); opacity:0.6; }
+.adm-legend-text      { font-size:var(--font-size-xs); color:var(--color-text-muted); }
+
+/* Traffic visitors overlay */
+.adm-visitors-overlay {
+  position:absolute; bottom:0; left:0; right:0;
+  background:var(--color-info);
+  opacity:0.45;
+  border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+  pointer-events:none;
+}
+
+/* Device breakdown */
+.adm-device-list      { display:flex; flex-direction:column; gap:var(--space-5); padding-top:var(--space-2); }
+.adm-device-header    { display:flex; justify-content:space-between; margin-bottom:var(--space-2); }
+.adm-device-label     { font-size:var(--font-size-sm); color:var(--color-text-secondary); font-weight:500; }
+.adm-device-pct       { font-size:var(--font-size-sm); font-weight:600; color:var(--color-text); }
+.adm-device-track     { height:8px; background:var(--color-border-light); border-radius:var(--radius-full); overflow:hidden; }
+
+/* Daily breakdown table */
+.adm-daily-table-wrap   { overflow-x:auto; }
+.adm-daily-table        { width:100%; border-collapse:collapse; font-size:var(--font-size-sm); }
+.adm-daily-table thead tr { border-bottom:1px solid var(--color-border); }
+.adm-daily-table th     { padding:var(--space-2) var(--space-3); color:var(--color-text-muted); font-size:var(--font-size-xs); text-transform:uppercase; letter-spacing:0.05em; font-weight:600; }
+.adm-daily-table th:first-child { text-align:left; }
+.adm-daily-table th:not(:first-child) { text-align:right; }
+.adm-daily-table tbody tr { border-bottom:1px solid var(--color-border-light); }
+.adm-daily-table td     { padding:var(--space-3); color:var(--color-text); }
+.adm-daily-table td.adm-td-views    { text-align:right; font-weight:500; }
+.adm-daily-table td.adm-td-visitors { text-align:right; color:var(--color-text-secondary); }
+
+/* Skeleton lines in Chat queue */
+.adm-skel-line-1 { height:12px; width:60%; background:var(--color-border-light); border-radius:var(--radius-sm); margin-bottom:var(--space-2); }
+.adm-skel-line-2 { height:10px; width:80%; background:var(--color-border-light); border-radius:var(--radius-sm); margin-bottom:var(--space-2); }
+.adm-skel-line-3 { height:10px; width:40%; background:var(--color-border-light); border-radius:var(--radius-sm); }
+
+/* Content filter width */
+.adm-filter-w160 { width:160px; }
+.adm-content-sub { font-size:var(--font-size-sm); color:var(--color-text-secondary); margin-top:var(--space-3); }
+
+/* Web app pages */
+.web-search-wrap { max-width:480px; margin-bottom:var(--space-5); }
+.web-empty-sub   { font-size:var(--font-size-xs); color:var(--color-text-muted); margin-top:var(--space-2); }
+.web-reel-skel   { aspect-ratio:9/16; max-width:360px; margin:0 auto; }
+
+/* Settings page */
+.set-pad5        { padding:var(--space-5); }
+.set-pad5-x      { padding:0 var(--space-5); }
+.set-pad5-t0     { padding:var(--space-5); padding-top:0; }
+.set-err-label   { color:var(--color-error); font-size:var(--font-size-sm); font-weight:var(--font-weight-semibold); text-transform:uppercase; letter-spacing:var(--letter-spacing-wider); }
+.set-danger-desc { font-size:var(--font-size-sm); color:var(--color-text-muted); }
+.set-lang-note   { font-size:var(--font-size-xs); color:var(--color-text-muted); }
+.set-primary-val { color:var(--color-primary); }
+
+/* Profile page */
+.pro-verified-yes { color:var(--color-success); display:flex; align-items:center; gap:4px; }
+.pro-verified-no  { color:var(--color-warning); }

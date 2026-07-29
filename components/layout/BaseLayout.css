@@ -1,0 +1,275 @@
+/**
+ * Lagos Konect — Base Layout Styles
+ * ============================================================
+ * Authenticated page shell: sidebar offset + main column + content area.
+ * Also contains shared page-level utilities used across all pages.
+ *
+ * Sections:
+ *   1.  Layout shell
+ *   2.  Main column
+ *   3.  Content area
+ *   4.  Page loading overlay
+ *   5.  Page header (admin + web)
+ *   6.  Grid utilities
+ *   7.  Section utilities
+ *   8.  Responsive breakpoints
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. LAYOUT SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-surface);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. MAIN COLUMN
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-layout__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.ktg-layout__topbar {
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. CONTENT AREA
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-layout__content {
+  flex: 1;
+  padding: var(--space-6) var(--content-padding);
+  overflow-y: auto;
+  max-width: var(--content-max-width);
+  width: 100%;
+  margin-inline: auto;
+
+  /*
+   * Establishes a containing block for the page-loading overlay so it
+   * covers only the content area (sidebar and topbar remain visible).
+   */
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. PAGE LOADING OVERLAY
+   ═══════════════════════════════════════════════════════════════════════ */
+.page-loading-overlay {
+  position: absolute;  /* contained by .ktg-layout__content, not the viewport */
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-overlay);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: layout-overlay-in 0.18s ease both;
+}
+
+@keyframes layout-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.page-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--color-border-light);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: layout-spin 0.7s linear infinite;
+}
+
+@keyframes layout-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. PAGE HEADER
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.ktg-page-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.ktg-page-header__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+}
+
+.ktg-page-header__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.ktg-page-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. GRID UTILITIES
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+.ktg-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+.ktg-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. SECTION UTILITIES
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-section {
+  margin-bottom: var(--space-8);
+}
+
+.ktg-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.ktg-section__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.ktg-section__link {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color var(--transition-fast);
+}
+
+.ktg-section__link:hover { text-decoration: underline; }
+
+.ktg-section__link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1280px) {
+  .ktg-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .ktg-layout__content {
+    padding: var(--space-5);
+  }
+
+  .ktg-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ktg-layout__content {
+    padding: var(--space-4);
+  }
+
+  .ktg-grid-4,
+  .ktg-grid-3,
+  .ktg-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .ktg-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .ktg-layout__content {
+    padding: var(--space-4) var(--space-3);
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .page-loading-overlay,
+  .page-loading-spinner {
+    animation: none !important;
+  }
+
+  .page-loading-spinner {
+    border-top-color: var(--color-primary);
+    /* Static indicator for reduce-motion users */
+    opacity: 0.7;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   PREMIUM ENHANCEMENTS — Base Layout
+   ══════════════════════════════════════════════════ */
+
+.ktg-layout { background: var(--color-surface); }
+.ktg-layout__content { background: var(--color-surface); }
+
+/* Page header: refined typography */
+.ktg-page-header__title {
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  background: linear-gradient(135deg, var(--color-text) 0%, #374151 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Page loading overlay: glass */
+.page-loading-overlay {
+  background: rgba(249,250,251,0.88);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}

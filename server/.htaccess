@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /server/
+
+# Allow direct access to uploads
+
+RewriteCond %{REQUEST_URI} ^/server/uploads/
+RewriteRule ^ - [L]
+
+CGIPassAuth On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/v1/(.*)$ index.php [QSA,L]

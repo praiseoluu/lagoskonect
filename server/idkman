@@ -1,0 +1,25 @@
+Options -Indexes
+
+# Block direct access to sensitive files only
+<FilesMatch "\.(sql|env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Route all /api/v1/* requests through index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /ronniiii-i-afx-connect/server/
+
+    # Allow direct PHP files (setup, generate_hashes) to run normally
+    RewriteRule ^(setup|generate_hashes)\.php$ - [L]
+
+    # Allow uploads folder
+    RewriteCond %{REQUEST_URI} ^/ronniiii-i-afx-connect/server/uploads/ [NC]
+    RewriteRule ^ - [L]
+
+    # Route api/v1/* to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/v1/(.*)$ index.php [QSA,L]
+</IfModule>

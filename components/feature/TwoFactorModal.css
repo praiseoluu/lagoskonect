@@ -1,0 +1,475 @@
+/**
+ * Lagos Konect — Two-Factor Authentication Modal Styles
+ * ============================================================
+ * Self-contained — no dependency on other modal sheets.
+ *
+ * Sections:
+ *   1.  Overlay
+ *   2.  Modal card
+ *   3.  Close button
+ *   4.  Step shell (shared layout for all steps)
+ *   5.  Step icon badges
+ *   6.  Step typography (title, desc, hint, warning, error)
+ *   7.  Step actions
+ *   8.  QR code wrapper + loading state + spinner
+ *   9.  Manual entry (details / summary)
+ *   10. Code input (6-digit OTP field)
+ *   11. Backup codes grid
+ *   12. Danger button variant
+ *   13. Responsive
+ *   14. Reduced motion
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. OVERLAY
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  padding: var(--space-4, 16px);
+  pointer-events: none;
+  transition: background var(--transition-base, 0.2s ease);
+}
+
+.twofa-overlay--visible {
+  background: rgba(0, 0, 0, 0.55);
+  pointer-events: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. MODAL CARD
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl, 16px);
+  padding: var(--space-8, 32px);
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  /* Entry animation */
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+  transition: opacity   var(--transition-base, 0.2s ease),
+              transform var(--transition-base, 0.2s ease);
+}
+
+.twofa-overlay--visible .twofa-modal {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Slim scrollbar */
+.twofa-modal::-webkit-scrollbar       { width: 4px; }
+.twofa-modal::-webkit-scrollbar-track { background: transparent; }
+.twofa-modal::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full, 9999px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. CLOSE BUTTON
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-modal__close {
+  position: absolute;
+  top: var(--space-4, 16px);
+  right: var(--space-4, 16px);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md, 8px);
+  border: none;
+  background: var(--color-surface-hover);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--transition-fast),
+              color       var(--transition-fast),
+              transform   var(--transition-fast);
+}
+
+.twofa-modal__close:hover {
+  background: var(--color-border-light);
+  color: var(--color-text);
+}
+
+.twofa-modal__close:active {
+  transform: scale(0.92);
+}
+
+.twofa-modal__close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. STEP SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4, 16px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. STEP ICON BADGES
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-step__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.twofa-step__icon--blue  { background: rgba(37, 99, 235, 0.10); color: #2563eb; }
+.twofa-step__icon--green { background: rgba(15, 107, 79, 0.10); color: var(--color-primary); }
+.twofa-step__icon--amber { background: rgba(217, 119, 6, 0.10); color: #d97706; }
+.twofa-step__icon--red   { background: rgba(220, 38, 38, 0.10); color: #dc2626; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. STEP TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-step__title {
+  font-size: var(--font-size-xl, 18px);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.twofa-step__desc {
+  font-size: var(--font-size-sm, 14px);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 360px;
+}
+
+.twofa-step__hint {
+  font-size: var(--font-size-xs, 13px);
+  color: var(--color-text-muted);
+  margin: 0;
+  opacity: 0.82;
+}
+
+.twofa-step__warning {
+  font-size: var(--font-size-xs, 13px);
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.22);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-2) var(--space-3);
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  line-height: var(--line-height-normal);
+}
+
+.twofa-step__error {
+  font-size: var(--font-size-xs, 13px);
+  color: var(--color-error, #dc2626);
+  min-height: 18px;
+  margin: 0;
+  /* Reserve space so layout doesn't shift when error appears */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. STEP ACTIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-step__actions {
+  display: flex;
+  gap: var(--space-3, 10px);
+  width: 100%;
+  justify-content: flex-end;
+  margin-top: var(--space-2, 8px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. QR CODE WRAPPER
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-qr {
+  background: #fff;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl, 12px);
+  padding: var(--space-3, 12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 204px;
+  min-width: 204px;
+  gap: var(--space-2);
+}
+
+.twofa-qr__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs, 13px);
+  color: var(--color-text-muted);
+}
+
+/* Loading spinner */
+.twofa-qr__spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid var(--color-border-light);
+  border-top-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  animation: twofa-spin 0.7s linear infinite;
+}
+
+@keyframes twofa-spin {
+  to { transform: rotate(360deg); }
+}
+
+.twofa-qr__img {
+  display: block;
+  border-radius: 4px;
+}
+
+.twofa-qr__fallback {
+  font-size: var(--font-size-xs, 13px);
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+  padding: var(--space-2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. MANUAL ENTRY (details / summary)
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-manual {
+  width: 100%;
+  text-align: left;
+}
+
+.twofa-manual__toggle {
+  font-size: var(--font-size-sm, 13px);
+  color: var(--color-primary);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: opacity var(--transition-fast);
+}
+
+.twofa-manual__toggle:hover { opacity: 0.78; }
+
+.twofa-manual__desc {
+  font-size: var(--font-size-xs, 13px);
+  color: var(--color-text-muted);
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+/* Code + copy button wrapper */
+.twofa-manual__code-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.twofa-manual__code {
+  flex: 1;
+  display: block;
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: var(--font-size-xs, 13px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-2) var(--space-3);
+  letter-spacing: 0.10em;
+  color: var(--color-text);
+  word-break: break-all;
+  line-height: var(--line-height-relaxed);
+}
+
+.twofa-manual__copy {
+  flex-shrink: 0;
+  padding: var(--space-1) var(--space-3);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--font-size-xs, 12px);
+  font-weight: var(--font-weight-medium);
+  font-family: inherit;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background     var(--transition-fast),
+              border-color   var(--transition-fast),
+              color          var(--transition-fast);
+}
+
+.twofa-manual__copy:hover {
+  background: var(--color-primary-15);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.twofa-manual__copy:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. CODE INPUT (OTP field)
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-code-input {
+  width: 100%;
+  max-width: 220px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: var(--font-weight-bold, 700);
+  letter-spacing: 0.28em;
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl, 12px);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: 'Courier New', monospace;
+  outline: none;
+  transition: border-color var(--transition-fast),
+              box-shadow   var(--transition-fast);
+}
+
+.twofa-code-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.twofa-code-input::placeholder {
+  color: var(--color-text-muted);
+  letter-spacing: 0.15em;
+  font-size: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. BACKUP CODES GRID
+   ═══════════════════════════════════════════════════════════════════════ */
+.twofa-backup__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2, 8px);
+  width: 100%;
+}
+
+.twofa-backup__code {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: var(--font-size-sm, 13px);
+  font-weight: var(--font-weight-semibold, 600);
+  text-align: center;
+  padding: var(--space-2, 8px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 8px);
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+  user-select: all;    /* let users triple-click to select individual codes */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. DANGER BUTTON VARIANT
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-btn--danger {
+  background: #dc2626;
+  color: #fff;
+  border: 1px solid transparent;
+  transition: background var(--transition-fast),
+              transform  var(--transition-fast);
+}
+
+.ktg-btn--danger:hover:not(:disabled) {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.ktg-btn--danger:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ktg-btn--danger:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+.ktg-btn--danger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .twofa-modal {
+    padding: var(--space-6, 24px) var(--space-5, 20px);
+    border-radius: var(--radius-xl, 12px);
+  }
+
+  .twofa-qr {
+    min-height: 172px;
+    min-width: 172px;
+  }
+
+  .twofa-code-input {
+    font-size: 22px;
+    letter-spacing: 0.20em;
+    max-width: 180px;
+  }
+
+  .twofa-backup__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .twofa-step__actions {
+    flex-direction: column-reverse;
+    gap: var(--space-2);
+  }
+
+  .twofa-step__actions .ktg-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   14. REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .twofa-overlay,
+  .twofa-modal,
+  .twofa-modal__close,
+  .twofa-manual__copy,
+  .twofa-code-input {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .twofa-qr__spinner {
+    animation: none !important;
+    border-top-color: var(--color-primary);
+    opacity: 0.6;
+  }
+
+  .ktg-btn--danger {
+    transition: none !important;
+  }
+}

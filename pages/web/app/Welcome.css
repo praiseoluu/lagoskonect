@@ -1,0 +1,201 @@
+/* ── Welcome Page ───────────────────────────────────────────────────────── */
+
+/*
+ * Renders inside WebLayout (sidebar + topbar).
+ * Content is a single centred card on the page body.
+ */
+
+/* ── Page wrapper ─────────────────────────────────────────────────────── */
+.welcome-page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────── */
+.welcome-card {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-10) var(--space-10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Decorative top-right corner accent */
+.welcome-card__corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle at top right, var(--color-primary-15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Icon ─────────────────────────────────────────────────────────────── */
+.welcome-card__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── LGA pill ─────────────────────────────────────────────────────────── */
+.welcome-card__lga-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  margin-top: calc(-1 * var(--space-3));
+}
+
+/* ── Heading ──────────────────────────────────────────────────────────── */
+.welcome-card__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.welcome-card__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+.welcome-card__title-brand {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.welcome-card__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+  max-width: 420px;
+}
+
+/* ── Feature cards row ────────────────────────────────────────────────── */
+.welcome-card__features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.welcome-card__feature {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  text-align: left;
+}
+
+.welcome-card__feature-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.welcome-card__feature-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.welcome-card__feature-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* ── CTA button ───────────────────────────────────────────────────────── */
+.welcome-card__cta {
+  width: 100%;
+}
+
+.welcome-card__cta .ktg-btn {
+  width: 100%;
+}
+
+/* ── Change LGA link ──────────────────────────────────────────────────── */
+.welcome-card__lga-change {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.welcome-card__lga-change-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: opacity var(--transition-fast);
+}
+
+.welcome-card__lga-change-btn:hover { opacity: 0.75; }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .welcome-card {
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .welcome-card__features {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-card__feature {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .welcome-card__feature-icon {
+    margin-top: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .welcome-card {
+    padding: var(--space-6) var(--space-5);
+    gap: var(--space-5);
+  }
+
+  .welcome-card__title {
+    font-size: var(--font-size-xl);
+  }
+}

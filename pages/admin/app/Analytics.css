@@ -1,0 +1,81 @@
+/**
+ * Lagos Konnect Admin — Governance Analytics Page
+ * Page-specific layout only.
+ * Chart component styles live in /components/charts/charts.css
+ */
+
+/* ── Page ─────────────────────────────────────────────────────────────── */
+
+.admin-analytics-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-bottom: var(--space-12);
+}
+
+.an-page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.an-page-header__title { font-size: var(--font-size-2xl); font-weight: var(--font-weight-black); color: var(--color-text); letter-spacing: var(--letter-spacing-tight); margin: 0; }
+.an-page-header__sub   { font-size: var(--font-size-sm); color: var(--color-text-muted); margin: var(--space-1) 0 0; }
+.an-page-header__sub strong { color: var(--color-primary); font-weight: var(--font-weight-semibold); }
+.an-page-header__actions { display: flex; gap: var(--space-3); flex-shrink: 0; }
+
+/* ── KPI row ──────────────────────────────────────────────────────────── */
+
+.an-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.an-kpi-wrap {}
+
+/* ── Charts row ───────────────────────────────────────────────────────── */
+
+.an-charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+
+.an-chart-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  overflow: hidden;
+}
+
+.an-chart-card__header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-5); }
+.an-chart-card__title  { font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-text); margin: 0 0 var(--space-1); }
+.an-chart-card__sub    { font-size: var(--font-size-xs); color: var(--color-text-muted); margin: 0; }
+.an-chart-card__info   { color: var(--color-text-muted); cursor: help; }
+.an-chart-body         { min-height: 200px; }
+
+/* ── Heatmap section ──────────────────────────────────────────────────── */
+
+.an-section { display: flex; flex-direction: column; gap: var(--space-4); }
+.an-section-header { display: flex; align-items: flex-start; justify-content: space-between; }
+.an-section-title  { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-text); margin: 0; }
+.an-section-sub    { font-size: var(--font-size-sm); color: var(--color-text-muted); margin: var(--space-1) 0 0; }
+
+/* ── Export modal ─────────────────────────────────────────────────────── */
+
+.an-export-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin: 0 0 var(--space-4); }
+.an-export-btns { display: flex; gap: var(--space-3); }
+.an-export-option {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  padding: var(--space-5); border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-xl); background: var(--color-bg); cursor: pointer;
+  font-family: var(--font-family); transition: all var(--transition-fast);
+}
+.an-export-option:hover { border-color: var(--color-primary); background: var(--color-primary-15); }
+.an-export-option__icon { font-size: 28px; }
+.an-export-option strong { font-size: var(--font-size-base); color: var(--color-text); }
+.an-export-option span   { font-size: var(--font-size-xs); color: var(--color-text-muted); }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) { .an-kpi-row { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 768px) {
+  .an-kpi-row    { grid-template-columns: 1fr; }
+  .an-charts-row { grid-template-columns: 1fr; }
+  .an-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .an-page-header__actions { align-self: flex-start; }
+  .an-section-header { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .an-export-btns { flex-direction: column; }
+}

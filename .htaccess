@@ -1,0 +1,72 @@
+# Lagos Konnect — Apache Rewrite Rules
+# ============================================================
+# Rewrites every non-file, non-directory request to index.html
+# so the SPA router can handle clean URLs on page reload.
+#
+# e.g. user refreshes at /home → Apache serves index.html
+#      → JS router reads /home → mounts the Home page component
+#
+# NGINX equivalent (add to server block):
+#   location / {
+#     try_files $uri $uri/ /index.html;
+#   }
+#
+# PHP backend API lives at /api/* — those pass through unmodified.
+
+Options -MultiViews
+RewriteEngine On
+
+# Redirect HTTP to HTTPS (skip for localhost/127.0.0.1 development)
+# R=308 preserves the HTTP method (POST stays POST — 301/302 convert POST→GET)
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:[0-9]+)?$ [NC]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=308]
+
+# ── Allow direct file access (assets, CSS, JS, etc.) ──────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── Pass PHP API calls through to PHP ─────────────────────────────────
+RewriteRule ^server/ - [L]
+RewriteRule ^api/ - [L]
+
+# ── Everything else → SPA entry point ─────────────────────────────────
+RewriteRule ^ index.html [L]
+
+# ── Security headers ──────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  # Prevent clickjacking
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Prevent MIME sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Enable XSS filter
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # Referrer policy
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # HSTS — force HTTPS for 1 year
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # Content Security Policy (tighten when going to production)
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://fonts.googleapis.com; font-src 'self' https://maxcdn.bootstrapcdn.com https://fonts.gstatic.com; img-src 'self' data: blob: https://picsum.photos https://fastly.picsum.photos https://lh3.googleusercontent.com https://*.e2-object.com https://*.idrivee2.com; media-src 'self' blob: data: https://*.e2-object.com https://*.idrivee2.com; connect-src 'self' https://cdn.jsdelivr.net;"
+</IfModule>
+
+# ── Caching ────────────────────────────────────────────────────────────
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # HTML — no cache (always fresh for the SPA shell)
+  ExpiresByType text/html                 "access plus 0 seconds"
+  # JS/CSS — cache with versioning
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType text/css                  "access plus 1 year"
+  # Images / fonts
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+</IfModule>

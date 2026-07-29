@@ -1,0 +1,192 @@
+/**
+ * Lagos Konect — Modal Styles
+ * ============================================================
+ * All values reference design tokens from tokens.css.
+ *
+ * Sections:
+ *   1. Overlay
+ *   2. Modal panel
+ *   3. Size modifiers
+ *   4. Header
+ *   5. Body
+ *   6. Footer
+ *   7. Mobile — bottom-sheet behaviour
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. OVERLAY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 18, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  padding: var(--space-4);
+  /* Hidden by default — opacity + visibility pairing allows
+     CSS transitions to play on both open and close */
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity    var(--transition-base),
+    visibility var(--transition-base);
+  backdrop-filter: blur(2px);
+  /* Ensure the overlay itself can receive focus for the trap */
+  outline: none;
+}
+
+.adm-modal-overlay--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. MODAL PANEL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-modal {
+  background: var(--color-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - var(--space-16));
+  overflow: hidden;
+  /* Panel enters from slightly below and small scale */
+  transform: translateY(12px) scale(0.98);
+  transition: transform var(--transition-base);
+}
+
+.adm-modal-overlay--visible .adm-modal {
+  transform: translateY(0) scale(1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. SIZE MODIFIERS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-modal--sm   { max-width: 480px;  }
+.adm-modal--md   { max-width: 600px;  }
+.adm-modal--lg   { max-width: 800px;  }
+.adm-modal--xl   { max-width: 1000px; }
+
+.adm-modal--full {
+  max-width: none;
+  width: calc(100vw - var(--space-8));
+  max-height: calc(100vh - var(--space-8));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. HEADER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+}
+
+.adm-modal__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  line-height: var(--line-height-tight);
+  /* Prevent long titles from pushing the close button off-screen */
+  min-width: 0;
+  flex: 1;
+}
+
+.adm-modal__close {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  transition:
+    background-color var(--transition-fast),
+    color            var(--transition-fast);
+}
+
+.adm-modal__close:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.adm-modal__close:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. BODY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  /* Smooth inertia scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. FOOTER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+  /* Allow footer buttons to stack on very narrow panels */
+  flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. MOBILE — BOTTOM-SHEET BEHAVIOUR
+   On small screens the modal slides up from the bottom edge
+   instead of appearing centred.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+  .adm-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .adm-modal {
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 92vh;
+    width: 100%;
+    /* Slide up from below instead of scaling */
+    transform: translateY(100%);
+    transition: transform var(--transition-base);
+  }
+
+  .adm-modal-overlay--visible .adm-modal {
+    transform: translateY(0);
+  }
+
+  /* Full-size modal ignores the sheet rounding */
+  .adm-modal--full {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}

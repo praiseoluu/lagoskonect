@@ -1,0 +1,58 @@
+/* ── VerifyPhone Page ───────────────────────────────────────────────────── */
+
+/*
+ * Page-specific styles for /verify-phone.
+ * Shared auth shell styles live in _AuthLayout.css.
+ */
+
+/* Wrapper for the whole verify page content */
+.verify-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Centred icon row */
+.verify-page__icon-row {
+  display: flex;
+  justify-content: center;
+}
+
+/* OTP row — slight bottom breathing room */
+.verify-page .auth-otp-row {
+  margin-bottom: var(--space-1);
+}
+
+/* Resend row */
+.verify-page__resend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-content: center;
+  margin-top: var(--space-3);
+}
+
+.verify-page__resend-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Full-width submit button */
+.verify-page .auth-form__submit .ktg-btn {
+  width: 100%;
+}
+
+/* Success state icon row */
+.verify-page__success-icon-row {
+  display: flex;
+  justify-content: center;
+}
+
+/* Success done button */
+.verify-page__done .ktg-btn {
+  width: 100%;
+}
+
+.verify-page__done {
+  margin-top: var(--space-4);
+}

@@ -1,0 +1,392 @@
+/**
+ * KTG Connect — Chart Component Styles
+ * /components/charts/charts.css
+ * ============================================================
+ * All styles for: BarChart, ClusterBarChart, SparklineChart,
+ * TopicsChart, HeatmapChart, TrendCard.
+ *
+ * Import once at the app level — do NOT duplicate in page CSS.
+ */
+
+/* ── Shared layout primitives ─────────────────────────────────────────── */
+
+.ktg-bar-chart__wrap {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+}
+
+.ktg-bar-chart__chart-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Y-axis tick labels */
+.ktg-bar-chart__y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-shrink: 0;
+  width: 32px;
+  padding-bottom: 22px; /* matches label row height so ticks align with bars */
+}
+
+.ktg-bar-chart__y-axis span {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+/* X-axis line between bars and labels */
+.ktg-bar-chart__axis-line,
+.dash-cluster-chart__axis-line {
+  height: 1px;
+  background: var(--color-border-light);
+  flex-shrink: 0;
+}
+
+/* Shared label style */
+.ktg-bar-chart__label,
+.dash-cluster-chart__label {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Shared empty/loading state */
+.ktg-chart-empty,
+.dash-chart-empty,
+.dash-chart-loading {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--space-8);
+}
+
+/* Floating tooltip */
+.ktg-chart-tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  background: var(--color-text);
+  color: #fff;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 4px var(--space-2);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+}
+
+/* ── BarChart ──────────────────────────────────────────────────────────── */
+
+.ktg-bar-chart {
+  width: 100%;
+}
+
+.ktg-bar-chart__bars-row {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  min-height: 160px;
+}
+
+.ktg-bar-chart__labels-row {
+  display: flex;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+}
+
+.ktg-bar-chart__labels-row .ktg-bar-chart__label {
+  flex: 1;
+  text-align: center;
+}
+
+.ktg-bar-chart__col {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 100%;
+}
+
+.ktg-bar-chart__bar {
+  flex: 1;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  min-height: 3px;
+  transition: opacity var(--transition-fast);
+}
+
+.ktg-bar-chart__bar--secondary { opacity: 0.6; }
+.ktg-bar-chart__bar:hover      { opacity: 0.75; }
+
+/* Legend */
+.ktg-chart-legend {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  justify-content: flex-end;
+}
+
+.ktg-chart-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ktg-chart-legend__item span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+/* ── ClusterBarChart ───────────────────────────────────────────────────── */
+
+.dash-cluster-chart {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dash-cluster-chart__inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dash-cluster-chart__chart-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dash-cluster-chart__bars-row {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  min-height: 120px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.dash-cluster-chart__labels-row {
+  display: flex;
+  gap: var(--space-4);
+  padding-top: var(--space-2);
+}
+
+.dash-cluster-chart__labels-row .dash-cluster-chart__label {
+  flex: 1;
+  min-width: 48px;
+  text-align: center;
+}
+
+.dash-cluster-chart__group {
+  flex: 1;
+  min-width: 48px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 100%;
+}
+
+.dash-cluster-chart__bar-wrap {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  cursor: default;
+}
+
+.dash-cluster-chart__bar {
+  width: 100%;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  min-height: 0;
+  transition: opacity var(--transition-fast), height var(--transition-slow);
+}
+
+.dash-cluster-chart__bar:hover { opacity: 0.8; }
+
+/* Dashboard chart legend */
+.dash-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.dash-chart-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dash-chart-legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.dash-chart-legend__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ── SparklineChart ────────────────────────────────────────────────────── */
+
+.ktg-sparkline {
+  width: 100%;
+  display: block;
+}
+
+/* ── TopicsChart ───────────────────────────────────────────────────────── */
+
+.ktg-topics-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.ktg-topic-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 40px;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ktg-topic-row__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.ktg-topic-row__bar-wrap {
+  height: 8px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.ktg-topic-row__bar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.ktg-topic-row__pct {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  text-align: right;
+}
+
+/* ── HeatmapChart ──────────────────────────────────────────────────────── */
+
+.ktg-heatmap-chart {}
+
+.ktg-heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--space-3);
+}
+
+.ktg-heatmap-card {
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  transition: transform var(--transition-fast);
+  cursor: default;
+}
+
+.ktg-heatmap-card:hover { transform: translateY(-2px); }
+
+.ktg-heatmap-card--high { background: var(--color-primary); }
+.ktg-heatmap-card--med  { background: var(--color-primary-40); }
+.ktg-heatmap-card--low  { background: var(--color-primary-15); border: 1px solid var(--color-primary-40); }
+
+.ktg-heatmap-card__name  { font-size: var(--font-size-xs); font-weight: var(--font-weight-bold);  margin: 0; }
+.ktg-heatmap-card__level { font-size: var(--font-size-base); font-weight: var(--font-weight-black); margin: 0; }
+
+.ktg-heatmap-card--high .ktg-heatmap-card__name,
+.ktg-heatmap-card--high .ktg-heatmap-card__level { color: #fff; }
+
+.ktg-heatmap-card--med .ktg-heatmap-card__name,
+.ktg-heatmap-card--med .ktg-heatmap-card__level  { color: #fff; }
+
+.ktg-heatmap-card--low .ktg-heatmap-card__name   { color: var(--color-primary); }
+.ktg-heatmap-card--low .ktg-heatmap-card__level  { color: var(--color-primary); }
+
+.ktg-heatmap-legend {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.ktg-heatmap-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 4px var(--space-3);
+  border-radius: var(--radius-full);
+}
+
+.ktg-heatmap-legend--high { background: var(--color-primary);    color: #fff; }
+.ktg-heatmap-legend--med  { background: var(--color-primary-40); color: #fff; }
+.ktg-heatmap-legend--low  { background: var(--color-primary-15); color: var(--color-primary); border: 1px solid var(--color-primary-40); }
+
+/* ── TrendCard ─────────────────────────────────────────────────────────── */
+
+.ktg-trend-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ktg-trend-card__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.ktg-trend-card__value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.ktg-trend-card__trend {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+.ktg-trend-card__trend span {
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+}

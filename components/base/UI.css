@@ -1,0 +1,370 @@
+/**
+ * Lagos Konect — UI Component Styles
+ * ============================================================
+ * Styles for the UI component family:
+ *   ToastContainer · Avatar · Tabs · Toggle
+ *
+ * All values reference design tokens from tokens.css.
+ *
+ * Sections:
+ *   1.  Toast — container
+ *   2.  Toast — individual toast
+ *   3.  Toast — type variants
+ *   4.  Toast — inner elements
+ *   5.  Toast — responsive
+ *   6.  Avatar — shell & sizes
+ *   7.  Avatar — image & initials
+ *   8.  Avatar — online indicator
+ *   9.  Tabs — strip
+ *   10. Tabs — individual tab
+ *   11. Toggle — wrapper
+ *   12. Toggle — track & thumb
+ *   13. Toggle — label text
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. TOAST — CONTAINER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  z-index: var(--z-toast);
+  /* Container is passthrough; only the toasts themselves are interactive */
+  pointer-events: none;
+  max-width: 380px;
+  width: calc(100vw - var(--space-8));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. TOAST — INDIVIDUAL TOAST
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  /* Accent stripe on the left edge indicates toast type */
+  border-left-width: 4px;
+  pointer-events: all;
+  /* Enter from the right edge */
+  opacity: 0;
+  transform: translateX(16px);
+  transition:
+    opacity   var(--transition-slow),
+    transform var(--transition-slow);
+}
+
+.adm-toast--visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. TOAST — TYPE VARIANTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-toast--success { border-left-color: var(--color-success); }
+.adm-toast--error   { border-left-color: var(--color-error);   }
+.adm-toast--warning { border-left-color: var(--color-warning); }
+.adm-toast--info    { border-left-color: var(--color-info);    }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. TOAST — INNER ELEMENTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-toast__icon {
+  flex-shrink: 0;
+  /* Nudge down 1px to optically align with the first text baseline */
+  margin-top: 1px;
+}
+
+.adm-toast--success .adm-toast__icon { color: var(--color-success); }
+.adm-toast--error   .adm-toast__icon { color: var(--color-error);   }
+.adm-toast--warning .adm-toast__icon { color: var(--color-warning); }
+.adm-toast--info    .adm-toast__icon { color: var(--color-info);    }
+
+.adm-toast__message {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  line-height: var(--line-height-normal);
+  /* Prevent very long messages from overflowing the container */
+  word-break: break-word;
+}
+
+.adm-toast__close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition:
+    color            var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.adm-toast__close:hover {
+  color: var(--color-text);
+  background-color: var(--color-surface-hover);
+}
+
+.adm-toast__close:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. TOAST — RESPONSIVE
+   On small screens toasts expand to fill the horizontal space.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+  .adm-toast-container {
+    bottom: var(--space-4);
+    right:  var(--space-4);
+    left:   var(--space-4);
+    max-width: none;
+    width: auto;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. AVATAR — SHELL & SIZES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-avatar {
+  position: relative;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  background: var(--color-primary-15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  user-select: none;
+}
+
+.adm-avatar--xs { width: 24px; height: 24px; font-size: 9px;  }
+.adm-avatar--sm { width: 32px; height: 32px; font-size: 11px; }
+.adm-avatar--md { width: 40px; height: 40px; font-size: 13px; }
+.adm-avatar--lg { width: 52px; height: 52px; font-size: 16px; }
+.adm-avatar--xl { width: 72px; height: 72px; font-size: 22px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. AVATAR — IMAGE & INITIALS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-full);
+  display: block;
+}
+
+.adm-avatar__initials {
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. AVATAR — ONLINE INDICATOR
+   Dot size scales with the avatar tier.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-avatar__online {
+  position: absolute;
+  bottom: 1px;
+  right:  1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-success);
+  /* White ring separates the dot from the avatar background */
+  border: 2px solid var(--color-bg);
+}
+
+.adm-avatar--lg .adm-avatar__online { width: 13px; height: 13px; }
+.adm-avatar--xl .adm-avatar__online { width: 16px; height: 16px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. TABS — STRIP
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1.5px solid var(--color-border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.adm-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. TABS — INDIVIDUAL TAB
+   The negative margin-bottom pulls the active border-bottom flush
+   with the strip border so only one line is visible.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  /* Pulls the bottom border down to sit on top of the strip border */
+  margin-bottom: -1.5px;
+  transition:
+    color        var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.adm-tab:hover {
+  color: var(--color-text-secondary);
+}
+
+.adm-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.adm-tab--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.adm-tab__icon {
+  display: flex;
+  align-items: center;
+}
+
+.adm-tab__icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. TOGGLE — WRAPPER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-toggle-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.adm-toggle-wrapper--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.adm-toggle-control {
+  position: relative;
+  flex-shrink: 0;
+  /* Optically align the toggle with the first label baseline */
+  margin-top: 1px;
+}
+
+/* Visually hidden native checkbox — keyboard and screen reader behaviour
+   is handled by the browser; we only style the pseudo-element track */
+.adm-toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. TOGGLE — TRACK & THUMB
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-toggle-track {
+  display: block;
+  width: 44px;
+  height: 24px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition-base);
+}
+
+.adm-toggle-input:checked + .adm-toggle-track {
+  background: var(--color-primary);
+}
+
+.adm-toggle-input:focus-visible + .adm-toggle-track {
+  box-shadow: var(--focus-ring);
+}
+
+.adm-toggle-thumb {
+  position: absolute;
+  top:  3px;
+  left: 3px;
+  width:  18px;
+  height: 18px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--transition-base);
+}
+
+.adm-toggle-input:checked + .adm-toggle-track .adm-toggle-thumb {
+  transform: translateX(20px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. TOGGLE — LABEL TEXT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-toggle-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.adm-toggle-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.adm-toggle-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+}

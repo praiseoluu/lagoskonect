@@ -1,0 +1,136 @@
+/**
+ * Lagos Konect — Badge Styles
+ * ============================================================
+ * All colours reference semantic tokens from tokens.css so
+ * dark-mode and theme changes are handled automatically.
+ *
+ * Sections:
+ *   1. Base shell
+ *   2. Sizes
+ *   3. Status variants
+ *   4. Category variants
+ *   5. Semantic variants
+ *   6. Dot indicator
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. BASE SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  white-space: nowrap;
+  line-height: 1;
+  /* Prevent badges from ever stretching to fill a flex parent */
+  flex-shrink: 0;
+  align-self: flex-start;
+  /* Smooth colour transitions when variant changes dynamically */
+  transition: background-color var(--transition-fast),
+              color            var(--transition-fast);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. SIZES
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-badge--sm {
+  font-size: 10px;
+  padding: 3px 8px;
+}
+
+.ktg-badge--md {
+  font-size: var(--font-size-xs);
+  padding: 4px 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. STATUS VARIANTS
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-badge--active {
+  background-color: var(--badge-active-bg);
+  color: var(--badge-active-text);
+}
+
+.ktg-badge--suspended {
+  background-color: var(--badge-suspended-bg);
+  color: var(--badge-suspended-text);
+}
+
+.ktg-badge--pending {
+  background-color: var(--badge-pending-bg);
+  color: var(--badge-pending-text);
+}
+
+.ktg-badge--draft {
+  background-color: var(--badge-draft-bg);
+  color: var(--badge-draft-text);
+}
+
+/* published maps to active styling — explicit class so HTML doesn't need to remap */
+.ktg-badge--published {
+  background-color: var(--badge-active-bg);
+  color: var(--badge-active-text);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. CATEGORY VARIANTS
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-badge--official {
+  background-color: var(--badge-official-bg);
+  color: var(--badge-official-text);
+}
+
+.ktg-badge--community {
+  background-color: var(--badge-community-bg);
+  color: var(--badge-community-text);
+}
+
+.ktg-badge--security {
+  background-color: var(--badge-security-bg);
+  color: var(--badge-security-text);
+}
+
+.ktg-badge--event {
+  background-color: var(--badge-event-bg);
+  color: var(--badge-event-text);
+}
+
+.ktg-badge--proposal {
+  /* Proposal reuses community tokens — explicit class preserves semantic clarity */
+  background-color: var(--badge-community-bg);
+  color: var(--badge-community-text);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. SEMANTIC VARIANTS
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-badge--info {
+  background-color: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+.ktg-badge--warning {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.ktg-badge--error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. DOT INDICATOR
+   ═══════════════════════════════════════════════════════════════════════ */
+.ktg-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  /* Inherits the badge's text colour so it adapts to any variant */
+  background-color: currentColor;
+  flex-shrink: 0;
+}

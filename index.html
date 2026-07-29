@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Primary meta -->
+  <meta name="description"
+        content="Lagos Konect — Your Local Government, Connected." />
+  <meta name="theme-color" content="#068927" />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Lagos Konect" />
+  <meta property="og:description" content="Your Local Government, Connected." />
+  <meta property="og:image"       content="/assets/images/og-cover.jpg" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Lagos Konect" />
+  <meta name="twitter:description" content="Your Local Government, Connected." />
+  <meta name="twitter:image"       content="/assets/images/og-cover.jpg" />
+
+  <title>Lagos Konect</title>
+
+  <!-- Favicon -->
+  <link rel="icon"             type="image/svg+xml" href="/assets/icons/adamawa-logo.svg" />
+  <link rel="icon"             type="image/png"     href="/assets/icons/favicon-32.png" sizes="32x32" />
+  <link rel="apple-touch-icon"                      href="/assets/icons/apple-touch-icon.png" />
+
+  <!--
+    Design System
+    Load order matters: tokens → reset → utilities.
+    Component-level CSS is injected at runtime by the component
+    base class via the static `styles` property.
+  -->
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/reset.css" />
+  <link rel="stylesheet" href="/styles/utilities.css" />
+
+</head>
+
+<body>
+
+<!--
+  Single SPA mount point.
+  The router replaces the contents of this element on every navigation.
+  aria-live="polite" notifies screen readers when the page content changes.
+  Do not place any markup here — it will be overwritten on first navigation.
+-->
+<div id="app"
+     role="main"
+     aria-live="polite"
+     aria-label="Page content"></div>
+
+<!-- Application bootstrap — loaded as an ES module -->
+<!--
+  The ?v= query is load-bearing. Static assets are served with a one-year
+  max-age and no versioned URLs (see .htaccess), so a cached app.js would
+  never be re-fetched and a browser could end up pairing a stale module with
+  a newer stylesheet. index.html is the only asset served fresh, so bumping
+  this query is the one reliable way to push an update to every visitor.
+  Bump it whenever a JS and CSS file change together.
+-->
+<script type="module" src="/app.js?v=20260724c"></script>
+
+</body>
+
+</html>

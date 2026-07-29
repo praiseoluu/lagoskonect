@@ -1,0 +1,307 @@
+/**
+ * Lagos Konect — Design Tokens
+ * ============================================================
+ * Single source of truth for every visual value used across
+ * the LagKonnect platform.
+ *
+ * Rules:
+ *   • All component and page styles MUST reference these tokens.
+ *   • Never hard-code colours, sizes, radii or timing values
+ *     outside of this file (exceptions: third-party overrides).
+ *   • Dark-mode overrides go in the media query block at the
+ *     bottom — uncomment and populate when ready.
+ *
+ * Load order: tokens.css → reset.css → utilities.css
+ *
+ * Usage: var(--color-primary), var(--space-4), etc.
+ *
+ * Sections:
+ *   1.  Google Fonts
+ *   2.  Brand colours
+ *   3.  Semantic surface colours
+ *   4.  Status / feedback colours
+ *   5.  Badge / tag colours
+ *   6.  Typography — font stack
+ *   7.  Typography — font sizes
+ *   8.  Typography — font weights
+ *   9.  Typography — line heights & letter spacing
+ *   10. Spacing scale
+ *   11. Border radius
+ *   12. Shadows
+ *   13. Layout dimensions
+ *   14. Z-index stack
+ *   15. Transitions
+ *   16. Focus ring
+ *   17. Dark mode (reserved)
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. GOOGLE FONTS
+   Inter is the sole brand typeface. Weights 300–700 cover every
+   font-weight token defined in Section 8.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOKEN DEFINITIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+
+  /* ─────────────────────────────────────────────────────────────────────
+     2. BRAND COLOURS
+     Primary green with opacity-derived tints.
+     Hex alpha suffix: E5=90% CC=80% B2=70% 99=60% 66=40% 26=15%
+     ───────────────────────────────────────────────────────────────── */
+
+  --color-primary:     #068927;
+  --color-primary-90:  #068927E5;
+  --color-primary-80:  #068927CC;
+  --color-primary-70:  #068927B2;
+  --color-primary-60:  #06892799;
+  --color-primary-40:  #06892766;
+  --color-primary-15:  #06892726;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     3. SEMANTIC SURFACE COLOURS
+     ───────────────────────────────────────────────────────────────── */
+
+  --color-bg:             #FFFFFF;
+  --color-text:           #0F1712;
+  --color-text-secondary: #4B5563;
+  --color-text-muted:     #9CA3AF;
+  --color-sidebar-bg:     #FFFFFF;
+  --color-border:         #E5E7EB;
+  --color-border-light:   #F3F4F6;
+  --color-surface:        #F9FAFB;
+  --color-surface-hover:  #F3F4F6;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     4. STATUS / FEEDBACK COLOURS
+     success intentionally matches --color-primary (brand green).
+     ───────────────────────────────────────────────────────────────── */
+
+  --color-success:     #068927;
+  --color-success-bg:  #06892726;
+  --color-error:       #DC2626;
+  --color-error-bg:    #FEE2E2;
+  --color-warning:     #D97706;
+  --color-warning-bg:  #FEF3C7;
+  --color-info:        #2563EB;
+  --color-info-bg:     #DBEAFE;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     5. BADGE / TAG COLOURS
+     Each badge variant has a paired bg + text token so the Badge
+     component never touches raw colour values.
+     ───────────────────────────────────────────────────────────────── */
+
+  --badge-active-bg:       #06892726;
+  --badge-active-text:     #068927;
+  --badge-suspended-bg:    #FEE2E2;
+  --badge-suspended-text:  #DC2626;
+  --badge-pending-bg:      #FEF3C7;
+  --badge-pending-text:    #D97706;
+  --badge-draft-bg:        #F3F4F6;
+  --badge-draft-text:      #6B7280;
+  --badge-official-bg:     #DBEAFE;
+  --badge-official-text:   #2563EB;
+  --badge-community-bg:    #F3E8FF;
+  --badge-community-text:  #7C3AED;
+  --badge-security-bg:     #FEE2E2;
+  --badge-security-text:   #DC2626;
+  --badge-event-bg:        #FEF3C7;
+  --badge-event-text:      #D97706;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     6. TYPOGRAPHY — FONT STACK
+     Inter first, then system-UI fallbacks.
+     ───────────────────────────────────────────────────────────────── */
+
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                 Helvetica, Arial, sans-serif;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     7. TYPOGRAPHY — FONT SIZES
+     rem values map to px at the browser default root (16px).
+     ───────────────────────────────────────────────────────────────── */
+
+  --font-size-xs:   0.75rem;    /*  12px */
+  --font-size-sm:   0.875rem;   /*  14px */
+  --font-size-base: 1rem;       /*  16px */
+  --font-size-md:   1.0625rem;  /*  17px */
+  --font-size-lg:   1.125rem;   /*  18px */
+  --font-size-xl:   1.25rem;    /*  20px */
+  --font-size-2xl:  1.5rem;     /*  24px */
+  --font-size-3xl:  1.875rem;   /*  30px */
+  --font-size-4xl:  2.25rem;    /*  36px */
+
+  /* ─────────────────────────────────────────────────────────────────────
+     8. TYPOGRAPHY — FONT WEIGHTS
+     ───────────────────────────────────────────────────────────────── */
+
+  --font-weight-light:    300;
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+  --font-weight-black:    900;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     9. TYPOGRAPHY — LINE HEIGHTS & LETTER SPACING
+     ───────────────────────────────────────────────────────────────── */
+
+  --line-height-tight:   1.25;
+  --line-height-snug:    1.375;
+  --line-height-normal:  1.5;
+  --line-height-relaxed: 1.625;
+
+  --letter-spacing-tight:   -0.025em;
+  --letter-spacing-normal:   0em;
+  --letter-spacing-wide:     0.025em;
+  --letter-spacing-wider:    0.05em;
+  --letter-spacing-widest:   0.1em;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     10. SPACING SCALE  (base unit: 4px = 0.25rem)
+     ───────────────────────────────────────────────────────────────── */
+
+  --space-0:  0;
+  --space-1:  0.25rem;  /*   4px */
+  --space-2:  0.5rem;   /*   8px */
+  --space-3:  0.75rem;  /*  12px */
+  --space-4:  1rem;     /*  16px */
+  --space-5:  1.25rem;  /*  20px */
+  --space-6:  1.5rem;   /*  24px */
+  --space-7:  1.75rem;  /*  28px */
+  --space-8:  2rem;     /*  32px */
+  --space-10: 2.5rem;   /*  40px */
+  --space-12: 3rem;     /*  48px */
+  --space-16: 4rem;     /*  64px */
+  --space-20: 5rem;     /*  80px */
+  --space-24: 6rem;     /*  96px */
+
+  /* ─────────────────────────────────────────────────────────────────────
+     11. BORDER RADIUS
+     ───────────────────────────────────────────────────────────────── */
+
+  --radius-sm:   0.25rem;  /*  4px */
+  --radius-md:   0.5rem;   /*  8px */
+  --radius-lg:   0.75rem;  /* 12px */
+  --radius-xl:   1rem;     /* 16px */
+  --radius-2xl:  1.5rem;   /* 24px */
+  --radius-full: 9999px;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     12. SHADOWS
+     Layered, low-opacity shadows for a natural depth feel.
+     ───────────────────────────────────────────────────────────────── */
+
+  --shadow-xs:     0 1px 2px  rgba(0, 0, 0, 0.05);
+  --shadow-sm:     0 1px 3px  rgba(0, 0, 0, 0.08),
+                   0 1px 2px  rgba(0, 0, 0, 0.04);
+  --shadow-md:     0 4px 6px  rgba(0, 0, 0, 0.06),
+                   0 2px 4px  rgba(0, 0, 0, 0.04);
+  --shadow-lg:     0 10px 15px rgba(0, 0, 0, 0.08),
+                   0 4px  6px  rgba(0, 0, 0, 0.04);
+  --shadow-xl:     0 20px 25px rgba(0, 0, 0, 0.08),
+                   0 10px 10px rgba(0, 0, 0, 0.03);
+  --shadow-2xl:    0 25px 50px rgba(0, 0, 0, 0.12);
+  --shadow-inner:  inset 0 2px 4px rgba(0, 0, 0, 0.04);
+
+  /* Branded glow for primary CTA buttons */
+  --shadow-primary: 0 4px 14px rgba(6, 137, 39, 0.3);
+
+  /* ─────────────────────────────────────────────────────────────────────
+     13. LAYOUT DIMENSIONS
+     ───────────────────────────────────────────────────────────────── */
+
+  --sidebar-width:           240px;
+  --sidebar-width-collapsed:  68px;
+  --topbar-height:            64px;
+  --content-max-width:      1280px;
+  --content-padding:    var(--space-6);
+
+  /* ─────────────────────────────────────────────────────────────────────
+     14. Z-INDEX STACK
+     Layering contract — never use raw integers in component CSS.
+     Gaps between values are intentional to allow future insertions.
+     ───────────────────────────────────────────────────────────────── */
+
+  --z-below:    -1;
+  --z-base:      0;
+  --z-raised:    10;
+  --z-dropdown:  100;
+  --z-sticky:    200;
+  --z-overlay:   300;
+  --z-toast:     500;
+  --z-tooltip:   600;
+  --z-modal:     1000;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     15. TRANSITIONS
+     Named durations enforce consistent motion across all components.
+     ───────────────────────────────────────────────────────────────── */
+
+  --transition-fast:   150ms ease;
+  --transition-base:   200ms ease;
+  --transition-slow:   300ms ease;
+  --transition-slower: 400ms ease;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     16. FOCUS RING
+     Shared across Button, Input, Dropdown, Modal close, etc.
+     A single token change updates every interactive element at once.
+     ───────────────────────────────────────────────────────────────── */
+
+  --focus-ring: 0 0 0 3px rgba(6, 137, 39, 0.25);
+
+
+  /* ─────────────────────────────────────────────────────────────────────
+     18. PREMIUM DESIGN TOKENS (v2 — elevation & gradients)
+     ───────────────────────────────────────────────────────────────── */
+
+  /* Multi-layer card shadows for depth */
+  --shadow-card:           0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-card-hover:     0 8px 28px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-primary-glow:   0 4px 16px rgba(6,137,39,0.30), 0 1px 4px rgba(6,137,39,0.18);
+
+  /* Brand gradients */
+  --gradient-brand:        linear-gradient(135deg, #068927 0%, #0aab32 100%);
+  --gradient-brand-subtle: linear-gradient(135deg, rgba(6,137,39,0.08) 0%, rgba(10,171,50,0.03) 100%);
+  --gradient-overlay:      linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.32) 55%, transparent 100%);
+
+  /* Glass / blur */
+  --surface-glass: rgba(255,255,255,0.82);
+
+  /* ─────────────────────────────────────────────────────────────────────
+     19. MISSING UTILITY TOKENS (referenced throughout components)
+     ─────────────────────────────────────────────────────────────────── */
+
+  --color-bg-card:      #FFFFFF;
+  --color-primary-30:   rgba(6,137,39,0.30);
+  --color-primary-5:    rgba(6,137,39,0.05);
+  --color-primary-dark: #056b1f;
+
+} /* :root */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   17. DARK MODE  (reserved — uncomment and populate when ready)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/*
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:             #0F1712;
+    --color-text:           #F9FAFB;
+    --color-text-secondary: #D1D5DB;
+    --color-text-muted:     #6B7280;
+    --color-sidebar-bg:     #111B14;
+    --color-border:         #1F2D22;
+    --color-border-light:   #192B1C;
+    --color-surface:        #141F17;
+    --color-surface-hover:  #1A2B1D;
+  }
+}
+*/

@@ -1,0 +1,279 @@
+/* ── Referral Programme Page ─────────────────────────────────────────────── */
+
+.ref-page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 0 var(--space-10, 40px);
+}
+
+.ref-page__header {
+    margin-bottom: var(--space-6, 24px);
+}
+
+.ref-page__title {
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 6px;
+}
+
+.ref-page__subtitle {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: 1.55;
+}
+
+.ref-page__subtitle strong { color: var(--color-primary); }
+
+.ref-earning-note {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    margin: -4px 0 20px;
+    border: 1px solid var(--color-primary-30, rgba(22,163,74,.25));
+    border-radius: 12px;
+    background: var(--color-primary-15, rgba(22,163,74,.08));
+    color: var(--color-text-primary);
+}
+
+.ref-earning-note__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 800;
+}
+
+.ref-earning-note strong { display: block; font-size: .875rem; }
+.ref-earning-note p { margin: 3px 0 0; color: var(--color-text-secondary); font-size: .78rem; }
+.ref-earning-note__example { margin-left: auto; color: var(--color-primary); font-size: .8rem; font-weight: 700; white-space: nowrap; }
+
+/* ── Stats row ──────────────────────────────────────────────────────────── */
+
+.ref-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.ref-stat-card {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 12px;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.ref-stat-card--accent {
+    background: var(--color-primary, #16a34a);
+    border-color: transparent;
+}
+
+.ref-stat-card--accent .ref-stat-card__value,
+.ref-stat-card--accent .ref-stat-card__label {
+    color: #fff;
+}
+
+.ref-stat-card__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1;
+}
+
+.ref-stat-card__label {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ── Referral link card ─────────────────────────────────────────────────── */
+
+.ref-link-card {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.ref-link-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 16px;
+}
+
+.ref-link-card__code {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-bg, #f9fafb);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+}
+
+.ref-link-card__code-text {
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    word-break: break-all;
+    font-family: monospace;
+}
+
+.ref-link-card__copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--color-primary, #16a34a);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+}
+
+.ref-link-card__copy-btn:hover { opacity: 0.88; }
+
+.ref-link-card__code-label {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    margin: 0 0 14px;
+}
+
+.ref-link-card__share {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.ref-share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+    background: var(--color-surface, #fff);
+    color: var(--color-text-primary);
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.ref-share-btn:hover {
+    background: var(--color-bg, #f9fafb);
+    border-color: var(--color-primary, #16a34a);
+    color: var(--color-primary, #16a34a);
+}
+
+/* ── History card ───────────────────────────────────────────────────────── */
+
+.ref-history-card {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.ref-history-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 16px;
+}
+
+.ref-history-table-wrap {
+    overflow-x: auto;
+}
+
+.ref-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.ref-history-table th {
+    text-align: left;
+    padding: 8px 12px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.ref-history-table td {
+    padding: 12px 12px;
+    border-bottom: 1px solid var(--color-border-light, #f3f4f6);
+    color: var(--color-text-primary);
+}
+
+.ref-history-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ref-status {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.ref-status--confirmed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.ref-status--pending {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+.ref-status--expired {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.ref-history-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+    .ref-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    .ref-stat-card__value { font-size: 1.5rem; }
+    .ref-earning-note { align-items: flex-start; flex-wrap: wrap; }
+    .ref-earning-note__example { width: 100%; margin-left: 46px; }
+}

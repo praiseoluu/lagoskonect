@@ -1,0 +1,23 @@
+# Environment & credentials — NEVER commit these
+.env
+config/oauth.php
+
+# Uploaded user files — not part of the codebase
+uploads/
+
+# Compiled/cached files
+*.log
+*.cache
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files created by editors
+*.bak
+*.swp
+*.orig
+
+# Setup helpers — not needed in production repo
+generate_hashes.php
+setup.php

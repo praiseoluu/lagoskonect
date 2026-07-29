@@ -1,0 +1,756 @@
+/**
+ * Lagos Konect — Public Layout Styles
+ * ============================================================
+ * Shared layout styles for all public-facing pages.
+ * Covers: .landing shell, premium dark-green nav, footer, advertise CTA.
+ * Page-specific styles (hero, form sections) live in their own files.
+ *
+ * Sections:
+ *   1.  Shell
+ *   2.  Nav — shell (dark green premium bar)
+ *   3.  Nav — brand & logo mark
+ *   4.  Nav — primary CTA buttons (Join / Login)
+ *   5.  Nav — language switcher overrides
+ *   6.  Nav — mobile toggle & menu
+ *   7.  Advertise CTA
+ *   8.  Footer — grid & brand column
+ *   9.  Footer — nav columns
+ *   10. Footer — subscribe & social
+ *   11. Footer — bottom bar
+ *   12. Newsletter submit feedback
+ *   13. Utility
+ *   14. Responsive
+ *   15. Reduced motion
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Push footer to the bottom when content is short */
+.landing > main,
+.landing > [role="main"] {
+  flex: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. NAV — SHELL (dark green premium bar)
+   Matches the SelectRegion page header treatment for visual consistency.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__nav {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  /* Deep forest green — premium, authoritative */
+  background: linear-gradient(135deg, #0b3a1f 0%, #0d4724 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  /* Soft shadow grounds the bar against any hero image below */
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15),
+              0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: box-shadow var(--transition-base);
+}
+
+.landing__nav--scrolled {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2),
+              0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+.landing__nav-inner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 0 var(--space-6);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. NAV — BRAND & LOGO MARK
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__nav-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.landing__nav-brand:hover {
+  opacity: 0.92;
+}
+
+.landing__nav-brand:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.landing__nav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* Subtle glow lifts the logo plate off the dark bar */
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+}
+
+.landing__nav-logo svg {
+  display: block;
+  width: 38px;
+  height: 38px;
+}
+
+.landing__nav-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  letter-spacing: var(--letter-spacing-tight);
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. NAV — PRIMARY CTA BUTTONS  (Join / Login)
+   Self-contained styles so the nav never depends on the global Button
+   component class — guarantees the buttons always render correctly here.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.landing__nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 var(--space-5);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition:
+    background-color var(--transition-fast),
+    border-color     var(--transition-fast),
+    color            var(--transition-fast),
+    transform        var(--transition-fast),
+    box-shadow       var(--transition-fast);
+}
+
+.landing__nav-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.landing__nav-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+}
+
+/* ── Join button — outlined ghost on the dark bar ─────────────────────── */
+
+.landing__nav-btn--join {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.landing__nav-btn--join:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+}
+
+/* ── Login button — outlined ghost on the dark bar ────────────────────── */
+
+.landing__nav-btn--login {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.landing__nav-btn--login:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. NAV — LANGUAGE SWITCHER OVERRIDES
+   The LanguageSwitcher component renders on a light surface by default;
+   these overrides invert it for the dark nav bar.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__nav-lang {
+  display: flex;
+  align-items: center;
+}
+
+/* Targets the trigger button rendered by LanguageSwitcher */
+.landing__nav-lang .lang-switcher__trigger,
+.landing__nav-lang button {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background: transparent !important;
+}
+
+.landing__nav-lang .lang-switcher__trigger:hover,
+.landing__nav-lang button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Globe icon in dark nav */
+.landing__nav-lang .lang-switcher__globe svg {
+  color: #ffffff !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. NAV — MOBILE TOGGLE & MENU
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.landing__nav-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.landing__nav-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+}
+
+.landing__mobile-menu {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  background: linear-gradient(135deg, #0b3a1f 0%, #0d4724 100%);
+  border-top: 1px solid transparent;
+  transition:
+    max-height   0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity      0.28s ease,
+    border-color var(--transition-base);
+}
+
+.landing__mobile-menu--open {
+  max-height: 320px;
+  opacity: 1;
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.landing__mobile-menu-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-6);
+}
+
+.landing__mobile-menu-btn {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. ADVERTISE CTA
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing-advertise-cta {
+  background: linear-gradient(135deg, #0b3a1f 0%, #0d4724 100%);
+  padding: var(--space-10) var(--space-6);
+}
+
+.landing-advertise-cta__inner {
+  max-width: 1200px;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.landing-advertise-cta__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.landing-advertise-cta__heading {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  margin: 0 0 var(--space-2);
+  line-height: 1.25;
+}
+
+.landing-advertise-cta__sub {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+.landing-advertise-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-7);
+  background: #ffffff;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    opacity    var(--transition-fast),
+    transform  var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.landing-advertise-cta__btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.landing-advertise-cta__btn:active {
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. FOOTER — GRID & BRAND COLUMN
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__footer {
+  background: var(--color-primary-15);
+  border-top: 1px solid var(--color-border);
+}
+
+.landing__footer-inner {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: var(--space-12) var(--space-6) var(--space-10);
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.6fr;
+  gap: var(--space-10);
+  align-items: start;
+}
+
+.landing__footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.landing__footer-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.landing__footer-brand .landing__nav-logo svg {
+  width: 36px;
+  height: 36px;
+  /* Slightly less prominent in the footer */
+  filter: none;
+}
+
+.landing__footer-brand span {
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.landing__footer-address {
+  font-style: normal;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+}
+
+.landing__footer-contact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.landing__footer-contact svg {
+  flex-shrink: 0;
+}
+
+.landing__footer-contact-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.landing__footer-contact-link:hover {
+  color: var(--color-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. FOOTER — NAV COLUMNS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__footer-nav-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.landing__footer-col-heading {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0;
+}
+
+.landing__footer-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.landing__footer-nav-list a {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition:
+    color        var(--transition-fast),
+    padding-left 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.landing__footer-nav-list a:hover {
+  color: var(--color-primary);
+  padding-left: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. FOOTER — SUBSCRIBE & SOCIAL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__footer-subscribe-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.landing__footer-newsletter {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  box-shadow: var(--shadow-xs);
+  border: 1px solid var(--color-border);
+  transition:
+    border-color var(--transition-base),
+    box-shadow   var(--transition-base);
+}
+
+.landing__footer-newsletter:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.landing__footer-email-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  min-width: 0;
+  padding: var(--space-1) 0;
+}
+
+.landing__footer-email-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.landing__footer-email-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    transform  0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.landing__footer-email-btn:hover {
+  background: var(--color-primary-90);
+  transform: scale(1.06);
+}
+
+.landing__footer-email-btn:active {
+  transform: scale(0.98);
+}
+
+.landing__footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.landing__footer-social-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.landing__footer-social-icons {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.landing__footer-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  color: var(--color-primary);
+  text-decoration: none;
+  transition:
+    color      var(--transition-fast),
+    background var(--transition-fast),
+    transform  0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.landing__footer-social-link:hover {
+  color: var(--color-primary-80);
+  background: var(--color-primary-15);
+  transform: translateY(-2px);
+}
+
+.landing__footer-social-link:active {
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. FOOTER — BOTTOM BAR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__footer-bottom {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: var(--space-4) var(--space-6);
+  border-top: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.landing__footer-copy {
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+.landing__footer-legal {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.landing__footer-legal a {
+  font-size: var(--font-size-xs);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.landing__footer-legal a:hover {
+  text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. NEWSLETTER SUBMIT FEEDBACK
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.landing__footer-email-btn--sent {
+  background: var(--color-success);
+  pointer-events: none;
+  animation: landing-btn-pulse 0.4s ease;
+}
+
+@keyframes landing-btn-pulse {
+  0%   { transform: scale(1);    }
+  50%  { transform: scale(1.18); }
+  100% { transform: scale(1);    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. UTILITY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.sr-only {
+  position: absolute;
+  width:  1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   14. RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── ≤ 1024px ─────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .landing__footer-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+
+  .landing__footer-brand-col {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── ≤ 768px — switch to mobile nav ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .landing__nav-actions {
+    display: none;
+  }
+
+  .landing__nav-toggle {
+    display: flex;
+  }
+
+  .landing__nav-inner {
+    height: 64px;
+  }
+
+  .landing__nav-name {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* ── ≤ 640px ──────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .landing-advertise-cta__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .landing-advertise-cta__btn {
+    align-self: stretch;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+/* ── ≤ 600px ──────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .landing__footer-inner {
+    grid-template-columns: 1fr;
+    padding: var(--space-8) var(--space-4) var(--space-6);
+  }
+
+  .landing__footer-brand-col {
+    grid-column: auto;
+  }
+
+  .landing__footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .landing__footer-legal {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+}
+
+/* ── ≤ 480px ──────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .landing__nav-inner {
+    padding: 0 var(--space-4);
+  }
+
+  .landing__mobile-menu-inner {
+    padding: var(--space-4);
+  }
+
+  .landing__nav-logo svg {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   15. REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .landing *,
+  .landing *::before,
+  .landing *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

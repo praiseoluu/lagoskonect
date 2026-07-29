@@ -1,0 +1,171 @@
+/**
+ * Lagos Konect — Admin Login Styles
+ * ============================================================
+ * Page-specific overrides and additions layered on top of
+ * _AuthLayout.css. Only styles unique to the Admin Login
+ * screen live here; shared auth-layout scaffolding is
+ * inherited from the base auth stylesheet.
+ *
+ * Sections:
+ *   1. Hero — overlay content
+ *   2. Hero — badge
+ *   3. Hero — pulse animation
+ *   4. Hero — typography
+ *   5. Security notice
+ *   6. Demo credentials hint
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. HERO — OVERLAY CONTENT
+   Positioned at the bottom of the left-hand hero panel.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-login__hero-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-10);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. HERO — BADGE
+   Frosted-glass pill displayed above the hero title.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-login__hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-4);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-widest);
+  color: #ffffff;
+  text-transform: uppercase;
+  margin-bottom: var(--space-5);
+  /* Prevent the badge from stretching to fill a flex parent */
+  width: fit-content;
+}
+
+/* ── Animated status dot inside the badge ─────────────────────────────── */
+
+.adm-login__hero-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: #22c55e;
+  /* Soft green glow to reinforce the "live / online" reading */
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+  flex-shrink: 0;
+  animation: adm-login-pulse 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. HERO — PULSE ANIMATION
+   Namespaced to this page to avoid collisions with other pulse
+   keyframes defined elsewhere in the codebase.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@keyframes adm-login-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. HERO — TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-login__hero-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-black);
+  color: #ffffff;
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0 0 var(--space-4);
+}
+
+.adm-login__hero-desc {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: rgba(255, 255, 255, 0.78);
+  line-height: var(--line-height-relaxed);
+  /* Cap the line length for optimal readability */
+  max-width: 380px;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. SECURITY NOTICE
+   Small instructional copy shown below the login form.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-login__security-notice {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+  text-align: center;
+  /* Slight horizontal padding prevents the text sitting flush with the
+     form edges on very narrow viewports */
+  padding: 0 var(--space-2);
+  margin: 0 0 var(--space-5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. DEMO CREDENTIALS HINT
+   Development / staging helper that surfaces test account details.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-login__demo-hint {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+}
+
+.adm-login__demo-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  margin: 0 0 var(--space-2);
+}
+
+.adm-login__demo-val {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: var(--space-1) 0 0;
+}
+
+/* Monospaced credential values stand out from surrounding prose */
+.adm-login__demo-val strong {
+  font-family: 'Courier New', monospace;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+/* ═══════════════════════════════════════════════════════════════════════════
+   COPYRIGHT — STATIC OVERRIDE
+   auth-panel__copyright defaults to position: absolute (for the public
+   login page). Inside the admin scrollable body it must flow naturally.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-login__copyright {
+  position: static;
+  margin-top: var(--space-6);
+  text-align: left;
+  left: auto;
+  bottom: auto;
+}

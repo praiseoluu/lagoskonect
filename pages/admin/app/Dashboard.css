@@ -1,0 +1,782 @@
+/**
+ * Lagos Konect — Admin Dashboard Styles
+ * ============================================================
+ * Page-specific styles for the /admin dashboard screen.
+ * Layout scaffolding (sidebar, topbar, page chrome) is provided
+ * by BaseLayout.css; only dashboard-specific components live here.
+ *
+ * Sections:
+ *   1.  Chart series colour tokens
+ *   2.  Page shell
+ *   3.  Page header
+ *   4.  Stat cards row
+ *   5.  Stat card — base
+ *   6.  Stat card — trend badge
+ *   7.  Stat card — icon wrap
+ *   8.  Stat card — live badge
+ *   9.  Flagged content mini list
+ *   10. LGA activity list
+ *   11. Main content row
+ *   12. Card base
+ *   13. Chart legend
+ *   14. Range selector
+ *   15. System Health card (dark variant)
+ *   16. Footer
+ *   17. Responsive breakpoints
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. CHART SERIES COLOUR TOKENS
+   Defined on :root so ClusterBarChart can read them via getComputedStyle.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --dash-c-reg:  var(--color-primary);
+  --dash-c-msg:  var(--color-primary-80);
+  --dash-c-reel: var(--color-primary-60);
+  --dash-c-wau:  var(--color-primary-40);
+  --dash-c-news: var(--color-primary-15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. PAGE SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-bottom: var(--space-16);
+  min-height: calc(100vh - var(--topbar-height));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. PAGE HEADER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.dash-page-header__title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+}
+
+.dash-page-header__sub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: var(--space-1) 0 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. STAT CARDS ROW
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. STAT CARD — BASE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-stat-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 160px;
+}
+
+.dash-stat-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.dash-stat-card__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.dash-stat-card__value {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: 1;
+}
+
+.dash-stat-card__sparkline {
+  margin-top: auto;
+  opacity: 0.8;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. STAT CARD — TREND BADGE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-stat-card__trend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.dash-stat-card__trend--up {
+  color: var(--color-primary);
+  background: var(--color-primary-15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. STAT CARD — ICON WRAP
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-stat-card__icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dash-stat-card__icon-wrap--flag {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. STAT CARD — LIVE BADGE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-stat-card__live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-primary);
+  background: var(--color-primary-15);
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.dash-stat-card__live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  animation: dash-live-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dash-live-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);   }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. FLAGGED CONTENT MINI LIST
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-flagged-empty {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--space-2) 0;
+}
+
+.dash-flagged-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.dash-flagged-item:last-child {
+  border-bottom: none;
+}
+
+.dash-flagged-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-flagged-item__reel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-flagged-item__reason {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.dash-flagged-item__meta {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.dash-flagged-item__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.dash-flagged-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition:
+    background-color var(--transition-fast),
+    color            var(--transition-fast);
+}
+
+/* Prevent SVGs inside action buttons from swallowing delegated clicks */
+.dash-flagged-btn svg {
+  pointer-events: none;
+}
+
+.dash-flagged-btn--review       { background: var(--color-surface);   color: var(--color-text-secondary); }
+.dash-flagged-btn--review:hover { background: var(--color-border);    color: var(--color-text);           }
+
+.dash-flagged-btn--dismiss       { background: var(--color-error-bg); color: var(--color-error); }
+.dash-flagged-btn--dismiss:hover { background: var(--color-error);    color: #ffffff;            }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. LGA ACTIVITY LIST
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-lga-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dash-lga-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dash-lga-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.dash-lga-item__name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.dash-lga-item__bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.dash-lga-item__bar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.dash-lga-item__count {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  white-space: nowrap;
+  min-width: 64px;
+  text-align: right;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   USERS BY REGION BREAKDOWN
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-region-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.dash-region-breakdown__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.dash-region-breakdown__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.dash-region-breakdown__count {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.dash-region-breakdown__track {
+  height: 7px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.dash-region-breakdown__bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.dash-region-breakdown__bar--west    { background: #3b82f6; }
+.dash-region-breakdown__bar--central { background: #10b981; }
+.dash-region-breakdown__bar--east    { background: #ec4899; }
+
+/* ── Region badges ───────────────────────────────────────────────────────── */
+
+.dash-region-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dash-region-badge--west {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.dash-region-badge--east {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.dash-region-badge--central {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.dash-region-badge--unknown {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. MAIN CONTENT ROW
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-main-row {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-5);
+  align-items: stretch;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. CARD BASE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.dash-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.dash-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+}
+
+.dash-card__sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin: var(--space-1) 0 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. CHART LEGEND
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+}
+
+.dash-chart-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dash-chart-legend__dot {
+  width: 10px;
+  height: 10px;
+  /* Slight rounding gives the dot a squircle shape matching the chart bars */
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.dash-chart-legend__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   14. RANGE SELECTOR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-range-selector {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.dash-range-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition-fast),
+    border-color     var(--transition-fast),
+    color            var(--transition-fast);
+}
+
+.dash-range-btn:hover {
+  background: var(--color-surface);
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
+.dash-range-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.dash-range-dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  min-width: 160px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  padding: var(--space-1);
+  /* Entrance animation — matches the Dropdown component */
+  animation: dash-dropdown-in var(--transition-base) ease;
+}
+
+@keyframes dash-dropdown-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.dash-range-dropdown--open {
+  display: flex;
+}
+
+.dash-range-option {
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: left;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color            var(--transition-fast);
+}
+
+.dash-range-option:hover {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.dash-range-option--active {
+  background: var(--color-primary-15);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   15. SYSTEM HEALTH CARD (dark variant)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-card--dark {
+  background: #0f1712;
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.dash-health__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dash-health__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: rgba(6, 137, 39, 0.2);
+  color: #4ade80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dash-health__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  margin: 0;
+}
+
+.dash-health__metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dash-health__metric-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-health__metric-label {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dash-health__metric-value--good {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: #4ade80;
+}
+
+.dash-health__bar-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.dash-health__bar-fill {
+  height: 100%;
+  background: #4ade80;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.dash-health__enc-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  background: rgba(37, 99, 235, 0.3);
+  color: #93c5fd;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.dash-health__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+.dash-health__notice-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-warning);
+  flex-shrink: 0;
+  /* Nudge into alignment with the first text baseline */
+  margin-top: 3px;
+}
+
+.dash-health__notice-text {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+.dash-health__stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.dash-health__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.dash-health__stat-val {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: #ffffff;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.dash-health__stat-label {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   16. FOOTER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dash-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--color-border-light);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: auto;
+}
+
+.dash-footer__link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.dash-footer__link:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   17. RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Below 1200px — health card stacks above the chart card */
+@media (max-width: 1200px) {
+  .dash-main-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-card--health {
+    order: -1;
+  }
+}
+
+/* Below 1100px — 4-col grid drops to 2 cols */
+@media (max-width: 1100px) {
+  .dash-stat-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Below 640px — stat cards stack vertically */
+@media (max-width: 640px) {
+  .dash-stat-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Below 640px — reduce header title size */
+@media (max-width: 640px) {
+  .dash-page-header__title {
+    font-size: var(--font-size-2xl);
+  }
+}

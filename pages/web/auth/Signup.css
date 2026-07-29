@@ -1,0 +1,30 @@
+/**
+ * Lagos Konect — Sign Up Page Styles
+ * ============================================================
+ * Page-specific overrides for /signup.
+ * All shared auth-shell scaffolding lives in _AuthLayout.css.
+ *
+ * Sections:
+ *   1. Form layout — submit button full-width
+ *   2. OTP modal — action button full-width
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. FORM LAYOUT — SUBMIT BUTTON FULL-WIDTH
+   The submit slot is a bare <div>; this rule ensures the Button
+   component inside it stretches to fill the available column width.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.auth-form__submit .adm-btn {
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. OTP MODAL — ACTION BUTTON FULL-WIDTH
+   The verify and done buttons inside the OTP modal should fill
+   the modal panel width for a clear, tap-friendly call to action.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.auth-modal__action .adm-btn {
+  width: 100%;
+}

@@ -1,0 +1,227 @@
+/**
+ * Lagos Konect — Input Styles
+ * ============================================================
+ * Styles for the Input component.
+ * All values reference design tokens from tokens.css.
+ *
+ * Sections:
+ *   1. Wrapper shell
+ *   2. Label
+ *   3. Control (border / focus / error container)
+ *   4. Field element
+ *   5. Prefix
+ *   6. Suffix (text / toggle / clear)
+ *   7. Error & hint messages
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. WRAPPER SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. LABEL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-input-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.adm-input-required {
+  color: var(--color-error);
+  margin-left: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. CONTROL — border / focus / error container
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-input-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  overflow: hidden;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow   var(--transition-fast);
+}
+
+/* Hover — only when not inside a disabled wrapper */
+.adm-input-control:hover:not(
+  .adm-input-wrapper--disabled .adm-input-control
+) {
+  border-color: var(--color-primary-60);
+}
+
+/* Focus — set via JS classList; also fires on :focus-within for no-JS fallback */
+.adm-input-control--focused,
+.adm-input-control:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+/* Error state */
+.adm-input-wrapper--error .adm-input-control {
+  border-color: var(--color-error);
+}
+
+.adm-input-wrapper--error .adm-input-control:focus-within {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+/* Disabled state */
+.adm-input-wrapper--disabled .adm-input-control {
+  background-color: var(--color-surface);
+  opacity: 0.65;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. FIELD ELEMENT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-input-field {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  padding: var(--space-3) var(--space-4);
+  line-height: var(--line-height-normal);
+  width: 100%;
+}
+
+/* Tighten left padding when a prefix is present */
+.adm-input-field--has-prefix {
+  padding-left: var(--space-2);
+}
+
+/* Tighten right padding when a suffix is present */
+.adm-input-field--has-suffix {
+  padding-right: var(--space-2);
+}
+
+.adm-input-field::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Textarea specific */
+textarea.adm-input-field {
+  resize: vertical;
+  min-height: 96px;
+  padding: var(--space-3) var(--space-4);
+  align-self: stretch;
+}
+
+/* Remove browser default search chrome */
+.adm-input-field[type="search"]::-webkit-search-decoration,
+.adm-input-field[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. PREFIX
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-input-prefix {
+  display: flex;
+  align-items: center;
+  padding-left: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* Icon-style prefix (search magnifier) sits closer to the edge */
+.adm-input-prefix--icon {
+  padding-left: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+/* Vertical divider between text prefix (e.g. +234) and field */
+.adm-input-prefix:not(.adm-input-prefix--icon)::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 18px;
+  background: var(--color-border);
+  margin-left: var(--space-3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. SUFFIX — text / toggle / clear
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-input-suffix {
+  display: flex;
+  align-items: center;
+  padding-right: var(--space-3);
+  flex-shrink: 0;
+}
+
+.adm-input-suffix--text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Interactive suffix buttons (password eye, search clear) */
+.adm-input-suffix--toggle,
+.adm-input-suffix--clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color            var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.adm-input-suffix--toggle:hover,
+.adm-input-suffix--clear:hover {
+  color: var(--color-text);
+  background-color: var(--color-surface-hover);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. ERROR & HINT MESSAGES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-input-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  animation: adm-input-error-in 0.15s ease;
+}
+
+.adm-input-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+@keyframes adm-input-error-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}

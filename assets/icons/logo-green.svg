@@ -1,0 +1,26 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+     xmlns="http://www.w3.org/2000/svg">
+    <!-- Green plate -->
+    <rect width="40" height="40" rx="10" fill="url(#admBrandGradient)"/>
+
+    <!-- Gold accent corner -->
+    <path d="M40 0 H30 A10 10 0 0 1 40 10 Z" fill="#E5B23A"/>
+
+    <!-- LK initials -->
+    <text x="50%" y="56%"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          font-family="Inter, system-ui, sans-serif"
+          font-weight="800"
+          font-size="15"
+          letter-spacing="-0.5"
+          fill="#ffffff">LK</text>
+
+    <defs>
+        <linearGradient id="admBrandGradient" x1="0" y1="0" x2="40" y2="40"
+                        gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stop-color="#0d4724"/>
+            <stop offset="100%" stop-color="#068927"/>
+        </linearGradient>
+    </defs>
+</svg>

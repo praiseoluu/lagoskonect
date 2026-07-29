@@ -1,0 +1,34 @@
+# nginx.conf snippet — add inside your server {} block
+# Place the API files at /var/www/afx-api/ (or your chosen path)
+
+# ── KTG Connect API ────────────────────────────────────────────────────────
+
+# Serve avatar uploads directly
+location /api/uploads/ {
+    alias /var/www/afx-api/uploads/;
+    expires 30d;
+    add_header Cache-Control "public, immutable";
+    # Only allow image types
+    location ~* \.(jpg|jpeg|png|gif|webp)$ {
+        try_files $uri =404;
+    }
+}
+
+# Route all /api/v1/* to index.php
+location /api/v1/ {
+    root /var/www/afx-api;
+    try_files $uri $uri/ /api/index.php$is_args$args;
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;  # adjust PHP version
+        fastcgi_param SCRIPT_FILENAME /var/www/afx-api/index.php;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+}
+
+# Block direct access to sensitive files
+location ~* \.(sql|md|env)$ {
+    deny all;
+    return 404;
+}

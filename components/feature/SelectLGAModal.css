@@ -1,0 +1,487 @@
+/**
+ * Lagos Konect — Select LGA Modal Styles
+ * ============================================================
+ * Scoped to .lga-modal-overlay and all .lga-* descendants.
+ *
+ * Sections:
+ *   1.  Overlay
+ *   2.  Modal card + enter animation
+ *   3.  Header (title + search)
+ *   4.  Body + grid
+ *   5.  LGA card (idle, hover, selected, skeleton)
+ *   6.  Card internals (icon, radio, body, badge)
+ *   7.  Footer (hint + actions)
+ *   8.  Responsive
+ *   9.  Reduced motion
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. OVERLAY
+   ═══════════════════════════════════════════════════════════════════════ */
+.lga-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  pointer-events: none;
+  transition: background var(--transition-base);
+}
+
+.lga-modal-overlay--visible {
+  background: rgba(0, 0, 0, 0.52);
+  pointer-events: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. MODAL CARD + ENTER ANIMATION
+   ═══════════════════════════════════════════════════════════════════════ */
+.lga-modal {
+  background: var(--color-bg);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-2xl);
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* Entry state */
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+  transition: opacity   var(--transition-base),
+              transform var(--transition-base);
+}
+
+.lga-modal-overlay--visible .lga-modal {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. HEADER
+   ═══════════════════════════════════════════════════════════════════════ */
+.lga-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+}
+
+.lga-modal__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Search pill */
+.lga-modal__search-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-4);
+  flex: 1;
+  max-width: 280px;
+  transition: border-color var(--transition-fast),
+              box-shadow   var(--transition-fast);
+}
+
+.lga-modal__search-wrap:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.lga-modal__search-icon {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.lga-modal__search {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  color: var(--color-text);
+  min-width: 0;
+  /* Remove browser-default clear (×) button on type=search */
+  -webkit-appearance: none;
+}
+
+.lga-modal__search::-webkit-search-cancel-button { display: none; }
+.lga-modal__search::placeholder { color: var(--color-text-muted); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. BODY + GRID
+   ═══════════════════════════════════════════════════════════════════════ */
+.lga-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-6);
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.lga-modal__body::-webkit-scrollbar       { width: 4px; }
+.lga-modal__body::-webkit-scrollbar-track { background: transparent; }
+.lga-modal__body::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.lga-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+
+.lga-modal__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  padding: var(--space-10) 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. LGA CARD — IDLE, HOVER, SELECTED, SKELETON
+   ═══════════════════════════════════════════════════════════════════════ */
+.lga-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  min-height: 90px;
+  position: relative;
+  transition: border-color var(--transition-fast),
+              background   var(--transition-fast),
+              box-shadow   var(--transition-fast),
+              transform    var(--transition-fast);
+}
+
+.lga-card:hover:not(.lga-card--skeleton):not(.lga-card--selected) {
+  border-color: var(--color-primary-40);
+  background: var(--color-primary-15);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
+}
+
+.lga-card:active:not(.lga-card--skeleton) {
+  transform: translateY(0);
+}
+
+.lga-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Selected state */
+.lga-card--selected {
+  border-color: var(--color-primary);
+  border-width: 2px;
+  background: var(--color-primary-15);
+  /* Ring effect without adding layout space */
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+/* Skeleton */
+.lga-card--skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-border-light) 25%,
+    var(--color-surface)      50%,
+    var(--color-border-light) 75%
+  );
+  background-size: 200% 100%;
+  animation: lga-shimmer 1.4s ease-in-out infinite;
+  cursor: default;
+  pointer-events: none;
+  border-color: transparent;
+}
+
+@keyframes lga-shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. CARD INTERNALS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Top row: map icon + radio indicator */
+.lga-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.lga-card__icon {
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color var(--transition-fast);
+}
+
+.lga-card__icon--selected,
+.lga-card:hover .lga-card__icon {
+  color: var(--color-primary);
+}
+
+/* Radio indicator */
+.lga-card__radio {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color var(--transition-fast),
+              background   var(--transition-fast);
+}
+
+.lga-card__radio--selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+/* Body: name + state + badge */
+.lga-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lga-card__name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  line-height: var(--line-height-snug);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lga-card__state {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lga-card__capital-badge {
+  display: inline-block;
+  width: fit-content;
+  margin-top: var(--space-1);
+  padding: 2px var(--space-1);
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: var(--color-primary-15);
+  border-radius: var(--radius-sm);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. FOOTER
+   ═══════════════════════════════════════════════════════════════════════ */
+.lga-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+  background: var(--color-bg);
+}
+
+.lga-modal__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.lga-modal__hint-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  margin-top: 1px;
+}
+
+#lga-hint-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+}
+
+.lga-modal__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+/* Cancel button */
+.lga-modal__cancel-btn {
+  padding: var(--space-2) var(--space-5);
+  background: none;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: inherit;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast),
+              color      var(--transition-fast);
+}
+
+.lga-modal__cancel-btn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.lga-modal__cancel-btn:active {
+  background: var(--color-border-light);
+}
+
+.lga-modal__cancel-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Confirm button */
+.lga-modal__confirm-btn {
+  padding: var(--space-2) var(--space-5);
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: inherit;
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              opacity    var(--transition-fast),
+              transform  var(--transition-fast);
+}
+
+.lga-modal__confirm-btn:hover:not(:disabled) {
+  background: var(--color-primary-90);
+  transform: translateY(-1px);
+}
+
+.lga-modal__confirm-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.lga-modal__confirm-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.lga-modal__confirm-btn:disabled {
+  opacity: 0.40;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .lga-modal__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .lga-modal__search-wrap {
+    max-width: none;
+  }
+
+  .lga-modal__body {
+    padding: var(--space-4);
+  }
+
+  .lga-modal__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lga-modal__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .lga-modal__actions {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 400px) {
+  .lga-modal__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+
+  .lga-modal__confirm-btn,
+  .lga-modal__cancel-btn {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .lga-modal,
+  .lga-modal-overlay,
+  .lga-card,
+  .lga-modal__confirm-btn,
+  .lga-modal__cancel-btn,
+  .lga-modal__search-wrap {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .lga-card--skeleton {
+    /* Static fallback for users who prefer no motion */
+    background: var(--color-border-light);
+    animation: none !important;
+  }
+}

@@ -1,0 +1,497 @@
+/**
+ * Lagos Konect — Card Styles
+ * ============================================================
+ * Styles for the Card component family:
+ *   Card · StatCard · NewsCard · ReelCard
+ *
+ * All values reference design tokens from tokens.css.
+ * No hard-coded colours, sizes or radii appear in this file.
+ *
+ * Sections:
+ *   1.  Card — base shell
+ *   2.  Card — padding modifiers
+ *   3.  Card — shadow modifiers
+ *   4.  Card — clickable modifier
+ *   5.  Card — inner slots (header / body / footer)
+ *   6.  StatCard — shell & layout
+ *   7.  StatCard — typography
+ *   8.  StatCard — trend indicator
+ *   9.  StatCard — icon badge
+ *   10. NewsCard — shell & layout
+ *   11. NewsCard — media slot
+ *   12. NewsCard — content slot
+ *   13. NewsCard — meta row
+ *   14. ReelCard — shell & layout
+ *   15. ReelCard — media slot & overlay
+ *   16. ReelCard — info slot
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. CARD — BASE SHELL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-card {
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.adm-card--border {
+  border: 1px solid var(--color-border);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. CARD — PADDING MODIFIERS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-card--pad-none { padding: 0; }
+.adm-card--pad-sm   { padding: var(--space-4); }
+.adm-card--pad-md   { padding: var(--space-5) var(--space-6); }
+.adm-card--pad-lg   { padding: var(--space-8); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. CARD — SHADOW MODIFIERS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-card--shadow-sm { box-shadow: var(--shadow-sm); }
+.adm-card--shadow-md { box-shadow: var(--shadow-md); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. CARD — CLICKABLE MODIFIER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-card--clickable {
+  cursor: pointer;
+  transition:
+    box-shadow var(--transition-base),
+    transform  var(--transition-base);
+}
+
+.adm-card--clickable:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.adm-card--clickable:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. CARD — INNER SLOTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-card__header {
+  margin-bottom: var(--space-4);
+}
+
+.adm-card__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  line-height: var(--line-height-snug);
+}
+
+.adm-card__footer {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. STATCARD — SHELL & LAYOUT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-stat-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  transition: box-shadow var(--transition-base);
+}
+
+.adm-stat-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.adm-stat-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. STATCARD — TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-stat-card__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+.adm-stat-card__value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: 1.2;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. STATCARD — TREND INDICATOR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-stat-card__trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--space-1);
+}
+
+.adm-stat-card__trend--up   { color: var(--color-success); }
+.adm-stat-card__trend--down { color: var(--color-error);   }
+
+.adm-stat-card__trend-label {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. STATCARD — ICON BADGE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-stat-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.adm-stat-card__icon--primary { background: var(--color-primary-15);  color: var(--color-primary);  }
+.adm-stat-card__icon--success { background: var(--color-success-bg);  color: var(--color-success);  }
+.adm-stat-card__icon--warning { background: var(--color-warning-bg);  color: var(--color-warning);  }
+.adm-stat-card__icon--error   { background: var(--color-error-bg);    color: var(--color-error);    }
+.adm-stat-card__icon--info    { background: var(--color-info-bg);     color: var(--color-info);     }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. NEWSCARD — SHELL & LAYOUT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-news-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  transition:
+    box-shadow var(--transition-base),
+    transform  var(--transition-base);
+}
+
+.adm-news-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.adm-news-card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.adm-news-card--vertical   { flex-direction: column; }
+.adm-news-card--horizontal { flex-direction: row;    }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. NEWSCARD — MEDIA SLOT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-news-card--vertical   .adm-news-card__media { height: 180px; flex-shrink: 0; }
+.adm-news-card--horizontal .adm-news-card__media { width: 140px;  flex-shrink: 0; }
+
+.adm-news-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.adm-news-card__img-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  background: var(--color-primary-15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-60);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. NEWSCARD — CONTENT SLOT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-news-card__content {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-news-card__category {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.adm-news-card__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  line-height: var(--line-height-snug);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.adm-news-card__summary {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. NEWSCARD — META ROW
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-news-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+.adm-news-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.adm-news-card__lga {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  background: var(--color-primary-15);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   14. REELCARD — SHELL & LAYOUT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-reel-card {
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-text);
+  transition: transform var(--transition-base);
+}
+
+.adm-reel-card:hover {
+  transform: scale(1.02);
+}
+
+.adm-reel-card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   15. REELCARD — MEDIA SLOT & OVERLAY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-reel-card__media {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: linear-gradient(145deg, #1a2e1f, #0d1a10);
+}
+
+.adm-reel-card__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.adm-reel-card__thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    145deg,
+    var(--color-primary-40),
+    var(--color-primary-15)
+  );
+}
+
+.adm-reel-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.adm-reel-card:hover .adm-reel-card__overlay {
+  opacity: 1;
+}
+
+.adm-reel-card__play {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(6, 137, 39, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  /* Subtle scale-in on overlay reveal */
+  transform: scale(0.85);
+  transition: transform var(--transition-base);
+}
+
+.adm-reel-card:hover .adm-reel-card__play {
+  transform: scale(1);
+}
+
+.adm-reel-card__duration {
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-2);
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  /* Keep readable over bright thumbnails */
+  backdrop-filter: blur(2px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   16. REELCARD — INFO SLOT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-reel-card__info {
+  padding: var(--space-3);
+  background: var(--color-bg);
+}
+
+.adm-reel-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  line-height: var(--line-height-snug);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.adm-reel-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.adm-reel-card__views {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ══════════════════════════════════════════════════════
+   PREMIUM ENHANCEMENTS — Cards
+   Multi-layer shadows + hover lift on all card types.
+   ══════════════════════════════════════════════════ */
+
+.adm-card {
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.05));
+  transition: box-shadow var(--transition-base), transform var(--transition-base),
+              border-color var(--transition-base);
+}
+.adm-card--border:hover {
+  border-color: rgba(6,137,39,0.15);
+  box-shadow: var(--shadow-card-hover, 0 8px 28px rgba(0,0,0,0.10));
+}
+.adm-card--clickable:hover {
+  box-shadow: var(--shadow-card-hover, 0 8px 28px rgba(0,0,0,0.10));
+  transform: translateY(-2px);
+}
+.adm-card__title { letter-spacing: -0.01em; }
+
+/* Stat cards */
+.adm-stat-card {
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.05));
+  transition: box-shadow var(--transition-base), transform var(--transition-base),
+              border-color var(--transition-base);
+}
+.adm-stat-card:hover {
+  box-shadow: var(--shadow-card-hover, 0 8px 28px rgba(0,0,0,0.10));
+  transform: translateY(-2px);
+  border-color: var(--color-primary-40);
+}
+.adm-stat-card__value { letter-spacing: -0.03em; }
+.adm-stat-card__label { letter-spacing: 0.01em; }
+
+/* NewsCard */
+.news-card {
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  border-radius: var(--radius-xl);
+}
+.news-card:hover {
+  box-shadow: var(--shadow-card-hover, 0 8px 28px rgba(0,0,0,0.10));
+  transform: translateY(-2px);
+}
+.news-card__title { letter-spacing: -0.015em; }
+
+/* ReelCard */
+.reel-card {
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  border-radius: var(--radius-xl);
+}
+.reel-card:hover {
+  box-shadow: var(--shadow-card-hover, 0 8px 28px rgba(0,0,0,0.10));
+  transform: translateY(-2px) scale(1.015);
+}

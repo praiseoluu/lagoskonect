@@ -1,0 +1,608 @@
+/**
+ * Lagos Konect — Form Component Styles
+ * ============================================================
+ * Styles for the Form component family:
+ *   OTPInput · Dropdown · FileUpload · ProgressBar · ChatBubble
+ *
+ * All values reference design tokens from tokens.css.
+ * No hard-coded colours, sizes or radii appear in this file.
+ *
+ * Sections:
+ *   1.  OTPInput  — shell & inputs
+ *   2.  OTPInput  — states (filled / error)
+ *   3.  OTPInput  — responsive
+ *   4.  Dropdown  — shell & trigger
+ *   5.  Dropdown  — states (open / error / disabled)
+ *   6.  Dropdown  — menu & options
+ *   7.  FileUpload — shell & drop zone
+ *   8.  FileUpload — previews
+ *   9.  FileUpload — error
+ *   10. ProgressBar — shell & track
+ *   11. ProgressBar — fill variants
+ *   12. ProgressBar — animated stripe
+ *   13. ChatBubble — layout
+ *   14. ChatBubble — bubble variants (sent / received)
+ *   15. ChatBubble — sender & meta
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. OTPINPUT — SHELL & INPUTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-otp__inputs {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.adm-otp__input {
+  width: 52px;
+  height: 60px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-bg);
+  outline: none;
+  caret-color: var(--color-primary);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow   var(--transition-fast),
+    background   var(--transition-fast);
+}
+
+.adm-otp__input:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. OTPINPUT — STATES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-otp__input--filled {
+  border-color: var(--color-primary-60);
+  background: var(--color-primary-15);
+}
+
+.adm-otp--error .adm-otp__input {
+  border-color: var(--color-error);
+}
+
+.adm-otp--error .adm-otp__input:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.adm-otp__error {
+  margin-top: var(--space-3);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. OTPINPUT — RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 400px) {
+  .adm-otp__input {
+    width: 44px;
+    height: 52px;
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. DROPDOWN — SHELL & TRIGGER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-dropdown {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.adm-dropdown__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.adm-dropdown__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow   var(--transition-fast);
+}
+
+.adm-dropdown__trigger:hover:not(:disabled) {
+  border-color: var(--color-primary-60);
+}
+
+.adm-dropdown__trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.adm-dropdown__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.adm-dropdown__value--placeholder {
+  color: var(--color-text-muted);
+}
+
+.adm-dropdown__arrow {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  transition: transform var(--transition-base);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. DROPDOWN — STATES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-dropdown--open .adm-dropdown__trigger {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.adm-dropdown--open .adm-dropdown__arrow {
+  transform: rotate(180deg);
+}
+
+.adm-dropdown--error .adm-dropdown__trigger {
+  border-color: var(--color-error);
+}
+
+.adm-dropdown--disabled .adm-dropdown__trigger {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.adm-dropdown__error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. DROPDOWN — MENU & OPTIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-dropdown__menu {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  right: 0;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  overflow: hidden;
+  animation: adm-dropdown-in var(--transition-base) ease;
+}
+
+@keyframes adm-dropdown-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.adm-dropdown__search-wrap {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.adm-dropdown__search {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.adm-dropdown__search:focus {
+  border-color: var(--color-primary);
+}
+
+.adm-dropdown__options {
+  max-height: 240px;
+  overflow-y: auto;
+  /* Smooth inertia scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+.adm-dropdown__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  gap: var(--space-2);
+}
+
+.adm-dropdown__option:hover {
+  background: var(--color-primary-15);
+}
+
+.adm-dropdown__option--selected {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-primary-15);
+}
+
+.adm-dropdown__option--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.adm-dropdown__empty {
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. FILEUPLOAD — SHELL & DROP ZONE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.adm-file__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+/* Visually hidden — keyboard/pointer events flow to the <label> */
+.adm-file__input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.adm-file__zone {
+  position: relative;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color     var(--transition-base),
+    background-color var(--transition-base);
+}
+
+.adm-file__zone:hover,
+.adm-file__zone--drag {
+  border-color: var(--color-primary-60);
+  background: var(--color-primary-15);
+}
+
+.adm-file__zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-10) var(--space-6);
+  cursor: pointer;
+  text-align: center;
+}
+
+.adm-file__zone-icon {
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.adm-file__zone--drag .adm-file__zone-icon {
+  color: var(--color-primary);
+}
+
+.adm-file__zone-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.adm-file__zone-cta {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.adm-file__zone-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. FILEUPLOAD — PREVIEWS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-file__previews {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.adm-file__preview-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.adm-file__preview-img {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+}
+
+.adm-file__preview-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--color-primary-15);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.adm-file__preview-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-file__preview-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-file__preview-size {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.adm-file__preview-remove {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color var(--transition-fast),
+    color            var(--transition-fast);
+}
+
+.adm-file__preview-remove:hover {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. FILEUPLOAD — ERROR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-file__error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. PROGRESSBAR — SHELL & TRACK
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-progress {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.adm-progress__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.adm-progress__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.adm-progress__pct {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+.adm-progress__track {
+  width: 100%;
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+/* Size tiers — track height only */
+.adm-progress--sm .adm-progress__track { height: 4px;  }
+.adm-progress--md .adm-progress__track { height: 8px;  }
+.adm-progress--lg .adm-progress__track { height: 12px; }
+
+.adm-progress__fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. PROGRESSBAR — FILL VARIANTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-progress__fill--primary { background: var(--color-primary); }
+.adm-progress__fill--success { background: var(--color-success); }
+.adm-progress__fill--warning { background: var(--color-warning); }
+.adm-progress__fill--error   { background: var(--color-error);   }
+.adm-progress__fill--info    { background: var(--color-info);    }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. PROGRESSBAR — ANIMATED STRIPE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-progress__fill--animated {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent           8px,
+    rgba(255,255,255,.15) 8px,
+    rgba(255,255,255,.15) 16px
+  );
+  animation: adm-progress-stripes 1s linear infinite;
+}
+
+@keyframes adm-progress-stripes {
+  from { background-position: 0 0;    }
+  to   { background-position: 32px 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. CHATBUBBLE — LAYOUT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-chat-bubble {
+  display: flex;
+  margin-bottom: var(--space-3);
+}
+
+.adm-chat-bubble--sent     { justify-content: flex-end;   }
+.adm-chat-bubble--received { justify-content: flex-start; }
+
+.adm-chat-bubble__content {
+  max-width: 72%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adm-chat-bubble--sent .adm-chat-bubble__content {
+  align-items: flex-end;
+}
+
+.adm-chat-bubble--received .adm-chat-bubble__content {
+  align-items: flex-start;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   14. CHATBUBBLE — BUBBLE VARIANTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-chat-bubble__text {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  word-break: break-word;
+}
+
+/* Sent — primary-filled, tail bottom-right */
+.adm-chat-bubble--sent .adm-chat-bubble__text {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+/* Received — surface-filled, tail bottom-left */
+.adm-chat-bubble--received .adm-chat-bubble__text {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   15. CHATBUBBLE — SENDER & META
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.adm-chat-bubble__sender {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.adm-chat-bubble__sender--admin {
+  color: var(--color-primary);
+}
+
+.adm-chat-bubble__admin-tag {
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  background: var(--color-primary-15);
+  color: var(--color-primary);
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+}
+
+.adm-chat-bubble__time {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  padding: 0 var(--space-1);
+  /* Semantic <time> should not inherit bubble text styling */
+  font-style: normal;
+}

@@ -1,0 +1,28 @@
+-- 005_create_news.sql
+CREATE TABLE IF NOT EXISTS `news` (
+    `id`               INT           NOT NULL AUTO_INCREMENT,
+    `lga_id`           INT           NULL,
+    `lga_name`         VARCHAR(100)  NULL,
+    `target_all_lgas`  BOOLEAN       NOT NULL DEFAULT FALSE,
+    `slug`             VARCHAR(300)  NOT NULL,
+    `title`            VARCHAR(300)  NOT NULL,
+    `summary`          TEXT          NULL,
+    `body`             LONGTEXT      NULL,
+    `image_url`        VARCHAR(500)  NULL,
+    `classification`   JSON          NULL,
+    `category`         VARCHAR(100)  NULL,
+    `breaking`         BOOLEAN       NOT NULL DEFAULT FALSE,
+    `source_url`       VARCHAR(500)  NULL,
+    `source_name`      VARCHAR(200)  NULL,
+    `author_id`        INT           NULL,
+    `status`           ENUM('draft','published','archived') NOT NULL DEFAULT 'draft',
+    `views`            INT           NOT NULL DEFAULT 0,
+    `published_at`     DATETIME      NULL,
+    `created_at`       DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`       DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_news_slug` (`slug`),
+    INDEX `idx_news_lga_status`   (`lga_id`, `status`),
+    INDEX `idx_news_published_at` (`published_at` DESC),
+    INDEX `idx_news_target_all`   (`target_all_lgas`, `status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

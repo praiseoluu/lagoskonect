@@ -1,0 +1,236 @@
+/**
+ * Lagos Konect — CSS Reset
+ * ============================================================
+ * Modern, minimal browser reset.
+ * Inspired by Andy Bell's Modern CSS Reset, extended with
+ * project-specific defaults sourced from design tokens.
+ *
+ * Load order: tokens.css → reset.css → utilities.css
+ *
+ * Sections:
+ *   1.  Box model
+ *   2.  HTML root
+ *   3.  Body defaults
+ *   4.  Media & embedded elements
+ *   5.  Form controls
+ *   6.  Typography
+ *   7.  Links
+ *   8.  Lists
+ *   9.  Buttons
+ *   10. Tables
+ *   11. Horizontal rule
+ *   12. Focus management
+ *   13. Scrollbar styling (Webkit)
+ *   14. App root
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. BOX MODEL
+   Apply border-box sizing universally so widths are predictable and
+   padding/border never cause overflow surprises.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. HTML ROOT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+html {
+  /* Prevent iOS text inflation on orientation change */
+  -webkit-text-size-adjust: 100%;
+  /* Smooth anchor scrolling across the whole document */
+  scroll-behavior: smooth;
+  /* Ensure the page always fills at least the full viewport height */
+  min-height: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. BODY DEFAULTS
+   Typography, colour and rendering are all sourced from design tokens
+   so a single token change propagates everywhere automatically.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+body {
+  font-family:    var(--font-family);
+  font-size:      var(--font-size-base);
+  font-weight:    var(--font-weight-regular);
+  line-height:    var(--line-height-normal);
+  color:          var(--color-text);
+  background-color: var(--color-bg);
+  /* Subpixel anti-aliasing for crisp text on high-DPI screens */
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. MEDIA & EMBEDDED ELEMENTS
+   block display removes the default inline gap beneath images.
+   max-width: 100% prevents overflow on narrow containers.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. FORM CONTROLS
+   Inherit font and colour so inputs don't fall back to UA stylesheet
+   defaults, which vary significantly across browsers.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Prevent long words / URLs from breaking the layout */
+p,
+h1, h2, h3,
+h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* Uniform heading rhythm — individual pages override where needed */
+h1, h2, h3,
+h4, h5, h6 {
+  font-weight:     var(--font-weight-semibold);
+  line-height:     var(--line-height-tight);
+  letter-spacing:  var(--letter-spacing-tight);
+  color:           var(--color-text);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. LINKS
+   Brand colour by default; underline appears only on hover so plain
+   text links don't look like navigation noise.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. LISTS
+   Components that need bullets/numbers add them back explicitly.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. BUTTONS
+   Strip UA styles. All visual treatment is applied by component classes
+   (e.g. .adm-btn) so raw <button> elements are invisible until styled.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. TABLES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   11. HORIZONTAL RULE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12. FOCUS MANAGEMENT
+   Remove the default outline globally, then restore a high-visibility
+   ring for keyboard navigation only. Mouse/touch users never see the ring.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   13. SCROLLBAR STYLING  (Webkit — Chrome, Safari, Edge)
+   Thin, unobtrusive scrollbar that blends with the surface background.
+   Firefox uses scrollbar-width below.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+/* Webkit */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   14. APP ROOT
+   The SPA mount point always fills at least the full viewport so
+   short-content pages never leave a visible background gap.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+#app {
+  min-height: 100vh;
+}
