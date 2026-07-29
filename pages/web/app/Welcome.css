@@ -1,49 +1,148 @@
-/* ── Welcome Page ───────────────────────────────────────────────────────── */
+/* ── Onboarding / Welcome Page ──────────────────────────────────────────── */
 
 /*
- * Renders inside WebLayout (sidebar + topbar).
- * Content is a single centred card on the page body.
+ * Styles for the multi-step hybrid onboarding flow (Onboarding.js).
+ * All class names are prefixed `ob-` to avoid collisions.
+ * Renders inside WebLayout (sidebar + topbar shell).
+ *
+ * Step breakdown:
+ *   0 — Welcome slide        (personalised greeting)
+ *   1 — Stay Informed slide  (feature overview)
+ *   2 — Participate slide    (feature overview)
+ *   3 — Bio setup            (optional, skippable)
+ *   4 — Notifications setup  (optional, skippable)
  */
 
 /* ── Page wrapper ─────────────────────────────────────────────────────── */
-.welcome-page {
+
+.ob-page {
   min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: var(--space-6) var(--space-4);
   background: var(--color-bg);
 }
 
 /* ── Card ─────────────────────────────────────────────────────────────── */
-.welcome-card {
+
+.ob-card {
   position: relative;
   width: 100%;
-  max-width: 760px;
+  max-width: 680px;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
-  padding: var(--space-10) var(--space-10);
+  padding: var(--space-10);
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: var(--space-6);
-  text-align: center;
   overflow: hidden;
 }
 
 /* Decorative top-right corner accent */
-.welcome-card__corner {
+.ob-card__corner {
   position: absolute;
   top: 0;
   right: 0;
-  width: 80px;
-  height: 80px;
-  background: radial-gradient(circle at top right, var(--color-primary-15) 0%, transparent 70%);
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at top right, var(--color-primary-15) 0%, transparent 65%);
   pointer-events: none;
 }
 
-/* ── Icon ─────────────────────────────────────────────────────────────── */
-.welcome-card__icon {
+/* ── Step indicator dots ──────────────────────────────────────────────── */
+
+.ob-dots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ob-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  transition: background 0.2s ease, width 0.2s ease;
+  flex-shrink: 0;
+}
+
+/* Setup steps get a slightly different shape to signal a mode change */
+.ob-dot--setup {
+  border-radius: var(--radius-sm);
+}
+
+.ob-dot--active {
+  background: var(--color-primary);
+  width: 20px;
+}
+
+.ob-dot--done {
+  background: var(--color-primary-40);
+}
+
+/* ── Animated step content area ───────────────────────────────────────── */
+
+.ob-step-content {
+  flex: 1;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Slide transitions — must match ANIM_MS = 220 in Onboarding.js */
+.ob--exit-left {
+  animation: ob-exit-left 220ms ease forwards;
+}
+.ob--exit-right {
+  animation: ob-exit-right 220ms ease forwards;
+}
+.ob--enter-right {
+  animation: ob-enter-right 220ms ease forwards;
+}
+.ob--enter-left {
+  animation: ob-enter-left 220ms ease forwards;
+}
+
+@keyframes ob-exit-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-32px); }
+}
+@keyframes ob-exit-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(32px); }
+}
+@keyframes ob-enter-right {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ob-enter-left {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Step base ────────────────────────────────────────────────────────── */
+
+.ob-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-5);
+  flex: 1;
+}
+
+/* Feature and setup steps align left for a more editorial feel */
+.ob-step--feature,
+.ob-step--setup {
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* ── Step 0 — Welcome ─────────────────────────────────────────────────── */
+
+.ob-step__check-icon {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-full);
@@ -52,10 +151,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--color-primary-40);
 }
 
-/* ── LGA pill ─────────────────────────────────────────────────────────── */
-.welcome-card__lga-pill {
+.ob-step__lga-pill {
   display: inline-flex;
   align-items: center;
   padding: var(--space-1) var(--space-4);
@@ -63,97 +162,49 @@
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wider);
+  letter-spacing: 0.06em;
   color: var(--color-text-secondary);
-  background: var(--color-bg);
-  margin-top: calc(-1 * var(--space-3));
+  background: var(--color-surface);
 }
 
-/* ── Heading ──────────────────────────────────────────────────────────── */
-.welcome-card__heading {
+/* ── Text block (shared) ──────────────────────────────────────────────── */
+
+.ob-step__text {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  width: 100%;
 }
 
-.welcome-card__title {
+.ob-step__title {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
-  letter-spacing: var(--letter-spacing-tight);
-  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
   margin: 0;
 }
 
-.welcome-card__title-brand {
+.ob-step__brand {
   color: var(--color-primary);
-  font-weight: var(--font-weight-bold);
 }
 
-.welcome-card__subtitle {
+.ob-step__subtitle {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  line-height: var(--line-height-relaxed);
+  line-height: 1.6;
   margin: 0;
-  max-width: 420px;
+  max-width: 480px;
 }
 
-/* ── Feature cards row ────────────────────────────────────────────────── */
-.welcome-card__features {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-  width: 100%;
-}
-
-.welcome-card__feature {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-xl);
-  text-align: left;
-}
-
-.welcome-card__feature-icon {
-  color: var(--color-primary);
-  flex-shrink: 0;
-}
-
-.welcome-card__feature-title {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
-  margin: 0;
-}
-
-.welcome-card__feature-desc {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  line-height: var(--line-height-relaxed);
-  margin: 0;
-}
-
-/* ── CTA button ───────────────────────────────────────────────────────── */
-.welcome-card__cta {
-  width: 100%;
-}
-
-.welcome-card__cta .ktg-btn {
-  width: 100%;
-}
-
-/* ── Change LGA link ──────────────────────────────────────────────────── */
-.welcome-card__lga-change {
+/* "Not in X? Change LGA" hint */
+.ob-step__lga-change {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  margin: 0;
+  margin: auto 0 0; /* push to bottom of step */
 }
 
-.welcome-card__lga-change-btn {
+.ob-step__lga-change-btn {
   background: none;
   border: none;
   padding: 0;
@@ -161,41 +212,263 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
   cursor: pointer;
-  font-family: var(--font-family);
-  transition: opacity var(--transition-fast);
+  font-family: inherit;
+  transition: opacity 0.15s ease;
+}
+.ob-step__lga-change-btn:hover { opacity: 0.75; }
+
+/* ── Feature / setup step icons ───────────────────────────────────────── */
+
+.ob-step__feature-icon,
+.ob-step__setup-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-xl);
+  background: var(--color-primary-15);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.welcome-card__lga-change-btn:hover { opacity: 0.75; }
+/* ── Bullet list (feature slides) ─────────────────────────────────────── */
+
+.ob-bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.ob-bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.ob-bullet__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 0.45em; /* optical vertical alignment with text */
+}
+
+/* ── Bio step ─────────────────────────────────────────────────────────── */
+
+.ob-bio-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.ob-bio-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.ob-bio-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 90px;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  line-height: 1.6;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+.ob-bio-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-15);
+}
+.ob-bio-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.ob-bio-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.ob-bio-chars {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ── Notification toggle ──────────────────────────────────────────────── */
+
+.ob-notif-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: inherit;
+  color: var(--color-primary);
+  background: var(--color-primary-15);
+  border: 1.5px solid var(--color-primary-40);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  width: 100%;
+  justify-content: center;
+}
+.ob-notif-toggle:hover {
+  background: var(--color-primary-40);
+}
+.ob-notif-toggle:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ob-notif-toggle--on {
+  color: #fff;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.ob-notif-toggle--on:hover {
+  background: var(--color-primary-90);
+}
+
+/* ── Inline error text ────────────────────────────────────────────────── */
+
+.ob-step__error {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger, #DC2626);
+  margin: 0;
+  min-height: 1.2em; /* reserve space so layout doesn't jump */
+}
+
+/* ── Navigation bar ───────────────────────────────────────────────────── */
+
+.ob-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.ob-nav__left,
+.ob-nav__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ob-nav__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: inherit;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.ob-nav__back:hover {
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+}
+
+.ob-nav__skip {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: inherit;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.ob-nav__skip:hover {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-hover);
+}
+
+.ob-nav__next {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 
 /* ── Responsive ───────────────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
-  .welcome-card {
+  .ob-card {
     padding: var(--space-8) var(--space-6);
+    gap: var(--space-5);
   }
 
-  .welcome-card__features {
-    grid-template-columns: 1fr;
+  .ob-step-content {
+    min-height: 280px;
   }
 
-  .welcome-card__feature {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: var(--space-3);
-  }
-
-  .welcome-card__feature-icon {
-    margin-top: 2px;
+  .ob-step__title {
+    font-size: var(--font-size-xl);
   }
 }
 
 @media (max-width: 480px) {
-
-  .welcome-card {
-    padding: var(--space-6) var(--space-5);
-    gap: var(--space-5);
+  .ob-page {
+    padding: var(--space-4) var(--space-3);
+    align-items: flex-start;
+    padding-top: var(--space-6);
   }
 
-  .welcome-card__title {
-    font-size: var(--font-size-xl);
+  .ob-card {
+    padding: var(--space-6) var(--space-5);
+    gap: var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  .ob-step-content {
+    min-height: 240px;
+  }
+
+  .ob-step__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .ob-step__subtitle {
+    font-size: var(--font-size-xs);
+  }
+
+  .ob-nav {
+    flex-wrap: wrap;
+  }
+
+  .ob-nav__right {
+    flex-direction: row-reverse;
   }
 }
