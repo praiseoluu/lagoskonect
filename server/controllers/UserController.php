@@ -67,6 +67,12 @@ class UserController {
             $values[] = trim($body['address']) ?: null;
         }
 
+        if (isset($body['bio'])) {
+            $bio = mb_substr(trim($body['bio']), 0, 160);
+            $fields[] = 'bio = ?';
+            $values[] = $bio ?: null;
+        }
+
         if (empty($fields)) {
             Response::error('VALIDATION_ERROR', 'No valid fields to update.', 422);
         }
@@ -392,6 +398,7 @@ class UserController {
                 'reelComments' => (bool) ($user['notif_reel_comments'] ?? true),
                 'breakingNews' => (bool) ($user['notif_breaking_news'] ?? true),
             ],
+            'bio'               => $user['bio']     ?? null,
             'dob'               => $user['dob']     ?? null,
             'city'              => $user['city']    ?? null,
             'state'             => $user['state']   ?? 'Lagos State',

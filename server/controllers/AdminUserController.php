@@ -338,6 +338,7 @@ class AdminUserController {
             'name'                => $u['name'],
             'phone'               => $u['phone'],
             'email'               => $u['email'],
+            'bio'                 => $u['bio'] ?? null,
             'dob'                 => $u['dob'],
             'city'                => $u['city'],
             'state'               => $u['state'] ?? 'Lagos State',

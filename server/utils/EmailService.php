@@ -19,19 +19,28 @@ class EmailService {
     }
 
     private static function fromName(): string {
-        return getenv('RESEND_FROM_NAME') ?: 'LagKonnect';
+        return getenv('RESEND_FROM_NAME') ?: 'Lagos Konect';
     }
 
     private static function fromEmail(): string {
-        return getenv('RESEND_FROM_EMAIL') ?: 'noreply@lagkonnect.com';
+        return getenv('RESEND_FROM_EMAIL') ?: 'noreply@lagoskonect.com';
+    }
+
+    private static function supportEmail(): string {
+        return getenv('SUPPORT_EMAIL') ?: 'support@lagoskonect.com';
+    }
+
+    private static function appUrl(): string {
+        $base = getenv('BASE_URL') ?: 'https://lagoskonect.com';
+        return rtrim(preg_replace('#/api/v1$#', '', $base), '/');
     }
 
     // ── Public API ────────────────────────────────────────────────────────
 
     public static function sendOtp(string $toEmail, string $toName, string $otp, string $type = 'verification'): bool {
         $subject = $type === 'identity'
-            ? 'Your LagKonnect identity verification code'
-            : 'Your LagKonnect verification code';
+            ? 'Your Lagos Konect identity verification code'
+            : 'Verify your Lagos Konect account';
 
         $html = self::otpTemplate($toName, $otp, $type);
 
@@ -43,28 +52,27 @@ class EmailService {
         $escapedSummary = htmlspecialchars($summary, ENT_QUOTES, 'UTF-8');
         $escapedUrl     = htmlspecialchars($url,     ENT_QUOTES, 'UTF-8');
         $escapedName    = htmlspecialchars($toName,  ENT_QUOTES, 'UTF-8');
+        $support        = htmlspecialchars(self::supportEmail(), ENT_QUOTES, 'UTF-8');
+        $appUrl         = htmlspecialchars(self::appUrl(),       ENT_QUOTES, 'UTF-8');
 
-        $html = <<<HTML
-        <!DOCTYPE html>
-        <html lang="en">
-        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-        <body style="margin:0;padding:0;background:#f4f6f4;font-family:system-ui,sans-serif;">
-          <div style="max-width:560px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);">
-            <div style="background:#1a7a3c;padding:28px 32px;">
-              <p style="margin:0;color:#fff;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">LagKonnect</p>
-            </div>
-            <div style="padding:32px;">
-              <h1 style="margin:0 0 8px;font-size:20px;color:#0a1a0d;line-height:1.3;">{$escapedTitle}</h1>
-              <p style="margin:0 0 24px;font-size:15px;color:#4a6a4e;line-height:1.6;">{$escapedSummary}</p>
-              <a href="{$escapedUrl}" style="display:inline-block;background:#1a7a3c;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;">Read Full Article →</a>
-              <p style="margin:32px 0 0;font-size:13px;color:#8aaa8e;">Hi {$escapedName}, this alert was sent based on your LagKonnect notification preferences.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-        HTML;
+        $html = self::wrap("Breaking News Alert", <<<HTML
+          <p style="margin:0 0 6px;font-size:13px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#068927;">Local News</p>
+          <h1 style="margin:0 0 12px;font-size:22px;font-weight:700;color:#0a150c;line-height:1.3;">{$escapedTitle}</h1>
+          <p style="margin:0 0 28px;font-size:15px;color:#4b5563;line-height:1.7;">{$escapedSummary}</p>
+          <a href="{$escapedUrl}"
+             style="display:inline-block;background:#068927;color:#ffffff;text-decoration:none;
+                    padding:13px 28px;border-radius:8px;font-size:14px;font-weight:600;
+                    letter-spacing:.01em;">
+            Read Full Article →
+          </a>
+          <p style="margin:32px 0 0;font-size:13px;color:#9ca3af;line-height:1.6;">
+            Hi {$escapedName}, you're receiving this because you enabled breaking news alerts
+            for your LGA. You can update your preferences in
+            <a href="{$appUrl}/settings/notifications" style="color:#068927;text-decoration:none;">notification settings</a>.
+          </p>
+        HTML, $support, $appUrl);
 
-        return self::send($toEmail, "New update: {$title}", $html);
+        return self::send($toEmail, "Breaking: {$title}", $html);
     }
 
     /**
@@ -208,29 +216,182 @@ class EmailService {
         return '';
     }
 
+    // ── Templates ─────────────────────────────────────────────────────────
+
     private static function otpTemplate(string $name, string $otp, string $type): string {
         $escapedName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         $escapedOtp  = htmlspecialchars($otp,  ENT_QUOTES, 'UTF-8');
-        $purpose     = $type === 'identity' ? 'verify your identity' : 'verify your account';
+        $support     = htmlspecialchars(self::supportEmail(), ENT_QUOTES, 'UTF-8');
+        $appUrl      = htmlspecialchars(self::appUrl(),       ENT_QUOTES, 'UTF-8');
+
+        if ($type === 'identity') {
+            $headline  = 'Verify your identity';
+            $subtext   = 'Use the code below to confirm it\'s really you. It expires in <strong>10 minutes</strong>.';
+        } else {
+            $headline  = 'You\'re almost in!';
+            $subtext   = 'Use the code below to verify your phone number and activate your account. It expires in <strong>10 minutes</strong>.';
+        }
+
+        $body = <<<HTML
+          <p style="margin:0 0 6px;font-size:13px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#068927;">
+            Account Security
+          </p>
+          <h1 style="margin:0 0 10px;font-size:24px;font-weight:700;color:#0a150c;line-height:1.25;">
+            {$headline}
+          </h1>
+          <p style="margin:0 0 8px;font-size:15px;color:#4b5563;line-height:1.7;">
+            Hi <strong>{$escapedName}</strong>,
+          </p>
+          <p style="margin:0 0 28px;font-size:15px;color:#4b5563;line-height:1.7;">
+            {$subtext}
+          </p>
+
+          <!-- OTP box -->
+          <div style="background:#f0faf2;border:1.5px dashed #068927;border-radius:12px;
+                      padding:28px 20px;text-align:center;margin-bottom:28px;">
+            <p style="margin:0 0 6px;font-size:12px;font-weight:600;letter-spacing:.1em;
+                      text-transform:uppercase;color:#6b7280;">Your verification code</p>
+            <span style="font-size:42px;font-weight:800;letter-spacing:.22em;color:#068927;
+                         font-variant-numeric:tabular-nums;">{$escapedOtp}</span>
+          </div>
+
+          <!-- Warning -->
+          <div style="background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;
+                      padding:14px 16px;margin-bottom:28px;">
+            <p style="margin:0;font-size:13px;color:#92400e;line-height:1.6;">
+              <strong>Never share this code.</strong> Lagos Konect will never ask for your
+              verification code by phone, WhatsApp, or email.
+            </p>
+          </div>
+
+          <p style="margin:0;font-size:13px;color:#9ca3af;line-height:1.6;">
+            Didn't request this code? You can safely ignore this email — your account is still secure.
+            If something seems wrong, contact us at
+            <a href="mailto:{$support}" style="color:#068927;text-decoration:none;">{$support}</a>.
+          </p>
+        HTML;
+
+        return self::wrap($type === 'identity' ? 'Identity Verification' : 'Verify Your Account', $body, $support, $appUrl);
+    }
+
+    /**
+     * Shared email shell — header logo, card body, footer.
+     *
+     * @param string $previewText  Short text shown in inbox preview (after subject)
+     * @param string $cardBody     Inner HTML placed inside the white card
+     * @param string $support      Support email address
+     * @param string $appUrl       Base URL for links
+     */
+    private static function wrap(string $previewText, string $cardBody, string $support, string $appUrl): string {
+        $year           = date('Y');
+        $escapedPreview = htmlspecialchars($previewText, ENT_QUOTES, 'UTF-8');
+        $escapedSupport = htmlspecialchars($support,     ENT_QUOTES, 'UTF-8');
+        $escapedAppUrl  = htmlspecialchars($appUrl,      ENT_QUOTES, 'UTF-8');
+
+        // Inline SVG wordmark — renders in all major clients
+        $logo = <<<SVG
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" style="display:inline-block;vertical-align:middle;margin-right:10px;">
+            <rect width="36" height="36" rx="9" fill="#068927"/>
+            <text x="18" y="25" font-family="system-ui,sans-serif" font-size="18" font-weight="800"
+                  fill="#ffffff" text-anchor="middle">LK</text>
+          </svg>
+        SVG;
 
         return <<<HTML
         <!DOCTYPE html>
         <html lang="en">
-        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-        <body style="margin:0;padding:0;background:#f4f6f4;font-family:system-ui,sans-serif;">
-          <div style="max-width:480px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);">
-            <div style="background:#1a7a3c;padding:28px 32px;">
-              <p style="margin:0;color:#fff;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">LagKonnect</p>
-            </div>
-            <div style="padding:32px;">
-              <h1 style="margin:0 0 8px;font-size:22px;color:#0a1a0d;">Hi {$escapedName},</h1>
-              <p style="margin:0 0 24px;font-size:15px;color:#4a6a4e;line-height:1.6;">Use the code below to {$purpose}. This code expires in 10 minutes.</p>
-              <div style="background:#f0f7f1;border-radius:10px;padding:20px;text-align:center;margin-bottom:24px;">
-                <span style="font-size:36px;font-weight:800;letter-spacing:.18em;color:#1a7a3c;">{$escapedOtp}</span>
-              </div>
-              <p style="margin:0;font-size:13px;color:#8aaa8e;">If you didn't request this code, you can safely ignore this email. Do not share it with anyone.</p>
-            </div>
-          </div>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <meta name="color-scheme" content="light">
+          <meta name="supported-color-schemes" content="light">
+          <!--[if mso]>
+          <noscript>
+            <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+          </noscript>
+          <![endif]-->
+          <title>{$escapedPreview}</title>
+          <style>
+            @media only screen and (max-width:600px) {
+              .outer  { padding: 16px 0 !important; }
+              .card   { border-radius: 0 !important; margin: 0 !important; }
+              .inner  { padding: 28px 20px !important; }
+              .footer { padding: 20px !important; }
+            }
+          </style>
+        </head>
+        <body style="margin:0;padding:0;background:#f3f4f6;-webkit-font-smoothing:antialiased;">
+
+          <!-- Preview text (hidden) -->
+          <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">{$escapedPreview}&nbsp;‌&zwnj;‌&zwnj;‌&zwnj;‌&zwnj;‌&zwnj;‌&zwnj;‌&zwnj;‌&zwnj;‌&zwnj;‌&zwnj;</div>
+
+          <table class="outer" width="100%" cellpadding="0" cellspacing="0" role="presentation"
+                 style="background:#f3f4f6;padding:40px 16px;">
+            <tr>
+              <td align="center">
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+                       style="max-width:560px;">
+
+                  <!-- Logo header -->
+                  <tr>
+                    <td style="padding:0 0 24px;">
+                      <a href="{$escapedAppUrl}" style="text-decoration:none;display:inline-flex;align-items:center;">
+                        {$logo}
+                        <span style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+                                     font-size:18px;font-weight:700;color:#0a150c;vertical-align:middle;
+                                     letter-spacing:-.01em;">Lagos Konect</span>
+                      </a>
+                    </td>
+                  </tr>
+
+                  <!-- Card -->
+                  <tr>
+                    <td class="card"
+                        style="background:#ffffff;border-radius:16px;
+                               box-shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+                               overflow:hidden;">
+
+                      <!-- Green accent bar -->
+                      <div style="height:4px;background:linear-gradient(90deg,#068927 0%,#0aaa33 100%);"></div>
+
+                      <!-- Body -->
+                      <div class="inner" style="padding:36px 40px;">
+                        {$cardBody}
+                      </div>
+
+                    </td>
+                  </tr>
+
+                  <!-- Footer -->
+                  <tr>
+                    <td class="footer" style="padding:28px 8px 8px;">
+                      <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                          <td align="center"
+                              style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+                                     font-size:12px;color:#9ca3af;line-height:1.7;text-align:center;">
+                            <p style="margin:0 0 6px;">
+                              Lagos Konect — Your Local Government, Connected.
+                            </p>
+                            <p style="margin:0 0 6px;">
+                              Questions? Email us at
+                              <a href="mailto:{$escapedSupport}"
+                                 style="color:#068927;text-decoration:none;">{$escapedSupport}</a>
+                            </p>
+                            <p style="margin:0;color:#d1d5db;">
+                              © {$year} Lagos Konect. All rights reserved.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+
         </body>
         </html>
         HTML;
