@@ -1,19 +1,26 @@
 /**
- * Lagos Konnect - Reels Page
- * Route: /reels
- * Guards: requireAuth + requireCitizen
+ * Lagos Konect — Reels Feed (Central)
+ * ============================================================
+ * TikTok / Instagram-style continuous vertical feed.
+ * Videos auto-play when scrolled into view; tap to pause/resume.
+ *
+ * Route:   /central/reels
+ * Guards:  requireAuth + requireCitizen
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js';
-import { Avatar } from '../../../components/base/UI.js';
-import { store, setPageLoading } from '../../../core/store.js';
-import { router } from '../../../core/router.js';
-import { api } from '../../../api/client.js';
-import { timeAgo } from '../../../utils/date.js';
-import { t } from '../../../core/i18n.js';
+import { WebLayout }                          from '../../../components/layout/BaseLayout.js';
+import { store, showToast, setPageLoading }   from '../../../core/store.js';
+import { router }                             from '../../../core/router.js';
+import { api }                                from '../../../api/client.js';
+import { timeAgo }                            from '../../../utils/date.js';
+import { t }                                  from '../../../core/i18n.js';
 
-function formatCount(n) {
-  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+const REGION_PREFIX = '/central';
+
+function fmtCount(n) {
+  n = Number(n) || 0;
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1_000)     return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
   return String(n);
 }
 
@@ -22,202 +29,296 @@ export default class ReelsPage extends WebLayout {
 
   constructor(props) {
     super({ title: t('reels.title'), ...props });
-    this._reels = [];
-    this._adverts = [];
-    this._page = 1;
-    this._perPage = 6;
-    this._totalPages = 0;
-    this._scrollObserver = null;
+    this._reels         = [];
+    this._page          = 1;
+    this._perPage       = 8;
+    this._totalPages    = 0;
+    this._loading       = false;
+    this._videoObserver = null;
+    this._sentinelObs   = null;
+    this._likedSet      = new Set();
   }
+
+  /* ── Shell ────────────────────────────────────────────────────────────── */
 
   getContent() {
     return `
-      <div class="reels-page" id="reels-root">
-        <h1 class="reels-page__title">${this.esc(t('reels.title'))}</h1>
-        <div class="reels-grid" id="reels-grid">
-          ${[1, 2, 3, 4, 5, 6].map(() => `
-            <div class="reel-card reel-card--skeleton">
-              <div class="reel-card__thumb skeleton-block"></div>
-            </div>
-          `).join('')}
+      <div class="rf-wrap" id="rf-wrap">
+        <div class="rf-feed" id="rf-feed" role="list"
+             aria-label="${this.esc(t('reels.title'))}">
+          ${[1, 2, 3].map(() =>
+            '<div class="rf-item rf-item--skeleton" role="presentation" aria-hidden="true"></div>'
+          ).join('')}
         </div>
-        <div class="reels-page__sentinel" id="reels-sentinel" aria-hidden="true"></div>
+        <div id="rf-sentinel" aria-hidden="true" style="height:1px;"></div>
       </div>
     `;
   }
+
+  /* ── Lifecycle ────────────────────────────────────────────────────────── */
 
   async onContentReady() {
     setPageLoading(true);
-    const [, advertsRes] = await Promise.all([
-      this._loadPage(),
-      api.adverts.getForLGA('feed'),
-    ]);
-    this._adverts = advertsRes.data || [];
+    await this._fetchPage();
     setPageLoading(false);
-
-    this._setupInfiniteScroll();
-
-    // Single delegated listener — covers all cards including future ones
-    this.delegate('.reel-card[data-reel-id]:not(.reel-ad-card)', 'click', (e, card) => {
-      if (e.target.closest('a')) return; // let author link navigate normally
-      router.push(`/central/reels/${card.dataset.reelId}`);
-    });
-  }
-
-  // ── Data ─────────────────────────────────────────────────────────────
-
-  async _loadPage() {
-    const res = await api.reels.getForLGA({ page: this._page, perPage: this._perPage });
-    if (res.error) return;
-
-    this._totalPages = res.meta?.totalPages ?? 0;
-
-    if (this._page === 1) {
-      this._reels = res.data || [];
-      this._renderGrid(this._reels);
-    } else {
-      this._reels = [...this._reels, ...(res.data || [])];
-      this._appendCards(res.data || []);
-    }
-  }
-
-  // ── Render ────────────────────────────────────────────────────────────
-
-  _renderGrid(reels) {
-    const grid = this.getContentEl()?.querySelector('#reels-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    if (!reels.length) {
-      const isDisabled = this._totalPages === 0;
-      grid.innerHTML = `
-        <div class="reels-page__empty">
-          <p>${this.esc(isDisabled ? t('reels.unavailable') : t('reels.empty'))}</p>
-        </div>
-      `;
-      return;
-    }
-    this._appendCards(reels);
-  }
-
-  _appendCards(reels) {
-    const grid = this.getContentEl()?.querySelector('#reels-grid');
-    if (!grid) return;
-
-    const existingCount = grid.querySelectorAll('.reel-card:not(.reel-ad-card)').length;
-    let adIndex = 0;
-
-    for (let i = 0; i < reels.length; i++) {
-      const reel = reels[i];
-      const slotNum = existingCount + i + 1;
-
-      // Inject ad every 6th slot
-      if (slotNum > 1 && (slotNum - 1) % 4 === 0 && this._adverts.length > 0) {
-        const ad = this._adverts[adIndex % this._adverts.length];
-        grid.appendChild(this._buildAdCard(ad));
-        adIndex++;
-      }
-
-      const card = document.createElement('div');
-      card.className = 'reel-card';
-      card.dataset.reelId = reel.reelId;
-      card.setAttribute('role', 'button');
-      card.setAttribute('tabindex', '0');
-      card.setAttribute('aria-label', t('reels.playAria', { caption: reel.caption || '' }));
-
-      const avatarHtml = Avatar.html({
-        name: reel.authorName,
-        imageUrl: reel.authorAvatarUrl,
-        size: 'xs',
-      });
-
-      card.innerHTML = `
-        <div class="reel-card__thumb-wrap">
-          ${reel.thumbnailUrl
-          ? `<img src="${reel.thumbnailUrl}" alt="" class="reel-card__thumb" loading="lazy" />`
-          : `<div class="reel-card__thumb-placeholder" data-lga="${reel.lgaName}" aria-hidden="true"></div>`
-      }
-          <div class="reel-card__author">
-            ${avatarHtml}
-            <a class="reel-card__author-name" href="/central/u/${reel.authorHandle ? this.esc(reel.authorHandle.replace('@','')) : this.esc(reel.authorName)}">${this.esc(reel.authorName)}</a>
-          </div>
-        </div>
-        <div class="reel-card__body">
-          <p class="reel-card__title">${reel.caption}</p>
-          <div class="reel-card__meta">
-            <span class="reel-card__views">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-              </svg>
-              ${formatCount(reel.views)}
-            </span>
-            <span class="reel-card__time">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-              </svg>
-              ${timeAgo(reel.publishedAt || reel.createdAt)}
-            </span>
-          </div>
-        </div>
-      `;
-      grid.appendChild(card);
-    }
-  }
-
-  _buildAdCard(ad) {
-    const card = document.createElement('div');
-    card.className = 'reel-card reel-ad-card';
-    card.dataset.advertId = ad.id;
-
-    const imgHtml = ad.imageUrl
-        ? `<img src="${ad.imageUrl}" alt="${ad.title}" class="reel-card__thumb" loading="lazy" />`
-        : `<div class="reel-card__thumb-placeholder reel-ad-card__placeholder" aria-hidden="true"></div>`;
-
-    card.innerHTML = `
-      <div class="reel-card__thumb-wrap">
-        ${imgHtml}
-        <span class="reel-ad-card__sponsored-badge">${this.esc(t('reels.sponsored'))}</span>
-      </div>
-      <div class="reel-card__body reel-ad-card__body">
-        <p class="reel-ad-card__advertiser">${ad.advertiser || ''}</p>
-        <p class="reel-card__title">${ad.title}</p>
-        ${ad.ctaUrl ? `
-          <a href="${ad.ctaUrl}" class="reel-ad-card__cta"
-             target="_blank" rel="noopener noreferrer"
-             data-ad-cta="${ad.id}">
-            ${this.esc(ad.ctaLabel || t('reels.learnMore'))} →
-          </a>` : ''}
-      </div>
-    `;
-
-    const ctaEl = card.querySelector('[data-ad-cta]');
-    if (ctaEl) {
-      ctaEl.addEventListener('click', (e) => {
-        e.stopPropagation();
-        api.adverts.recordClick(ad.id);
-      });
-    }
-
-    return card;
-  }
-
-  // ── Infinite Scroll ───────────────────────────────────────────────────
-
-  _setupInfiniteScroll() {
-    const sentinel = this.getContentEl()?.querySelector('#reels-sentinel');
-    if (!sentinel) return;
-    this._scrollObserver = new IntersectionObserver(async (entries) => {
-      if (!entries[0].isIntersecting) return;
-      if (this._page >= this._totalPages) { sentinel.hidden = true; return; }
-      this._page += 1;
-      await this._loadPage();
-      if (this._page >= this._totalPages) sentinel.hidden = true;
-    }, { rootMargin: '200px' });
-    this._scrollObserver.observe(sentinel);
-    sentinel.hidden = (this._totalPages === 0 || this._page >= this._totalPages);
+    this._setupVideoObserver();
+    this._setupSentinel();
+    this._bindEvents();
   }
 
   beforeUnmount() {
-    this._scrollObserver?.disconnect();
-    this._scrollObserver = null;
+    this._videoObserver?.disconnect();
+    this._sentinelObs?.disconnect();
+    this._videoObserver = null;
+    this._sentinelObs   = null;
+    this._feedEl()?.querySelectorAll('video').forEach(v => v.pause());
   }
+
+  /* ── Data ─────────────────────────────────────────────────────────────── */
+
+  async _fetchPage() {
+    if (this._loading) return;
+    this._loading = true;
+    const res = await api.reels.getForLGA({ page: this._page, perPage: this._perPage });
+    this._loading = false;
+    if (res.error) return;
+    this._totalPages = res.meta?.totalPages ?? 0;
+    const items = res.data || [];
+    if (this._page === 1) {
+      this._reels = items;
+      this._renderAll(items);
+    } else {
+      this._reels = [...this._reels, ...items];
+      this._appendItems(items);
+    }
+  }
+
+  /* ── Render ───────────────────────────────────────────────────────────── */
+
+  _renderAll(reels) {
+    const feed = this._feedEl();
+    if (!feed) return;
+    feed.innerHTML = '';
+    if (!reels.length) {
+      feed.innerHTML = `
+        <div class="rf-empty">
+          <p>${this.esc(t('reels.empty') || 'No reels yet for your LGA.')}</p>
+        </div>`;
+      return;
+    }
+    this._appendItems(reels);
+  }
+
+  _appendItems(reels) {
+    const feed = this._feedEl();
+    if (!feed) return;
+    for (const reel of reels) {
+      const el = this._buildItem(reel);
+      feed.appendChild(el);
+      this._videoObserver?.observe(el);
+    }
+  }
+
+  _buildItem(reel) {
+    const el        = document.createElement('div');
+    el.className    = 'rf-item';
+    el.dataset.reelId = reel.reelId;
+    el.setAttribute('role', 'listitem');
+
+    const isLiked  = !!reel.isLiked;
+    if (isLiked) this._likedSet.add(reel.reelId);
+
+    const caption  = this.esc(reel.caption || reel.title || '');
+    const author   = this.esc(reel.authorName || '');
+    const initial  = author ? author[0].toUpperCase() : '?';
+    const timeStr  = reel.publishedAt ? this.esc(timeAgo(reel.publishedAt)) : '';
+    const likes    = fmtCount(reel.likeCount    ?? 0);
+    const comments = fmtCount(reel.commentCount ?? 0);
+    const hasVideo = !!reel.videoUrl;
+    const thumb    = reel.thumbnailUrl ? this.esc(reel.thumbnailUrl) : '';
+
+    let mediaHtml;
+    if (hasVideo) {
+      mediaHtml = `
+        <video class="rf-item__video"
+               src="${this.esc(reel.videoUrl)}"
+               loop muted playsinline preload="metadata"
+               ${thumb ? `poster="${thumb}"` : ''}
+               aria-label="${caption || 'Video reel'}"></video>
+        <div class="rf-item__pause-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="white" width="36" height="36" aria-hidden="true">
+            <rect x="6" y="4" width="4" height="16"/>
+            <rect x="14" y="4" width="4" height="16"/>
+          </svg>
+        </div>`;
+    } else if (thumb) {
+      mediaHtml = `<img class="rf-item__thumb" src="${thumb}" alt="" loading="lazy">`;
+    } else {
+      mediaHtml = `<div class="rf-item__thumb-placeholder"></div>`;
+    }
+
+    el.innerHTML = `
+      ${mediaHtml}
+      <div class="rf-item__overlay" aria-hidden="true"></div>
+      <div class="rf-item__controls">
+        <div class="rf-item__info">
+          <div class="rf-item__author">
+            <span class="rf-item__avatar" aria-hidden="true">${initial}</span>
+            <span class="rf-item__author-name">${author}</span>
+            ${timeStr ? `<span class="rf-item__time">${timeStr}</span>` : ''}
+          </div>
+          ${caption ? `<p class="rf-item__caption">${caption}</p>` : ''}
+        </div>
+        <div class="rf-item__actions">
+          <button class="rf-item__btn${isLiked ? ' rf-item__btn--liked' : ''}"
+                  data-action="like"
+                  aria-label="${isLiked ? 'Unlike' : 'Like'}"
+                  aria-pressed="${isLiked}">
+            <svg viewBox="0 0 24 24" width="28" height="28"
+                 fill="${isLiked ? 'currentColor' : 'none'}"
+                 stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span class="rf-item__btn-count" data-like-count>${likes}</span>
+          </button>
+          <button class="rf-item__btn" data-action="comment"
+                  aria-label="View ${comments} comments">
+            <svg viewBox="0 0 24 24" width="26" height="26"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span class="rf-item__btn-count">${comments}</span>
+          </button>
+        </div>
+      </div>
+      <button class="rf-item__tap"
+              data-action="${hasVideo ? 'playpause' : 'open'}"
+              aria-label="${hasVideo ? 'Play or pause video' : 'Open reel'}"
+              tabindex="0"></button>
+    `;
+
+    return el;
+  }
+
+  /* ── Events ───────────────────────────────────────────────────────────── */
+
+  _bindEvents() {
+    const wrap = this._wrapEl();
+    if (!wrap) return;
+
+    wrap.addEventListener('click', (e) => {
+      const btn    = e.target.closest('[data-action]');
+      if (!btn) return;
+      const item   = btn.closest('.rf-item[data-reel-id]');
+      if (!item) return;
+      const reelId = item.dataset.reelId;
+
+      switch (btn.dataset.action) {
+        case 'like':      e.stopPropagation(); this._toggleLike(item, reelId); break;
+        case 'comment':   e.stopPropagation(); router.push(`${REGION_PREFIX}/reels/${reelId}`); break;
+        case 'open':      router.push(`${REGION_PREFIX}/reels/${reelId}`); break;
+        case 'playpause': this._togglePlay(item); break;
+      }
+    });
+  }
+
+  async _toggleLike(item, reelId) {
+    const reel  = this._reels.find(r => r.reelId === reelId);
+    if (!reel) return;
+    const liked  = this._likedSet.has(reelId);
+    const btn    = item.querySelector('[data-action="like"]');
+    const cntEl  = item.querySelector('[data-like-count]');
+    const svg    = btn?.querySelector('svg');
+    const delta  = liked ? -1 : 1;
+
+    reel.likeCount = (reel.likeCount ?? 0) + delta;
+    if (!liked) {
+      this._likedSet.add(reelId);
+      btn?.classList.add('rf-item__btn--liked');
+      btn?.setAttribute('aria-pressed', 'true');
+      btn?.setAttribute('aria-label', 'Unlike');
+      svg?.setAttribute('fill', 'currentColor');
+    } else {
+      this._likedSet.delete(reelId);
+      btn?.classList.remove('rf-item__btn--liked');
+      btn?.setAttribute('aria-pressed', 'false');
+      btn?.setAttribute('aria-label', 'Like');
+      svg?.setAttribute('fill', 'none');
+    }
+    if (cntEl) cntEl.textContent = fmtCount(reel.likeCount);
+
+    const res = await api.reels.toggleLike(reelId);
+    if (res.error) {
+      reel.likeCount -= delta;
+      if (!liked) {
+        this._likedSet.delete(reelId); btn?.classList.remove('rf-item__btn--liked');
+        btn?.setAttribute('aria-pressed', 'false'); svg?.setAttribute('fill', 'none');
+      } else {
+        this._likedSet.add(reelId); btn?.classList.add('rf-item__btn--liked');
+        btn?.setAttribute('aria-pressed', 'true'); svg?.setAttribute('fill', 'currentColor');
+      }
+      if (cntEl) cntEl.textContent = fmtCount(reel.likeCount);
+      showToast('error', 'Could not update like. Please try again.');
+    }
+  }
+
+  _togglePlay(item) {
+    const video    = item.querySelector('video');
+    const pauseIco = item.querySelector('.rf-item__pause-icon');
+    if (!video) return;
+    if (video.paused) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+      if (pauseIco) {
+        pauseIco.classList.add('rf-item__pause-icon--show');
+        setTimeout(() => pauseIco.classList.remove('rf-item__pause-icon--show'), 900);
+      }
+    }
+  }
+
+  /* ── Video auto-play observer ─────────────────────────────────────────── */
+
+  _setupVideoObserver() {
+    this._videoObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const video = entry.target.querySelector('video');
+        if (!video) continue;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      }
+    }, { threshold: 0.6 });
+
+    this._feedEl()?.querySelectorAll('.rf-item').forEach(el => {
+      this._videoObserver.observe(el);
+    });
+  }
+
+  /* ── Infinite scroll ──────────────────────────────────────────────────── */
+
+  _setupSentinel() {
+    const sentinel = this.getContentEl()?.querySelector('#rf-sentinel');
+    if (!sentinel) return;
+
+    this._sentinelObs = new IntersectionObserver(async (entries) => {
+      if (!entries[0].isIntersecting) return;
+      if (this._page >= this._totalPages) { sentinel.style.display = 'none'; return; }
+      this._page++;
+      await this._fetchPage();
+      if (this._page >= this._totalPages) sentinel.style.display = 'none';
+    }, { rootMargin: '400px' });
+
+    this._sentinelObs.observe(sentinel);
+    if (this._totalPages <= 1) sentinel.style.display = 'none';
+  }
+
+  /* ── Helpers ──────────────────────────────────────────────────────────── */
+
+  _feedEl() { return this.getContentEl()?.querySelector('#rf-feed'); }
+  _wrapEl() { return this.getContentEl()?.querySelector('#rf-wrap'); }
 }

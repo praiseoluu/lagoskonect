@@ -288,14 +288,9 @@ class EmailService {
         $escapedSupport = htmlspecialchars($support,     ENT_QUOTES, 'UTF-8');
         $escapedAppUrl  = htmlspecialchars($appUrl,      ENT_QUOTES, 'UTF-8');
 
-        // Inline SVG wordmark — renders in all major clients
-        $logo = <<<SVG
-          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" style="display:inline-block;vertical-align:middle;margin-right:10px;">
-            <rect width="36" height="36" rx="9" fill="#068927"/>
-            <text x="18" y="25" font-family="system-ui,sans-serif" font-size="18" font-weight="800"
-                  fill="#ffffff" text-anchor="middle">LK</text>
-          </svg>
-        SVG;
+        // Table-based logo — SVG is not supported in Gmail/Outlook; a <td> with
+        // background-color renders correctly in every major email client.
+        $logo = '<table cellpadding="0" cellspacing="0" role="presentation" style="display:inline-table;vertical-align:middle;margin-right:10px;"><tr><td style="background:#068927;border-radius:9px;width:36px;height:36px;text-align:center;vertical-align:middle;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;font-size:16px;font-weight:800;color:#ffffff;line-height:1;padding:0;">LK</td></tr></table>';
 
         return <<<HTML
         <!DOCTYPE html>
