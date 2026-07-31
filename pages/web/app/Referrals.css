@@ -171,21 +171,35 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    padding: 9px 16px;
+    padding: 10px 18px;
     border-radius: 8px;
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    border: 1.5px solid var(--color-border, #e5e7eb);
-    background: var(--color-surface, #fff);
-    color: var(--color-text-primary);
-    transition: background 0.15s, border-color 0.15s;
+    border: none;
+    color: #fff;
+    transition: opacity 0.15s, transform 0.1s;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
 }
 
-.ref-share-btn:hover {
-    background: var(--color-bg, #f9fafb);
-    border-color: var(--color-primary, #16a34a);
-    color: var(--color-primary, #16a34a);
+.ref-share-btn:hover  { opacity: 0.88; }
+.ref-share-btn:active { transform: scale(0.97); }
+
+/* WhatsApp — green */
+.ref-share-btn--whatsapp {
+    background: #25D366;
+}
+
+/* Twitter / X — black */
+.ref-share-btn--twitter {
+    background: #000;
+}
+
+/* Email — primary green */
+.ref-share-btn--email {
+    background: var(--color-primary, #068927);
 }
 
 /* ── History card ───────────────────────────────────────────────────────── */

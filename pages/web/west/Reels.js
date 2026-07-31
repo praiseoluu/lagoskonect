@@ -1,8 +1,9 @@
 /**
  * Lagos Konect — Reels Feed (West)
  * ============================================================
- * TikTok / Instagram-style continuous vertical feed.
- * Videos auto-play when scrolled into view; tap to pause/resume.
+ * Light-theme vertical feed. Like / comment / share live below
+ * the video. Comments open as an inline slide-up drawer — no
+ * page navigation needed.
  *
  * Route:   /west/reels
  * Guards:  requireAuth + requireCitizen
@@ -120,8 +121,8 @@ export default class ReelsPage extends WebLayout {
   }
 
   _buildItem(reel) {
-    const el        = document.createElement('div');
-    el.className    = 'rf-item';
+    const el = document.createElement('div');
+    el.className      = 'rf-item';
     el.dataset.reelId = reel.reelId;
     el.setAttribute('role', 'listitem');
 
@@ -158,23 +159,65 @@ export default class ReelsPage extends WebLayout {
     }
 
     el.innerHTML = `
-      ${mediaHtml}
-      <div class="rf-item__overlay" aria-hidden="true"></div>
-      <div class="rf-item__controls">
-        <div class="rf-item__info">
-          <div class="rf-item__author">
-            <span class="rf-item__avatar" aria-hidden="true">${initial}</span>
-            <span class="rf-item__author-name">${author}</span>
-            ${timeStr ? `<span class="rf-item__time">${timeStr}</span>` : ''}
-          </div>
-          ${caption ? `<p class="rf-item__caption">${caption}</p>` : ''}
+      <div class="rf-item__media">
+        ${mediaHtml}
+
+        <div class="rf-item__video-info" aria-hidden="true">
+          <span class="rf-item__avatar">${initial}</span>
+          <span class="rf-item__author-name">${author}</span>
+          ${timeStr ? `<span class="rf-item__time">${timeStr}</span>` : ''}
         </div>
-        <div class="rf-item__actions">
+
+        <button class="rf-item__tap"
+                data-action="${hasVideo ? 'playpause' : 'open'}"
+                aria-label="${hasVideo ? 'Play or pause video' : 'Open reel'}"
+                tabindex="0"></button>
+
+        <!-- Inline comment drawer -->
+        <div class="rf-item__comment-drawer" id="cd-${reel.reelId}"
+             role="dialog" aria-label="Comments" aria-hidden="true">
+          <div class="rf-item__comment-drawer-handle">
+            <p class="rf-item__comment-drawer-title">
+              Comments <span data-comment-count>(${comments})</span>
+            </p>
+            <button class="rf-item__comment-close" data-action="close-comments"
+                    aria-label="Close comments">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          <div class="rf-item__comments-list" id="cl-${reel.reelId}" role="list">
+            <div class="rf-item__comment-loading">Loading comments…</div>
+          </div>
+          <div class="rf-item__comment-input-row">
+            <input class="rf-item__comment-input" id="ci-${reel.reelId}"
+                   type="text" placeholder="Add a comment…"
+                   maxlength="500" autocomplete="off" />
+            <button class="rf-item__comment-send" data-action="send-comment"
+                    aria-label="Post comment">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rf-item__below">
+        ${caption ? `<p class="rf-item__caption">${caption}</p>` : ''}
+        <div class="rf-item__action-bar">
           <button class="rf-item__btn${isLiked ? ' rf-item__btn--liked' : ''}"
                   data-action="like"
                   aria-label="${isLiked ? 'Unlike' : 'Like'}"
                   aria-pressed="${isLiked}">
-            <svg viewBox="0 0 24 24" width="28" height="28"
+            <svg viewBox="0 0 24 24" width="20" height="20"
                  fill="${isLiked ? 'currentColor' : 'none'}"
                  stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -182,21 +225,31 @@ export default class ReelsPage extends WebLayout {
             </svg>
             <span class="rf-item__btn-count" data-like-count>${likes}</span>
           </button>
-          <button class="rf-item__btn" data-action="comment"
-                  aria-label="View ${comments} comments">
-            <svg viewBox="0 0 24 24" width="26" height="26"
+
+          <button class="rf-item__btn" data-action="comment" aria-label="Comments">
+            <svg viewBox="0 0 24 24" width="20" height="20"
                  fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
             <span class="rf-item__btn-count">${comments}</span>
           </button>
+
+          <button class="rf-item__btn rf-item__btn--share" data-action="share"
+                  aria-label="Share reel">
+            <svg viewBox="0 0 24 24" width="20" height="20"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="18" cy="5"  r="3"/>
+              <circle cx="6"  cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59"  y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51"  x2="8.59"  y2="10.49"/>
+            </svg>
+            Share
+          </button>
         </div>
       </div>
-      <button class="rf-item__tap"
-              data-action="${hasVideo ? 'playpause' : 'open'}"
-              aria-label="${hasVideo ? 'Play or pause video' : 'Open reel'}"
-              tabindex="0"></button>
     `;
 
     return el;
@@ -216,13 +269,29 @@ export default class ReelsPage extends WebLayout {
       const reelId = item.dataset.reelId;
 
       switch (btn.dataset.action) {
-        case 'like':      e.stopPropagation(); this._toggleLike(item, reelId); break;
-        case 'comment':   e.stopPropagation(); router.push(`${REGION_PREFIX}/reels/${reelId}`); break;
-        case 'open':      router.push(`${REGION_PREFIX}/reels/${reelId}`); break;
-        case 'playpause': this._togglePlay(item); break;
+        case 'like':           e.stopPropagation(); this._toggleLike(item, reelId); break;
+        case 'comment':        e.stopPropagation(); this._toggleCommentDrawer(item, reelId); break;
+        case 'close-comments': e.stopPropagation(); this._closeCommentDrawer(item); break;
+        case 'send-comment':   e.stopPropagation(); this._sendComment(item, reelId); break;
+        case 'share':          e.stopPropagation(); this._shareReel(reelId); break;
+        case 'open':           router.push(`${REGION_PREFIX}/reels/${reelId}`); break;
+        case 'playpause':      this._togglePlay(item); break;
       }
     });
+
+    // Enter key submits comment
+    wrap.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.shiftKey) return;
+      const input = e.target.closest('.rf-item__comment-input');
+      if (!input) return;
+      const item = input.closest('.rf-item[data-reel-id]');
+      if (!item) return;
+      e.preventDefault();
+      this._sendComment(item, item.dataset.reelId);
+    });
   }
+
+  /* ── Like ─────────────────────────────────────────────────────────────── */
 
   async _toggleLike(item, reelId) {
     const reel  = this._reels.find(r => r.reelId === reelId);
@@ -233,7 +302,6 @@ export default class ReelsPage extends WebLayout {
     const svg    = btn?.querySelector('svg');
     const delta  = liked ? -1 : 1;
 
-    // Optimistic update
     reel.likeCount = (reel.likeCount ?? 0) + delta;
     if (!liked) {
       this._likedSet.add(reelId);
@@ -252,7 +320,6 @@ export default class ReelsPage extends WebLayout {
 
     const res = await api.reels.toggleLike(reelId);
     if (res.error) {
-      // Revert
       reel.likeCount -= delta;
       if (!liked) {
         this._likedSet.delete(reelId);
@@ -269,6 +336,119 @@ export default class ReelsPage extends WebLayout {
       showToast('error', 'Could not update like. Please try again.');
     }
   }
+
+  /* ── Inline comment drawer ────────────────────────────────────────────── */
+
+  async _toggleCommentDrawer(item, reelId) {
+    const drawer = item.querySelector(`#cd-${reelId}`);
+    if (!drawer) return;
+    if (drawer.classList.contains('rf-item__comment-drawer--open')) {
+      this._closeCommentDrawer(item);
+    } else {
+      drawer.classList.add('rf-item__comment-drawer--open');
+      drawer.setAttribute('aria-hidden', 'false');
+      if (!drawer.dataset.loaded) {
+        await this._loadComments(item, reelId);
+        drawer.dataset.loaded = '1';
+      }
+      item.querySelector(`#ci-${reelId}`)?.focus();
+    }
+  }
+
+  _closeCommentDrawer(item) {
+    const drawer = item.querySelector('.rf-item__comment-drawer');
+    if (!drawer) return;
+    drawer.classList.remove('rf-item__comment-drawer--open');
+    drawer.setAttribute('aria-hidden', 'true');
+  }
+
+  async _loadComments(item, reelId) {
+    const list = item.querySelector(`#cl-${reelId}`);
+    if (!list) return;
+    const res = await api.reels.getComments(reelId, { perPage: 20 });
+    if (res.error || !res.data?.length) {
+      list.innerHTML = '<div class="rf-item__comment-empty">No comments yet. Be the first!</div>';
+      return;
+    }
+    list.innerHTML = res.data.map(c => `
+      <div class="rf-item__comment-item" role="listitem">
+        <div class="rf-item__comment-avatar">${(c.authorName || c.author || '?')[0].toUpperCase()}</div>
+        <div class="rf-item__comment-body">
+          <div class="rf-item__comment-author">${this.esc(c.authorName || c.author || 'Anonymous')}</div>
+          <p class="rf-item__comment-text">${this.esc(c.text || c.content || '')}</p>
+          <div class="rf-item__comment-time">${c.createdAt ? this.esc(timeAgo(c.createdAt)) : ''}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async _sendComment(item, reelId) {
+    const input   = item.querySelector(`#ci-${reelId}`);
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+
+    const sendBtn = item.querySelector('[data-action="send-comment"]');
+    input.disabled = true;
+    if (sendBtn) sendBtn.disabled = true;
+
+    const res = await api.reels.postComment(reelId, { text });
+
+    input.disabled = false;
+    if (sendBtn) sendBtn.disabled = false;
+
+    if (res.error) {
+      showToast('error', 'Could not post comment. Please try again.');
+      return;
+    }
+
+    input.value = '';
+
+    const list = item.querySelector(`#cl-${reelId}`);
+    if (list) {
+      list.querySelector('.rf-item__comment-empty')?.remove();
+      const name = store.currentUser?.name || 'You';
+      const node = document.createElement('div');
+      node.className = 'rf-item__comment-item';
+      node.setAttribute('role', 'listitem');
+      node.innerHTML = `
+        <div class="rf-item__comment-avatar">${name[0].toUpperCase()}</div>
+        <div class="rf-item__comment-body">
+          <div class="rf-item__comment-author">${this.esc(name)}</div>
+          <p class="rf-item__comment-text">${this.esc(text)}</p>
+          <div class="rf-item__comment-time">Just now</div>
+        </div>
+      `;
+      list.insertBefore(node, list.firstChild);
+      list.scrollTop = 0;
+    }
+
+    const reel = this._reels.find(r => r.reelId === reelId);
+    if (reel) {
+      reel.commentCount = (reel.commentCount ?? 0) + 1;
+      const cntEl   = item.querySelector('[data-action="comment"] .rf-item__btn-count');
+      const cntBadge = item.querySelector('[data-comment-count]');
+      if (cntEl)   cntEl.textContent   = fmtCount(reel.commentCount);
+      if (cntBadge) cntBadge.textContent = `(${fmtCount(reel.commentCount)})`;
+    }
+  }
+
+  /* ── Share ────────────────────────────────────────────────────────────── */
+
+  _shareReel(reelId) {
+    const reel  = this._reels.find(r => r.reelId === reelId);
+    const url   = `${window.location.origin}${REGION_PREFIX}/reels/${reelId}`;
+    const title = reel?.caption || reel?.title || 'Check out this reel on Lagos Konect';
+    if (navigator.share) {
+      navigator.share({ title, url }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(url)
+        .then(() => showToast('success', 'Link copied to clipboard!'))
+        .catch(() => showToast('info', `Share: ${url}`));
+    }
+  }
+
+  /* ── Play / pause ─────────────────────────────────────────────────────── */
 
   _togglePlay(item) {
     const video    = item.querySelector('video');
@@ -296,6 +476,7 @@ export default class ReelsPage extends WebLayout {
           video.play().catch(() => {});
         } else {
           video.pause();
+          this._closeCommentDrawer(entry.target);
         }
       }
     }, { threshold: 0.6 });
