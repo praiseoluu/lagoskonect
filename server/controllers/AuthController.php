@@ -210,17 +210,34 @@ class AuthController {
         $allowedGenders = ['male', 'female', 'prefer_not_to_say'];
         $safeGender = in_array($gender, $allowedGenders) ? $gender : null;
 
-        $insert = $this->db->prepare('
-            INSERT INTO users
-                (name, username, referral_code, referred_by_user_id, gender, password, lga_id, lga_name, region, role,
-                 is_verified, status, otp_hash, otp_expires_at, created_at, updated_at)
-            VALUES
-                (?, ?, CONCAT("LK", UPPER(SUBSTRING(MD5(CONCAT(?, "-", UUID())), 1, 8))), ?, ?, ?, ?, ?, ?, "citizen",
-                 0, "pending", ?, ?, NOW(), NOW())
-        ');
-        $insert->execute([$name, $username, $email, $referrerId, $safeGender, $hashed, $lgaId, $lga['name'], $region, hash('sha256', (string)$otp), $expiry]);
+        // ── Sequential ID generation ───────────────────────────────────────
+        // Instead of relying on AUTO_INCREMENT (which skips numbers when
+        // inserts fail or transactions roll back), we compute the next ID
+        // inside a transaction with a row-level lock so IDs are always
+        // gap-free and start from 100001.
+        $this->db->beginTransaction();
+        try {
+            $idStmt = $this->db->query(
+                'SELECT COALESCE(MAX(id), 100000) + 1 FROM users WHERE id >= 100000 FOR UPDATE'
+            );
+            $nextId = (int) $idStmt->fetchColumn();
 
-        $userId = (int) $this->db->lastInsertId();
+            $insert = $this->db->prepare('
+                INSERT INTO users
+                    (id, name, username, referral_code, referred_by_user_id, gender, password, lga_id, lga_name, region, role,
+                     is_verified, status, otp_hash, otp_expires_at, created_at, updated_at)
+                VALUES
+                    (?, ?, ?, CONCAT("LK", UPPER(SUBSTRING(MD5(CONCAT(?, "-", UUID())), 1, 8))), ?, ?, ?, ?, ?, ?, "citizen",
+                     0, "pending", ?, ?, NOW(), NOW())
+            ');
+            $insert->execute([$nextId, $name, $username, $email, $referrerId, $safeGender, $hashed, $lgaId, $lga['name'], $region, hash('sha256', (string)$otp), $expiry]);
+
+            $userId = $nextId;
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            Response::error('SERVER_ERROR', 'Could not complete registration. Please try again.', 500);
+        }
 
         EmailService::sendOtp($email, $name, $otp, 'phone');
 
