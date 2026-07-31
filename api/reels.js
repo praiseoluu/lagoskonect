@@ -36,6 +36,11 @@ export const reels = {
     return await _fetch('POST', '/reels/' + reelId + '/comments', { text });
   },
 
+  // Alias used by some Reels page components
+  async postComment(reelId, body) {
+    return this.addComment(reelId, body?.text ?? body);
+  },
+
   async upload(file, caption, hashtags, onProgress, thumbnailBlob) {
     caption = caption || '';
     hashtags = hashtags || [];

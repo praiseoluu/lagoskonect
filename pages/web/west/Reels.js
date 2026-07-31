@@ -151,7 +151,10 @@ export default class ReelsPage extends WebLayout {
             <rect x="6" y="4" width="4" height="16"/>
             <rect x="14" y="4" width="4" height="16"/>
           </svg>
-        </div>`;
+        </div>
+        <button class="rf-item__mute-btn" data-action="toggle-mute" aria-label="Unmute video">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        </button>`;
     } else if (thumb) {
       mediaHtml = `<img class="rf-item__thumb" src="${thumb}" alt="" loading="lazy">`;
     } else {
@@ -276,6 +279,7 @@ export default class ReelsPage extends WebLayout {
         case 'share':          e.stopPropagation(); this._shareReel(reelId); break;
         case 'open':           router.push(`${REGION_PREFIX}/reels/${reelId}`); break;
         case 'playpause':      this._togglePlay(item); break;
+        case 'toggle-mute':    e.stopPropagation(); this._toggleMute(item); break;
       }
     });
 
@@ -318,23 +322,7 @@ export default class ReelsPage extends WebLayout {
     }
     if (cntEl) cntEl.textContent = fmtCount(reel.likeCount);
 
-    const res = await api.reels.toggleLike(reelId);
-    if (res.error) {
-      reel.likeCount -= delta;
-      if (!liked) {
-        this._likedSet.delete(reelId);
-        btn?.classList.remove('rf-item__btn--liked');
-        btn?.setAttribute('aria-pressed', 'false');
-        svg?.setAttribute('fill', 'none');
-      } else {
-        this._likedSet.add(reelId);
-        btn?.classList.add('rf-item__btn--liked');
-        btn?.setAttribute('aria-pressed', 'true');
-        svg?.setAttribute('fill', 'currentColor');
-      }
-      if (cntEl) cntEl.textContent = fmtCount(reel.likeCount);
-      showToast('error', 'Could not update like. Please try again.');
-    }
+    api.reels.toggleLike(reelId);
   }
 
   /* ── Inline comment drawer ────────────────────────────────────────────── */
@@ -388,20 +376,7 @@ export default class ReelsPage extends WebLayout {
     const text = input.value.trim();
     if (!text) return;
 
-    const sendBtn = item.querySelector('[data-action="send-comment"]');
-    input.disabled = true;
-    if (sendBtn) sendBtn.disabled = true;
-
-    const res = await api.reels.postComment(reelId, { text });
-
-    input.disabled = false;
-    if (sendBtn) sendBtn.disabled = false;
-
-    if (res.error) {
-      showToast('error', 'Could not post comment. Please try again.');
-      return;
-    }
-
+    // Optimistic: insert comment immediately, then sync to server
     input.value = '';
 
     const list = item.querySelector(`#cl-${reelId}`);
@@ -431,6 +406,7 @@ export default class ReelsPage extends WebLayout {
       if (cntEl)   cntEl.textContent   = fmtCount(reel.commentCount);
       if (cntBadge) cntBadge.textContent = `(${fmtCount(reel.commentCount)})`;
     }
+    api.reels.addComment(reelId, text);
   }
 
   /* ── Share ────────────────────────────────────────────────────────────── */
@@ -466,6 +442,17 @@ export default class ReelsPage extends WebLayout {
   }
 
   /* ── Video auto-play observer ─────────────────────────────────────────── */
+
+  _toggleMute(item) {
+    const video = item.querySelector('video');
+    const btn   = item.querySelector('[data-action="toggle-mute"]');
+    if (!video || !btn) return;
+    video.muted = !video.muted;
+    btn.setAttribute('aria-label', video.muted ? 'Unmute video' : 'Mute video');
+    btn.innerHTML = video.muted
+      ? `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`
+      : `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+  }
 
   _setupVideoObserver() {
     this._videoObserver = new IntersectionObserver((entries) => {

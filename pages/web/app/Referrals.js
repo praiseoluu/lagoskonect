@@ -171,5 +171,22 @@ export default class ReferralsPage extends WebLayout {
                 window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener');
             });
         }
+
+        const twitterBtn = root.querySelector('#share-twitter-btn');
+        if (twitterBtn) {
+            this.on(twitterBtn, 'click', () => {
+                const text = encodeURIComponent(`Join me on Lagos Konect — your local government, connected! Sign up here: ${link}`);
+                window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank', 'noopener');
+            });
+        }
+
+        const emailBtn = root.querySelector('#share-email-btn');
+        if (emailBtn) {
+            this.on(emailBtn, 'click', () => {
+                const subject = encodeURIComponent('Join me on Lagos Konect!');
+                const body = encodeURIComponent(`Hi!\n\nI'd like to invite you to join Lagos Konect — a civic engagement app that keeps you connected with your local government.\n\nSign up using my referral link:\n${link}\n\nSee you there!`);
+                window.location.href = `mailto:?subject=${subject}&body=${body}`;
+            });
+        }
     }
 }

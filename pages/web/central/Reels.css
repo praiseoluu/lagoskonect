@@ -254,3 +254,28 @@
 .reel-ad-card__cta:hover { opacity: 0.85; }
 /* Ensure hidden attribute works even when display is set by class */
 .reels-page__load-more[hidden] { display: none !important; }
+/* ── Mute / unmute toggle ─────────────────────────────────────────────── */
+.rf-item__mute-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  color: white;
+  transition: background 0.2s;
+  padding: 0;
+}
+.rf-item__mute-btn:hover {
+  background: rgba(0, 0, 0, 0.72);
+}
+
