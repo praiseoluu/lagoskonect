@@ -238,6 +238,61 @@ class ReferralController {
         ]);
     }
 
+    // ── Admin: per-user referral history ──────────────────────────
+    // GET /admin/referrals/user/:userId
+
+    public function getUserReferrals(int $userId): void {
+        $this->requireAdmin();
+
+        $user = $this->fetchUser($userId);
+
+        $page    = max(1, (int)($_GET['page']    ?? 1));
+        $perPage = min(50, max(1, (int)($_GET['perPage'] ?? 20)));
+        $offset  = ($page - 1) * $perPage;
+
+        $cntStmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM users WHERE referred_by_user_id = ?'
+        );
+        $cntStmt->execute([$userId]);
+        $total = (int)$cntStmt->fetchColumn();
+
+        $stmt = $this->db->prepare(
+            'SELECT id, name, username, status, is_verified, created_at, avatar_url
+             FROM users
+             WHERE referred_by_user_id = ?
+             ORDER BY created_at DESC
+             LIMIT ? OFFSET ?'
+        );
+        $stmt->execute([$userId, $perPage, $offset]);
+        $rows = $stmt->fetchAll();
+
+        $entries = array_map(function ($r) {
+            $confirmed = (bool)$r['is_verified'] && $r['status'] === 'active';
+            return [
+                'userId'    => (int)$r['id'],
+                'name'      => $r['name'],
+                'username'  => $r['username'],
+                'avatarUrl' => $r['avatar_url'] ?: null,
+                'joinedAt'  => $r['created_at'],
+                'status'    => $confirmed ? 'confirmed' : 'pending',
+            ];
+        }, $rows);
+
+        Response::json(
+            ['user' => [
+                'userId'       => (int)$user['id'],
+                'name'         => $user['name'],
+                'username'     => $user['username'],
+                'referralCount'=> (int)$user['referral_count'],
+            ], 'entries' => $entries],
+            200,
+            ['total'      => $total,
+             'page'       => $page,
+             'perPage'    => $perPage,
+             'totalPages' => max(1, (int)ceil($total / $perPage))]
+        );
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private function fetchUser(int $userId): array {

@@ -146,9 +146,13 @@ export const auth = {
   /**
    * Initiate Google OAuth login.
    * Fetches the Google auth URL from the backend and redirects the browser.
+   * @param {string} [referralCode] - Optional referral code to pass through OAuth flow.
    */
-  async loginWithGoogle() {
-    const res = await _fetch('GET', '/auth/oauth/google/redirect', null, false);
+  async loginWithGoogle(referralCode) {
+    const params = new URLSearchParams();
+    if (referralCode) params.set('ref', referralCode);
+    const qs = params.toString() ? '?' + params : '';
+    const res = await _fetch('GET', '/auth/oauth/google/redirect' + qs, null, false);
     if (res.error) return res;
     // Redirect the full browser window to Google's consent screen
     window.location.href = res.data.url;

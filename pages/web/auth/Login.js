@@ -188,11 +188,14 @@ export default class LoginPage extends Component {
     }));
     this._submitBtn.mount(this.$('#submit-mount'));
 
-    // ── Google OAuth ─────────────────────────────────────────────────────
-    const googleBtn = this.$('#google-login-btn');
-    if (googleBtn) {
-      this.on(googleBtn, 'click', () => api.auth.loginWithGoogle());
-    }
+     // ── Google OAuth ─────────────────────────────────────────────────────
+     const googleBtn = this.$('#google-login-btn');
+     if (googleBtn) {
+       this.on(googleBtn, 'click', () => {
+         const ref = new URLSearchParams(window.location.search).get('ref');
+         api.auth.loginWithGoogle(ref || undefined);
+       });
+     }
   }
 
   /* ── Private helpers ──────────────────────────────────────────────────── */

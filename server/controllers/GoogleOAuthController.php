@@ -33,12 +33,13 @@ class GoogleOAuthController {
 
     public function redirect(): void {
         $state = bin2hex(random_bytes(16));
+        $referralCode = strtoupper(trim($_GET['ref'] ?? ''));
 
         // Store state in DB for CSRF verification
         $this->db->prepare('
-            INSERT INTO oauth_states (state, provider, created_at)
-            VALUES (?, "google", NOW())
-        ')->execute([$state]);
+            INSERT INTO oauth_states (state, provider, referral_code, created_at)
+            VALUES (?, "google", ?, NOW())
+        ')->execute([$state, $referralCode ?: null]);
 
         $params = http_build_query([
             'client_id'     => GOOGLE_CLIENT_ID,
@@ -78,15 +79,18 @@ class GoogleOAuthController {
 
         // Verify state to prevent CSRF
         $stateStmt = $this->db->prepare('
-            SELECT id FROM oauth_states
+            SELECT id, referral_code FROM oauth_states
             WHERE state = ? AND provider = "google"
             AND created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)
         ');
         $stateStmt->execute([$state]);
-        if (!$stateStmt->fetch()) {
+        $stateRow = $stateStmt->fetch();
+        if (!$stateRow) {
             $this->redirectToFrontend(['error' => 'oauth_state_invalid']);
             return;
         }
+
+        $referralCode = $stateRow['referral_code'] ?: null;
 
         // Clean up used state
         $this->db->prepare('DELETE FROM oauth_states WHERE state = ?')->execute([$state]);
@@ -106,7 +110,7 @@ class GoogleOAuthController {
         }
 
         // Find or create user
-        $result = $this->findOrCreateUser($profile);
+        $result = $this->findOrCreateUser($profile, $referralCode);
         if (!$result['success']) {
             $this->redirectToFrontend(['error' => $result['error']]);
             return;
@@ -174,7 +178,7 @@ class GoogleOAuthController {
 
     // ── Private: find or create local user ───────────────────────────────
 
-    private function findOrCreateUser(array $profile): array {
+    private function findOrCreateUser(array $profile, ?string $referralCode = null): array {
         $email     = $profile['email']      ?? '';
         $name      = $profile['name']       ?? '';
         $googleId  = $profile['sub']        ?? '';  // Google's unique user ID
@@ -209,18 +213,41 @@ class GoogleOAuthController {
         }
 
         // 3. New user — create account
+        // Generate a referral code for this user
+        $referralCodeValue = 'LK' . strtoupper(substr(md5(uniqid((string)$email, true)), 0, 8));
+
+        // Resolve referrer from referral code
+        $referrerId = null;
+        if ($referralCode !== null && $referralCode !== '') {
+            $referrerStmt = $this->db->prepare(
+                'SELECT id FROM users WHERE referral_code = ? AND is_verified = 1 AND status = "active" LIMIT 1'
+            );
+            $referrerStmt->execute([$referralCode]);
+            $referrer = $referrerStmt->fetch();
+            if ($referrer) {
+                $referrerId = (int)$referrer['id'];
+            }
+        }
+
         // New OAuth users need to select an LGA before they can use the app.
         // We create the account with status='active', is_verified=1 (email verified by Google),
         // lga_id=NULL. The frontend will detect lga_id=null and show the LGA selection screen.
         $this->db->prepare('
             INSERT INTO users
                 (name, email, google_id, avatar_url, role, is_verified, status,
-                 has_seen_welcome, created_at, updated_at)
+                 has_seen_welcome, referral_code, referred_by_user_id, created_at, updated_at)
             VALUES
-                (?, ?, ?, ?, "citizen", 1, "active", 0, NOW(), NOW())
-        ')->execute([$name, $email, $googleId, $avatarUrl]);
+                (?, ?, ?, ?, "citizen", 1, "active", 0, ?, ?, NOW(), NOW())
+        ')->execute([$name, $email, $googleId, $avatarUrl, $referralCodeValue, $referrerId]);
 
         $newId = (int) $this->db->lastInsertId();
+
+        // Award referral credit if this user was referred
+        if ($referrerId !== null) {
+            $this->db->prepare('UPDATE users SET referral_count = referral_count + 1 WHERE id = ?')
+                     ->execute([$referrerId]);
+        }
+
         $newStmt = $this->db->prepare('SELECT * FROM users WHERE id = ?');
         $newStmt->execute([$newId]);
         $newUser = $newStmt->fetch();

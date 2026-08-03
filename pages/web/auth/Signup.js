@@ -209,7 +209,10 @@ export default class SignupPage extends Component {
     // Google OAuth
     const googleBtn = this.$('#google-signup-btn');
     if (googleBtn) {
-      this.on(googleBtn, 'click', () => api.auth.loginWithGoogle());
+      this.on(googleBtn, 'click', () => {
+        const ref = new URLSearchParams(window.location.search).get('ref');
+        api.auth.loginWithGoogle(ref || undefined);
+      });
     }
   }
 

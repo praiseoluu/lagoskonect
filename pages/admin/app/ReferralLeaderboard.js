@@ -12,6 +12,7 @@
  */
 
 import { AdminLayout }                      from '../../../components/layout/BaseLayout.js';
+import { Modal }                             from '../../../components/base/Modal.js';
 import { store, setPageLoading, showToast } from '../../../core/store.js';
 import { api }                              from '../../../api/client.js';
 
@@ -62,6 +63,7 @@ export default class ReferralLeaderboardPage extends AdminLayout {
     this._region      = sessionStorage.getItem('adminRegion') || 'west';
     this._filterRegion = 'all';   // page-level region filter (overrides sidebar for this view)
     this._search       = '';
+    this._detailModal  = null;
   }
 
   getContent() {
@@ -136,9 +138,21 @@ export default class ReferralLeaderboardPage extends AdminLayout {
           <div class="rl-loading">Loading leaderboard…</div>
         </div>
         <div class="rl-pagination" id="rl-pagination"></div>
-      </div>
-    `;
-  }
+       </div>
+
+       <!-- Detail modal -->
+       <div id="rl-detail-mount"></div>
+     `;
+
+     // Detail modal
+     this._detailModal = this.addChild(new Modal({
+       title: 'Referred Users',
+       size: 'md',
+       body: '<div id="rl-detail-content"><p class="rl-loading">Loading…</p></div>',
+       footer: '<button class="ktg-btn ktg-btn--ghost ktg-btn--md" data-modal-close>Close</button>',
+     }));
+     this._detailModal.mount(document.body, { append: true });
+   }
 
   /* ── Data ─────────────────────────────────────────────────────────────── */
 
@@ -289,29 +303,34 @@ export default class ReferralLeaderboardPage extends AdminLayout {
             const regionKey   = entry.region ?? 'west';
             const regionBadge = `<span class="rl-region-badge rl-region-badge--${regionKey}">${REGION_LABELS[regionKey] ?? regionKey}</span>`;
 
-            return `
-              <tr class="rl-table__row${rank <= 3 ? ' rl-table__row--top' : ''}">
-                <td class="rl-table__rank" aria-label="Rank ${rank}">${medal}</td>
-                <td>
-                  <div class="rl-user-cell">
-                    ${avatar}
-                    <div class="rl-user-cell__info">
-                      <span class="rl-user-cell__name">${this.esc(entry.name ?? entry.userName ?? '—')}</span>
-                      <span class="rl-user-cell__handle">${entry.handle ? this.esc(entry.handle) : ''}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>${this.esc(entry.lgaName ?? '—')}</td>
-                <td>${regionBadge}</td>
-                <td class="rl-table__num rl-table__num--strong">${fmt(entry.referrals ?? 0)}</td>
-                <td class="rl-table__num">${fmt(entry.converted ?? 0)}</td>
-                <td class="rl-table__num">
-                  <span class="rl-rate-badge rl-rate-badge--${rate >= 50 ? 'good' : rate >= 25 ? 'mid' : 'low'}">
-                    ${rate}%
-                  </span>
-                </td>
-              </tr>
-            `;
+             return `
+               <tr class="rl-table__row${rank <= 3 ? ' rl-table__row--top' : ''}"
+                   data-user-id="${entry.userId}"
+                   data-user-name="${this.esc(entry.name ?? entry.userName ?? '')}"
+                   role="button"
+                   tabindex="0"
+                   aria-label="View referrals for ${this.esc(entry.name ?? entry.userName ?? '')}">
+                 <td class="rl-table__rank" aria-label="Rank ${rank}">${medal}</td>
+                 <td>
+                   <div class="rl-user-cell">
+                     ${avatar}
+                     <div class="rl-user-cell__info">
+                       <span class="rl-user-cell__name">${this.esc(entry.name ?? entry.userName ?? '—')}</span>
+                       <span class="rl-user-cell__handle">${entry.handle ? this.esc(entry.handle) : ''}</span>
+                     </div>
+                   </div>
+                 </td>
+                 <td>${this.esc(entry.lgaName ?? '—')}</td>
+                 <td>${regionBadge}</td>
+                 <td class="rl-table__num rl-table__num--strong">${fmt(entry.referrals ?? 0)}</td>
+                 <td class="rl-table__num">${fmt(entry.converted ?? 0)}</td>
+                 <td class="rl-table__num">
+                   <span class="rl-rate-badge rl-rate-badge--${rate >= 50 ? 'good' : rate >= 25 ? 'mid' : 'low'}">
+                     ${rate}%
+                   </span>
+                 </td>
+               </tr>
+             `;
           }).join('')}
         </tbody>
       </table>
@@ -359,49 +378,134 @@ export default class ReferralLeaderboardPage extends AdminLayout {
 
   /* ── Events ───────────────────────────────────────────────────────────── */
 
-  _bindEvents() {
-    // Pagination
-    const prev = document.getElementById('rl-prev-btn');
-    const next = document.getElementById('rl-next-btn');
-    if (prev) this.on(prev, 'click', () => { if (this._page > 1) { this._page--; this._reload(); } });
-    if (next) this.on(next, 'click', () => { if (this._page < this._totalPages) { this._page++; this._reload(); } });
+   _bindEvents() {
+     // Pagination
+     const prev = document.getElementById('rl-prev-btn');
+     const next = document.getElementById('rl-next-btn');
+     if (prev) this.on(prev, 'click', () => { if (this._page > 1) { this._page--; this._reload(); } });
+     if (next) this.on(next, 'click', () => { if (this._page < this._totalPages) { this._page++; this._reload(); } });
 
-    // Region tabs
-    const tabs = document.getElementById('rl-region-tabs');
-    if (tabs) {
-      this.on(tabs, 'click', (e) => {
-        const btn = e.target.closest('[data-region]');
-        if (!btn) return;
-        this._filterRegion = btn.dataset.region;
-        this._page = 1;
-        this._search = '';
-        const searchEl = document.getElementById('rl-search');
-        if (searchEl) searchEl.value = '';
-        // Update active tab visuals
-        tabs.querySelectorAll('.rl-region-tab').forEach(t => {
-          t.classList.toggle('rl-region-tab--active', t.dataset.region === this._filterRegion);
-          t.setAttribute('aria-selected', t.dataset.region === this._filterRegion);
-        });
-        this._reload();
-      });
-    }
+     // Region tabs
+     const tabs = document.getElementById('rl-region-tabs');
+     if (tabs) {
+       this.on(tabs, 'click', (e) => {
+         const btn = e.target.closest('[data-region]');
+         if (!btn) return;
+         this._filterRegion = btn.dataset.region;
+         this._page = 1;
+         this._search = '';
+         const searchEl = document.getElementById('rl-search');
+         if (searchEl) searchEl.value = '';
+         // Update active tab visuals
+         tabs.querySelectorAll('.rl-region-tab').forEach(t => {
+           t.classList.toggle('rl-region-tab--active', t.dataset.region === this._filterRegion);
+           t.setAttribute('aria-selected', t.dataset.region === this._filterRegion);
+         });
+         this._reload();
+       });
+     }
 
-    // Search
-    const searchEl = document.getElementById('rl-search');
-    let searchTimer;
-    if (searchEl) {
-      this.on(searchEl, 'input', () => {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => {
-          this._search = searchEl.value.trim();
-          this._renderTable();
-          this._renderPagination();
-        }, 200);
-      });
-    }
+     // Search
+     const searchEl = document.getElementById('rl-search');
+     let searchTimer;
+     if (searchEl) {
+       this.on(searchEl, 'input', () => {
+         clearTimeout(searchTimer);
+         searchTimer = setTimeout(() => {
+           this._search = searchEl.value.trim();
+           this._renderTable();
+           this._renderPagination();
+         }, 200);
+       });
+     }
 
-    // Export
-    const exportBtn = document.getElementById('rl-export-btn');
-    if (exportBtn) this.on(exportBtn, 'click', () => this._exportCSV());
-  }
+     // Export
+     const exportBtn = document.getElementById('rl-export-btn');
+     if (exportBtn) this.on(exportBtn, 'click', () => this._exportCSV());
+
+     // Drill-down: click on a user row to see their referred users
+     const tableWrap = document.getElementById('rl-table-wrap');
+     if (tableWrap) {
+       this.on(tableWrap, 'click', (e) => {
+         const row = e.target.closest('[data-user-id]');
+         if (!row) return;
+         const userId = parseInt(row.dataset.userId, 10);
+         const userName = row.dataset.userName;
+         this._showUserReferrals(userId, userName);
+       });
+       // Keyboard accessibility
+       this.on(tableWrap, 'keydown', (e) => {
+         if (e.key !== 'Enter' && e.key !== ' ') return;
+         const row = e.target.closest('[data-user-id]');
+         if (!row) return;
+         e.preventDefault();
+         const userId = parseInt(row.dataset.userId, 10);
+         const userName = row.dataset.userName;
+         this._showUserReferrals(userId, userName);
+       });
+     }
+   }
+
+   /* ── Drill-down: show referred users ─────────────────────── */
+
+   async _showUserReferrals(userId, userName) {
+     const contentEl = document.getElementById('rl-detail-content');
+     if (!contentEl) return;
+
+     this._detailModal.setTitle(`Referred by ${this.esc(userName)}`);
+     contentEl.innerHTML = '<div class="rl-loading">Loading referrals…</div>';
+     this._detailModal.open();
+
+     try {
+       const res = await api.referrals.adminGetUserReferrals(userId);
+       if (res.error) {
+         contentEl.innerHTML = `<p class="rl-empty"><p>Failed to load referrals.</p></p>`;
+         return;
+       }
+
+       const data = res.data;
+       const entries = data.entries ?? [];
+       const user = data.user ?? {};
+
+       if (!entries.length) {
+         contentEl.innerHTML = `
+           <div class="rl-empty">
+             <p>No referrals yet for this user.</p>
+             <span>Referred users will appear here once they sign up.</span>
+           </div>
+         `;
+         return;
+       }
+
+       contentEl.innerHTML = `
+         <div class="rl-detail-user">
+           <span class="rl-detail-user__name">${this.esc(user.name ?? userName)}</span>
+           <span class="rl-detail-user__handle">@${this.esc(user.username ?? '')}</span>
+           <span class="rl-detail-user__count">${user.referralCount ?? 0} total referrals</span>
+         </div>
+         <div class="rl-detail-table-wrap">
+           <table class="rl-detail-table" aria-label="Referred users">
+             <thead><tr>
+               <th>Name</th>
+               <th>Username</th>
+               <th>Joined</th>
+               <th>Status</th>
+             </tr></thead>
+             <tbody>
+               ${entries.map(e => `
+                 <tr>
+                   <td>${this.esc(e.name ?? '—')}</td>
+                   <td>@${this.esc(e.username ?? '')}</td>
+                   <td>${this.esc(e.joinedAt ? new Date(e.joinedAt).toLocaleDateString() : '—')}</td>
+                   <td><span class="rl-detail-status rl-detail-status--${e.status}">${e.status}</span></td>
+                 </tr>
+               `).join('')}
+             </tbody>
+           </table>
+         </div>
+       `;
+     } catch {
+       contentEl.innerHTML = `<p class="rl-empty"><p>Error loading referrals.</p></p>`;
+     }
+   }
 }

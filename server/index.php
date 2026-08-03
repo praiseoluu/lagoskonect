@@ -621,11 +621,14 @@ try {
     } elseif ($path === '/admin/chat/banned-words' && $method === 'GET') {
         (new AdminChatController())->getBannedWords();
 
-    } elseif ($path === '/admin/referrals/leaderboard' && $method === 'GET') {
-        (new ReferralController())->getLeaderboard();
+     } elseif ($path === '/admin/referrals/leaderboard' && $method === 'GET') {
+         (new ReferralController())->getLeaderboard();
 
-    } elseif ($path === '/admin/referrals/stats' && $method === 'GET') {
-        (new ReferralController())->getStats();
+     } elseif ($path === '/admin/referrals/stats' && $method === 'GET') {
+         (new ReferralController())->getStats();
+
+     } elseif (preg_match('#^/admin/referrals/user/(\d+)$#', $path, $m) && $method === 'GET') {
+         (new ReferralController())->getUserReferrals((int)$m[1]);
 
     } elseif ($path === '/admin/chat/banned-words' && $method === 'POST') {
         (new AdminChatController())->addBannedWord();
