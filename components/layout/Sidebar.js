@@ -453,8 +453,9 @@ export class AdminSidebar extends Sidebar {
       { path: '/admin/content-moderation',label: t('adminNav.moderation'), icon: ICON.contentMod },
       { path: '/admin/adverts',           label: t('adminNav.adverts'),    icon: ICON.advert     },
       { path: '/admin/lga-data',          label: t('adminNav.lgaData'),    icon: ICON.lgaData    },
-      { path: '/admin/analytics',         label: t('adminNav.analytics'),  icon: ICON.analytics  },
-      { path: '/admin/traffic',           label: t('adminNav.traffic'),    icon: ICON.traffic    },
+       { path: '/admin/analytics',         label: t('adminNav.analytics'),  icon: ICON.analytics  },
+       { path: '/admin/active-users',     label: 'Active Users',           icon: ICON.star       },
+       { path: '/admin/traffic',           label: t('adminNav.traffic'),    icon: ICON.traffic    },
       { path: '/admin/management',        label: t('adminNav.management'), icon: ICON.users      },
       { path: '/admin/settings',          label: t('adminNav.settings'),   icon: ICON.settings   },
     ];

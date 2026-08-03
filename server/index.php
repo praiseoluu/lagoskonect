@@ -518,8 +518,11 @@ try {
     } elseif ($path === '/admin/analytics/lga-heatmap' && $method === 'GET') {
         (new AdminAnalyticsController())->lgaHeatmap();
 
-    } elseif ($path === '/admin/analytics/export' && $method === 'GET') {
-        (new AdminAnalyticsController())->export();
+     } elseif ($path === '/admin/analytics/top-active-users' && $method === 'GET') {
+         (new AdminAnalyticsController())->getTopActiveUsers();
+
+     } elseif ($path === '/admin/analytics/export' && $method === 'GET') {
+         (new AdminAnalyticsController())->export();
 
     } elseif ($path === '/data/visit' && $method === 'POST') {
         (new AdminAnalyticsController())->recordPageview();

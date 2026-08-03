@@ -65,15 +65,23 @@ export const analytics = {
     return await _fetch('GET', '/admin/analytics/topics' + qs);
   },
 
-  async getLgaHeatmap(region, range) {
-    const p = new URLSearchParams();
-    if (region) p.set('region', region);
-    if (range) p.set('range', range);
-    const qs = p.toString() ? '?' + p : '';
-    return await _fetch('GET', '/admin/analytics/lga-heatmap' + qs);
-  },
+   async getLgaHeatmap(region, range) {
+     const p = new URLSearchParams();
+     if (region) p.set('region', region);
+     if (range) p.set('range', range);
+     const qs = p.toString() ? '?' + p : '';
+     return await _fetch('GET', '/admin/analytics/lga-heatmap' + qs);
+   },
 
-  async recordPageview(page, lgaId, userId) {
+   async getTopActiveUsers(region, range) {
+     const p = new URLSearchParams();
+     if (region) p.set('region', region);
+     if (range) p.set('range', range);
+     const qs = p.toString() ? '?' + p : '';
+     return await _fetch('GET', '/admin/analytics/top-active-users' + qs);
+   },
+
+   async recordPageview(page, lgaId, userId) {
     return await _fetch('POST', '/data/visit', {
       page: page,
       lgaId: lgaId || null,

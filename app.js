@@ -668,14 +668,20 @@ router.register('admin', [
     guards:    [requireAdmin],
     meta:      { title: 'LGA Data' },
   },
-  {
-    path:      '/admin/analytics',
-    component: () => import('./pages/admin/app/Analytics.js'),
-    guards:    [requireAdmin],
-    meta:      { title: 'Governance Analytics' },
-  },
-  {
-    path:      '/admin/traffic',
+   {
+     path:      '/admin/analytics',
+     component: () => import('./pages/admin/app/Analytics.js'),
+     guards:    [requireAdmin],
+     meta:      { title: 'Governance Analytics' },
+   },
+   {
+     path:      '/admin/active-users',
+     component: () => import('./pages/admin/app/ActiveUsers.js'),
+     guards:    [requireAdmin],
+     meta:      { title: 'Top Active Users' },
+   },
+   {
+     path:      '/admin/traffic',
     component: () => import('./pages/admin/app/Traffic.js'),
     guards:    [requireAdmin],
     meta:      { title: 'Site Traffic' },
