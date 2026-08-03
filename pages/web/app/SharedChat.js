@@ -611,19 +611,41 @@ export default class SharedChatPage extends WebLayout {
 
         if (!previews.length) { list.innerHTML = `<p class="chat-list-sidebar__empty">No communities found.</p>`; return; }
 
-        list.innerHTML = previews.map(lga => {
-            const isActive    = lga.id === this._activeLgaId;
-            const initials    = lga.name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase();
-            const last        = lga.lastMessage;
-            const previewText = last ? `${last.isMe ? 'You' : last.sender}: ${last.text || 'Sent a file'}` : '';
-            const timeText    = last ? _relativeTime(last.createdAt) : '';
-            const unread      = lga.unreadCount || 0;
-            return `
+        const userRegion = store.currentUser?.region || null;
+        const userLgaId  = store.currentUser?.lgaId  || null;
+
+        const REGION_LABELS = { west: 'Lagos West', central: 'Lagos Central', east: 'Lagos East' };
+        // User's own region floats to the top; the other two follow alphabetically
+        const REGION_ORDER  = ['west', 'central', 'east'].sort((a, b) =>
+            a === userRegion ? -1 : b === userRegion ? 1 : 0
+        );
+
+        // Group previews by region
+        const groups = {};
+        for (const p of previews) {
+            const r = p.region || 'west';
+            if (!groups[r]) groups[r] = [];
+            groups[r].push(p);
+        }
+
+        const html = REGION_ORDER
+            .filter(r => groups[r]?.length)
+            .map(region => {
+                const isUserRegion = region === userRegion;
+                const items = groups[region].map(lga => {
+                    const isActive    = lga.id === this._activeLgaId;
+                    const isHome      = lga.id === userLgaId;
+                    const initials    = lga.name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase();
+                    const last        = lga.lastMessage;
+                    const previewText = last ? `${last.isMe ? 'You' : last.sender}: ${last.text || 'Sent a file'}` : '';
+                    const timeText    = last ? _relativeTime(last.createdAt) : '';
+                    const unread      = lga.unreadCount || 0;
+                    return `
         <button class="chat-list-item${isActive ? ' chat-list-item--active' : ''}"
           data-lga-id="${lga.id}" data-lga-name="${this.esc(lga.name)}" type="button" role="listitem">
           <div class="chat-list-item__avatar" aria-hidden="true">${initials}</div>
           <div class="chat-list-item__body">
-            <span class="chat-list-item__name">${this.esc(lga.name)} LGA</span>
+            <span class="chat-list-item__name">${this.esc(lga.name)} LGA${isHome ? ` <span class="chat-list-item__home-tag">Home</span>` : ''}</span>
             <span class="chat-list-item__preview">${this.esc(previewText)}</span>
           </div>
           <div class="chat-list-item__meta">
@@ -631,7 +653,19 @@ export default class SharedChatPage extends WebLayout {
             ${unread > 0 ? `<span class="chat-list-item__unread-badge">${unread > 99 ? '99+' : unread}</span>` : ''}
           </div>
         </button>`;
-        }).join('');
+                }).join('');
+
+                return `
+        <div class="chat-region-group" data-region="${region}">
+          <div class="chat-region-group__header">
+            <span class="chat-region-group__label">${this.esc(REGION_LABELS[region] || region)}</span>
+            ${isUserRegion ? '<span class="chat-region-group__yours">Your region</span>' : ''}
+          </div>
+          ${items}
+        </div>`;
+            }).join('');
+
+        list.innerHTML = html;
 
         list.querySelectorAll('.chat-list-item[data-lga-id]').forEach(btn => {
             btn.addEventListener('click', () => {

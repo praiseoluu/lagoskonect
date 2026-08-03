@@ -14,9 +14,9 @@ class ChatController {
         $auth   = requireRole('citizen');
         $userId = $auth['userId'];
 
-        // Only LGAs within the user's own region are visible in community chat.
-        $lgaStmt = $this->db->prepare('SELECT id, name FROM lgas WHERE region = ? ORDER BY name ASC');
-        $lgaStmt->execute([$auth['region']]);
+        // All LGAs across all regions are visible — users can chat anywhere.
+        $lgaStmt = $this->db->prepare('SELECT id, name, region FROM lgas ORDER BY region ASC, name ASC');
+        $lgaStmt->execute([]);
         $lgas = $lgaStmt->fetchAll();
 
         if (!$lgas) { Response::json([]); return; }
@@ -97,6 +97,7 @@ class ChatController {
             return [
                 'id'          => $lgaId,
                 'name'        => $lga['name'],
+                'region'      => $lga['region'],
                 'lastMessage' => $preview,
                 'unreadCount' => $unreadCounts[$lgaId] ?? 0,
             ];
@@ -662,20 +663,13 @@ class ChatController {
 
     // ── Private helpers ──────────────────────────────────────────────────
 
-    // Community chat is region-scoped: a user may only read/post in an LGA
-    // that belongs to their own region (north/south/central). Blocks
-    // cross region access even if a valid lgaId is passed explicitly.
+    // Validates that the LGA exists. All users may read and post in any LGA's
+    // community chat regardless of their own region.
     private function assertLgaInRegion(int $lgaId, array $auth): void {
-        $stmt = $this->db->prepare('SELECT region FROM lgas WHERE id = ?');
+        $stmt = $this->db->prepare('SELECT id FROM lgas WHERE id = ?');
         $stmt->execute([$lgaId]);
-        $lga = $stmt->fetch();
-
-        if (!$lga) {
+        if (!$stmt->fetch()) {
             Response::error('NOT_FOUND', 'LGA not found.', 404);
-        }
-
-        if (!$auth['region'] || $lga['region'] !== $auth['region']) {
-            Response::error('FORBIDDEN', 'You can only access community chat for LGAs in your own region.', 403);
         }
     }
 
