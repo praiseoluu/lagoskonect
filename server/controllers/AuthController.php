@@ -224,13 +224,13 @@ class AuthController {
 
             $insert = $this->db->prepare('
                 INSERT INTO users
-                    (id, name, username, referral_code, referred_by_user_id, gender, password, lga_id, lga_name, region, role,
+                    (id, name, username, email, referral_code, referred_by_user_id, gender, password, lga_id, lga_name, region, role,
                      is_verified, status, otp_hash, otp_expires_at, created_at, updated_at)
                 VALUES
-                    (?, ?, ?, CONCAT("LK", UPPER(SUBSTRING(MD5(CONCAT(?, "-", UUID())), 1, 8))), ?, ?, ?, ?, ?, ?, "citizen",
+                    (?, ?, ?, ?, CONCAT("LK", UPPER(SUBSTRING(MD5(CONCAT(?, "-", UUID())), 1, 8))), ?, ?, ?, ?, ?, ?, "citizen",
                      0, "pending", ?, ?, NOW(), NOW())
             ');
-            $insert->execute([$nextId, $name, $username, $email, $referrerId, $safeGender, $hashed, $lgaId, $lga['name'], $region, hash('sha256', (string)$otp), $expiry]);
+            $insert->execute([$nextId, $name, $username, $email, $email, $referrerId, $safeGender, $hashed, $lgaId, $lga['name'], $region, hash('sha256', (string)$otp), $expiry]);
 
             $userId = $nextId;
             $this->db->commit();
