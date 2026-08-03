@@ -15,4 +15,12 @@ export const newsletter = {
   async subscribe(email) {
     return await _fetch('POST', '/newsletter/subscribe', { email }, false);
   },
+
+  /**
+   * Unsubscribe using the one-click token from the confirmation email.
+   * @param {string} token
+   */
+  async unsubscribe(token) {
+    return await _fetch('POST', '/newsletter/unsubscribe', { token }, false);
+  },
 };

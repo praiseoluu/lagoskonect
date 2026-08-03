@@ -52,13 +52,13 @@ if (session?.token) {
   if (session.role === 'citizen' && session.user) {
     store.currentUser = session.user;
     store.currentLGA  = session.user.lgaId
-      ? { id: session.user.lgaId, name: session.user.lgaName }
-      : null;
+        ? { id: session.user.lgaId, name: session.user.lgaName }
+        : null;
   }
 
   if (
-    (session.role === 'admin' || session.role === 'super_admin') &&
-    session.admin
+      (session.role === 'admin' || session.role === 'super_admin') &&
+      session.admin
   ) {
     store.currentAdmin = session.admin;
   }
@@ -137,6 +137,13 @@ router.register('web', [
     component: () => import('./pages/web/auth/TermsPage.js'),
     guards:    [],
     meta:      { title: 'Terms & Conditions' },
+  },
+
+  {
+    path:      '/newsletter/unsubscribe',
+    component: () => import('./pages/web/auth/NewsletterUnsubscribe.js'),
+    guards:    [],
+    meta:      { title: 'Unsubscribe — Lagos Konect' },
   },
 
   /* ── Public auth routes ─────────────────────────────────────────────── */
@@ -758,18 +765,18 @@ router.afterEach(({ to } = {}) => {
   const path = typeof to === 'string' ? to : window.location.pathname;
 
   const shouldTrack =
-    store.isAuthenticated &&
-    store.role === 'citizen' &&
-    path !== '/' &&
-    !EXCLUDED_PAGEVIEW_PREFIXES.some((prefix) => path.startsWith(prefix));
+      store.isAuthenticated &&
+      store.role === 'citizen' &&
+      path !== '/' &&
+      !EXCLUDED_PAGEVIEW_PREFIXES.some((prefix) => path.startsWith(prefix));
 
   if (shouldTrack) {
     const lgaId  = store.currentLGA?.id   ?? null;
     const userId = store.currentUser?.id  ?? null;
 
     import('./api/client.js')
-      .then(({ api }) => api.analytics.recordPageview(path, lgaId, userId))
-      .catch(() => { /* Silently ignore — tracking must never break navigation */ });
+        .then(({ api }) => api.analytics.recordPageview(path, lgaId, userId))
+        .catch(() => { /* Silently ignore — tracking must never break navigation */ });
   }
 });
 

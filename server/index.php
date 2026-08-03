@@ -122,6 +122,8 @@ try {
 
     } elseif ($path === '/newsletter/subscribe' && $method === 'POST') {
         (new NewsletterController())->subscribe();
+    } elseif ($path === '/newsletter/unsubscribe' && $method === 'POST') {
+        (new NewsletterController())->unsubscribe();
 
     } elseif ($path === '/referrals/my-code' && $method === 'GET') {
         (new ReferralController())->getMyCode();

@@ -2,9 +2,10 @@
 /**
  * NewsletterController
  * =====================
- * Handles public newsletter subscriptions.
+ * Handles public newsletter subscriptions and unsubscribes.
  *
- * POST /newsletter/subscribe  — save email + send confirmation
+ * POST /newsletter/subscribe    — save email + send confirmation with unsubscribe link
+ * POST /newsletter/unsubscribe  — mark email as unsubscribed via one-click token
  */
 
 require_once __DIR__ . '/../utils/Response.php';
@@ -27,25 +28,79 @@ class NewsletterController {
 
         $db = Database::connect();
 
-        // Upsert — if already subscribed just re-send confirmation
-        $stmt = $db->prepare(
-            'INSERT INTO newsletter_subscribers (email, subscribed_at, confirmed)
-             VALUES (:email, NOW(), 0)
-             ON DUPLICATE KEY UPDATE subscribed_at = subscribed_at'
-        );
-        $stmt->execute([':email' => $email]);
+        // Generate a unique unsubscribe token
+        $token = bin2hex(random_bytes(32));
 
-        // Attempt to send a confirmation email (non-fatal on failure)
-        $this->_sendConfirmation($email);
+        // Upsert — if already subscribed just re-send confirmation (keep existing token)
+        $stmt = $db->prepare(
+            'INSERT INTO newsletter_subscribers (email, subscribed_at, confirmed, unsubscribe_token)
+             VALUES (:email, NOW(), 0, :token)
+             ON DUPLICATE KEY UPDATE
+               subscribed_at     = subscribed_at,
+               unsubscribed_at   = NULL,
+               unsubscribe_token = IF(unsubscribe_token IS NULL, :token2, unsubscribe_token)'
+        );
+        $stmt->execute([
+            ':email'  => $email,
+            ':token'  => $token,
+            ':token2' => $token,
+        ]);
+
+        // Fetch the actual token stored (may differ if row already existed)
+        $row = $db->prepare('SELECT unsubscribe_token FROM newsletter_subscribers WHERE email = :email');
+        $row->execute([':email' => $email]);
+        $storedToken = $row->fetchColumn() ?: $token;
+
+        $this->_sendConfirmation($email, $storedToken);
 
         Response::json(['subscribed' => true]);
     }
 
+    // ── POST /newsletter/unsubscribe ──────────────────────────────────────
+
+    public function unsubscribe(): void {
+        $body  = json_decode(file_get_contents('php://input'), true) ?? [];
+        $token = trim($body['token'] ?? '');
+
+        if (!$token) {
+            Response::error('VALIDATION_ERROR', 'An unsubscribe token is required.', 422);
+            return;
+        }
+
+        $db   = Database::connect();
+        $stmt = $db->prepare(
+            'SELECT id, unsubscribed_at FROM newsletter_subscribers WHERE unsubscribe_token = :token LIMIT 1'
+        );
+        $stmt->execute([':token' => $token]);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            Response::error('NOT_FOUND', 'Invalid or expired unsubscribe link.', 404);
+            return;
+        }
+
+        $alreadyUnsubscribed = !empty($row['unsubscribed_at']);
+
+        if (!$alreadyUnsubscribed) {
+            $upd = $db->prepare(
+                'UPDATE newsletter_subscribers SET unsubscribed_at = NOW() WHERE id = :id'
+            );
+            $upd->execute([':id' => $row['id']]);
+        }
+
+        Response::json([
+            'unsubscribed'         => true,
+            'alreadyUnsubscribed'  => $alreadyUnsubscribed,
+        ]);
+    }
+
     // ── Private helpers ───────────────────────────────────────────────────
 
-    private function _sendConfirmation(string $email): void {
-        $siteName = 'Lagos Konect';
-        $subject  = "You're subscribed to {$siteName}!";
+    private function _sendConfirmation(string $email, string $unsubscribeToken): void {
+        $siteName    = 'Lagos Konect';
+        $subject     = "You're subscribed to {$siteName}!";
+        $frontendUrl = rtrim(getenv('FRONTEND_URL') ?: 'https://lagoskonect.com', '/');
+        $unsubUrl    = $frontendUrl . '/newsletter/unsubscribe?token=' . urlencode($unsubscribeToken);
 
         $html = '
 <!DOCTYPE html>
@@ -64,13 +119,23 @@ class NewsletterController {
             Thanks for subscribing to <strong>' . htmlspecialchars($siteName, ENT_QUOTES) . '</strong>.
             You\'ll receive local government news and updates for your LGA directly in your inbox.
           </p>
-          <p style="margin:0;color:#888;font-size:13px;">
-            If you didn\'t subscribe, you can safely ignore this email.
+          <p style="margin:0 0 24px;color:#888;font-size:13px;">
+            If you didn\'t subscribe, you can safely ignore this email or click the unsubscribe link below.
           </p>
+          <a href="' . htmlspecialchars($unsubUrl, ENT_QUOTES) . '"
+             style="display:inline-block;padding:10px 22px;background:#068927;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+            Visit Lagos Konect
+          </a>
         </td></tr>
         <tr><td style="padding:16px 32px;background:#f9fafb;border-top:1px solid #e5e7eb;">
-          <p style="margin:0;color:#999;font-size:12px;">
+          <p style="margin:0 0 6px;color:#999;font-size:12px;">
             &copy; ' . date('Y') . ' ' . htmlspecialchars($siteName, ENT_QUOTES) . ' &mdash; Your Local Government, Connected.
+          </p>
+          <p style="margin:0;font-size:12px;">
+            <a href="' . htmlspecialchars($unsubUrl, ENT_QUOTES) . '"
+               style="color:#999;text-decoration:underline;">
+              Unsubscribe from this newsletter
+            </a>
           </p>
         </td></tr>
       </table>
@@ -82,7 +147,6 @@ class NewsletterController {
         try {
             EmailService::send($email, $subject, $html);
         } catch (\Throwable $e) {
-            // Log but don't fail the request
             error_log('[NewsletterController] Failed to send confirmation to ' . $email . ': ' . $e->getMessage());
         }
     }
