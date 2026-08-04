@@ -251,7 +251,7 @@ class ReferralController {
 
         $user = $this->fetchUser($userId);
 
-        $activity = $this->fetchActivityMetrics((int)$user['id']);
+        $activity = $this->fetchActivityMetrics((int)$user['userId']);
 
         $page    = max(1, (int)($_GET['page']    ?? 1));
         $perPage = min(50, max(1, (int)($_GET['perPage'] ?? 20)));
@@ -392,21 +392,23 @@ class ReferralController {
     private function minePayload(array $user): array {
         $base = rtrim(getenv('APP_URL') ?: getenv('BASE_URL') ?: '', '/');
         $base = preg_replace('#/server/api/v1$#', '', $base);
-        $link = $base . '/signup?ref=' . rawurlencode($user['referral_code'] ?? '');
+        $code = $user['referralCode'] ?? '';
+        $count = (int) ($user['referralCount'] ?? 0);
+        $link = $base . '/signup?ref=' . rawurlencode($code);
 
         return [
             // Canonical names
-            'referralCode'  => $user['referral_code'],
-            'referralCount' => (int)$user['referral_count'],
+            'referralCode'  => $code,
+            'referralCount' => $count,
             'referralLink'  => $link,
             // Aliases expected by the frontend Referral page
-            'code'          => $user['referral_code'],
+            'code'          => $code,
             'link'          => $link,
             // Referral earnings are paid per successful (verified) referral.
-            'rewardAmount'  => (int)$user['referral_count'] * 250,
+            'rewardAmount'  => $count * 250,
             'rewardRate'    => 250,
             // Keep the legacy field for older clients, but make it reflect naira.
-            'rewardPoints'  => (int)$user['referral_count'] * 250,
+            'rewardPoints'  => $count * 250,
         ];
     }
 
