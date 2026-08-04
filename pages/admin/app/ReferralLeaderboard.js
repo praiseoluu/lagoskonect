@@ -65,6 +65,8 @@ export default class ReferralLeaderboardPage extends AdminLayout {
     this._filterRegion = 'all';   // page-level region filter (overrides sidebar for this view)
     this._search       = '';
     this._detailModal  = null;
+    this._detailPage   = 1;
+    this._detailUserName = '';
   }
 
   getContent() {
@@ -450,6 +452,9 @@ export default class ReferralLeaderboardPage extends AdminLayout {
     /* ── Drill-down: show full user profile + referrals ────────── */
 
     async _showUserReferrals(userId, userName) {
+      this._detailPage = 1;
+      this._detailUserName = userName;
+
       const contentEl = document.getElementById('rl-detail-content');
       if (!contentEl) return;
 
@@ -458,7 +463,7 @@ export default class ReferralLeaderboardPage extends AdminLayout {
       this._detailModal.open();
 
       try {
-        const res = await api.referrals.adminGetUserReferrals(userId, { perPage: 20 });
+        const res = await api.referrals.adminGetUserReferrals(userId, { page: this._detailPage ?? 1, perPage: 20 });
         if (res.error) {
           contentEl.innerHTML = `<p class="rl-empty">Failed to load user details.</p>`;
           return;
@@ -649,7 +654,11 @@ export default class ReferralLeaderboardPage extends AdminLayout {
       const contentEl = document.getElementById('rl-detail-content');
       if (!contentEl) return;
 
-      this.on(contentEl, 'click', (e) => {
+      if (this._boundDetailHandler) {
+        this.off(contentEl, 'click', this._boundDetailHandler);
+      }
+
+      this._boundDetailHandler = (e) => {
         const btn = e.target.closest('[data-action]');
         if (btn) {
           const action = btn.dataset.action;
@@ -663,15 +672,17 @@ export default class ReferralLeaderboardPage extends AdminLayout {
           return;
         }
 
-        // Drill into referrer's profile
         const refLink = e.target.closest('[data-ref-id]');
         if (refLink) {
           const refId = parseInt(refLink.dataset.refId, 10);
           if (refId > 0) {
+            const refName = refLink.textContent.replace(/\s*\(@[^)]+\)$/, '').trim() || ('#' + refId);
             this._detailPage = 1;
-            this._showUserReferrals(refId, userName);
+            this._showUserReferrals(refId, refName);
           }
         }
-      });
+      };
+
+      this.on(contentEl, 'click', this._boundDetailHandler);
     }
 }

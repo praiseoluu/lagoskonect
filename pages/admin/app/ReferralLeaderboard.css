@@ -286,6 +286,7 @@
   vertical-align: middle;
 }
 
+.rl-table__row { cursor: pointer; }
 .rl-table__row--top { background: var(--color-primary-5, rgba(var(--color-primary-rgb, 0,100,255),.03)); }
 .rl-table__row:last-child td { border-bottom: none; }
 .rl-table__row:hover td { background: var(--color-surface-hover); }
