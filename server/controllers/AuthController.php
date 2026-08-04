@@ -642,6 +642,16 @@ class AuthController {
     }
 
     private function generateOtp(int $digits = 6): string {
+        // Development escape hatch. When DEV_OTP is set in server/.env, every
+        // generated code becomes that fixed value — needed locally because
+        // there is no mail transport, so real codes can never be delivered.
+        // The code is still hashed, stored and checked normally, and it still
+        // expires; only the randomness is removed. MUST be blank in production.
+        $devOtp = getenv('DEV_OTP') ?: '';
+        if ($devOtp !== '' && preg_match('/^\d+$/', $devOtp)) {
+            return str_pad(substr($devOtp, 0, $digits), $digits, '0', STR_PAD_LEFT);
+        }
+
         $max = (int) str_repeat('9', $digits);
         $min = (int) ('1' . str_repeat('0', $digits - 1));
         return (string) random_int($min, $max);

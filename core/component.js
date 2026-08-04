@@ -161,13 +161,17 @@ export class Component {
    * @returns {this}
    */
   update(newProps = {}) {
+    this.beforeUpdate(newProps);
+    this.props = { ...this.props, ...newProps };
+
+    // mount() is async — it awaits stylesheets before the first render — so an
+    // update can legitimately land before _mounted flips. Keep the merged props
+    // and let the pending render pick them up; re-rendering here would throw
+    // because this.el does not exist yet.
     if (!this._mounted) {
-      console.warn(`${this.constructor.name}.update() called before mount.`);
       return this;
     }
 
-    this.beforeUpdate(newProps);
-    this.props = { ...this.props, ...newProps };
     this._rerender();
     this.afterUpdate();
     return this;

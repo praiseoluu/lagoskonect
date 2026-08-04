@@ -633,17 +633,38 @@
   background: var(--gradient-brand, linear-gradient(135deg,#068927 0%,#0aab32 100%));
   border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
 }
+/* The whole row used to be pulled up by -48px, which dragged the name, the
+   verified badge and the Edit button onto the green banner — pale-green-on-green
+   text that could not be read. Only the avatar should overlap the banner; every
+   piece of text sits below it. */
 .profile-hero__inner {
-  padding: 0 var(--space-6) var(--space-6);
-  margin-top: -48px;
+  align-items: flex-end;
+  padding: var(--space-4) var(--space-6) var(--space-6);
+  margin-top: 0;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-3) var(--space-5);
 }
 .profile-hero__avatar-wrap {
   box-shadow: 0 0 0 4px #fff, 0 4px 16px rgba(6,137,39,0.22);
   border-radius: var(--radius-full);
+  /* Lifts the avatar into the banner without moving anything else.
+     align-self overrides the row's flex-end so the offset is measured from the
+     top of the row, which makes the overlap predictable. */
+  align-self: flex-start;
+  margin-top: -48px;
+  margin-bottom: 0;
+  /* The avatar fill is translucent, so without this the banner shows through
+     and washes out the initials wherever the two overlap. */
+  background: var(--color-bg, #fff);
 }
-.profile-hero__name { letter-spacing: -0.025em; }
+.profile-hero__info {
+  gap: var(--space-1);
+}
+.profile-hero__name { letter-spacing: -0.025em; line-height: 1.2; }
+.profile-hero__handle { margin-top: 0; }
+.profile-hero__meta { margin-top: var(--space-2); }
+/* Keeps the action pinned to the right edge on wide screens. */
+.profile-edit-btn { margin-left: auto; }
 .profile-edit-btn {
   border-radius: var(--radius-full);
   border-color: var(--color-primary-40);
@@ -662,6 +683,11 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
 }
+/* The markup still emits two 1px dividers between the three stats, left over
+   from when this row was a single flex bar. As grid children they took up two
+   of the three columns and pushed "Member Since" onto a second row. They have
+   no role between separate cards. */
+.profile-stat__divider { display: none; }
 .profile-stat {
   background: var(--color-bg);
   border: 1px solid var(--color-border-light);
@@ -746,11 +772,26 @@
   .profile-page { padding: var(--space-4) var(--space-4) var(--space-10); gap: var(--space-4); }
   .profile-hero { border-radius: var(--radius-xl); }
   .profile-hero::before { height: 100px; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
-  .profile-hero__inner { padding: 0 var(--space-4) var(--space-4); margin-top: -40px; }
   .profile-hero__name { font-size: var(--font-size-xl); }
+
+  /* Side-by-side does not fit: the name ends up next to the avatar and back on
+     the banner. Stack instead — avatar, then identity, then a full-width
+     action — so every line starts at the same left edge. */
+  .profile-hero__inner {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-3) var(--space-4) var(--space-5);
+    margin-top: 0;
+    gap: var(--space-3);
+  }
+  .profile-hero__avatar-wrap { align-self: flex-start; margin-top: -44px; }
+  .profile-hero__meta { margin-top: 0; }
+  .profile-edit-btn { margin-left: 0; width: 100%; justify-content: center; }
 }
 @media (max-width: 480px) {
   .profile-stats { grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
   .profile-stat { padding: var(--space-3) var(--space-2); }
-  .profile-stat__value { font-size: var(--font-size-xl); }
+  /* "< 1 month" broke across two lines and dragged the cards out of alignment. */
+  .profile-stat__value { font-size: var(--font-size-lg); white-space: nowrap; }
+  .profile-stat__label { letter-spacing: 0.02em; }
 }

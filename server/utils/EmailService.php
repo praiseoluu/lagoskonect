@@ -15,7 +15,7 @@ class EmailService {
 
     private static function driver(): string {
         $d = strtolower(trim(getenv('MAIL_DRIVER') ?: 'mail'));
-        return in_array($d, ['resend', 'mail'], true) ? $d : 'mail';
+        return in_array($d, ['resend', 'mail', 'log'], true) ? $d : 'mail';
     }
 
     private static function fromName(): string {
@@ -79,12 +79,28 @@ class EmailService {
      * Core send — dispatches to the configured driver.
      */
     public static function send(string $to, string $subject, string $html, ?string $text = null): bool {
-        return self::driver() === 'resend'
-            ? self::sendViaResend($to, $subject, $html, $text)
-            : self::sendViaMail($to, $subject, $html, $text);
+        switch (self::driver()) {
+            case 'resend':
+                return self::sendViaResend($to, $subject, $html, $text);
+            case 'log':
+                return self::sendViaLog($to, $subject);
+            default:
+                return self::sendViaMail($to, $subject, $html, $text);
+        }
     }
 
     // ── Drivers ───────────────────────────────────────────────────────────
+
+    /**
+     * Development driver — records the email in the PHP error log and sends
+     * nothing. Local machines have no MTA, so mail() blocks for seconds trying
+     * to reach localhost:25 on every request that sends anything. Set
+     * MAIL_DRIVER=log in server/.env to avoid that entirely.
+     */
+    private static function sendViaLog(string $to, string $subject): bool {
+        error_log("[Email:log] would send to {$to} — {$subject}");
+        return true;
+    }
 
     /**
      * PHP mail() — uses the server's local MTA (cPanel/Exim).
@@ -122,7 +138,11 @@ class EmailService {
 
         $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
-        $result = mail($to, $encodedSubject, $body, $headers);
+        // Silenced: a missing/unreachable MTA makes mail() emit a warning, and
+        // with display_errors on that warning is printed into the response body
+        // ahead of the JSON, breaking every client that parses it. Failure is
+        // already reported through the return value and the log below.
+        $result = @mail($to, $encodedSubject, $body, $headers);
 
         if (!$result) {
             error_log("[Email] mail() failed sending to {$to}");
