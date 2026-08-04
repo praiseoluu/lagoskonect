@@ -12,12 +12,14 @@
  */
 export function timeAgo(date) {
   const now = Date.now();
-  // Normalise naive datetime strings (no timezone offset) to UTC so that
-  // the diff is computed correctly regardless of server/browser timezone.
-  // e.g. "2025-07-20T10:30:00" → "2025-07-20T10:30:00Z"
+  // MySQL DATETIME values ("YYYY-MM-DD HH:MM:SS") are stored in the server's
+  // local timezone (set via MySQL's time_zone variable).  When this frontend
+  // runs in the same timezone — which is the normal case for a single-region
+  // deployment — treating the value as local time gives the correct diff.
+  // Appending "Z" would incorrectly shift the timestamp by the UTC offset.
   let normalised = date;
   if (typeof date === 'string' && !/[Zz]|[+-]\d{2}:\d{2}|[+-]\d{4}$/.test(date)) {
-    normalised = date + 'Z';
+    normalised = date.replace(' ', 'T');
   }
   const then = new Date(normalised).getTime();
   const diff = Math.floor((now - then) / 1000); // seconds

@@ -31,7 +31,7 @@
 
 import { store, showToast } from '../core/store.js';
 import { BASE_URL } from '../api/_fetch.js';
-import { api } from '../api/client.js';
+import { api }    from '../api/client.js';
 
 class SSEClient {
   constructor() {
@@ -40,6 +40,64 @@ class SSEClient {
     this._retryTimer     = null;
     this._heartbeatTimer = null;   // periodic session-validity check
     this._onMessage      = null;   // optional DOM handler (Chat page only)
+    this._audioContext   = null;   // Web Audio API context for notification sound
+    this._notificationPermission = 'default';
+  }
+
+  _ensureAudio() {
+    if (!this._audioContext) {
+      try {
+        this._audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      } catch {
+        return null;
+      }
+    }
+    return this._audioContext;
+  }
+
+  _playNotificationSound() {
+    const ctx = this._ensureAudio();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') {
+      ctx.resume().then(() => this._playBeep(ctx));
+    } else {
+      this._playBeep(ctx);
+    }
+  }
+
+  _playBeep(ctx) {
+    const gain = ctx.createGain();
+    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+    const osc = ctx.createOscillator();
+    osc.connect(gain);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(720, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(480, ctx.currentTime + 0.2);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.3);
+  }
+
+  async _requestNotificationPermission() {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'granted') this._notificationPermission = 'granted';
+    if (Notification.permission === 'default') {
+      const result = await Notification.requestPermission();
+      this._notificationPermission = result;
+    }
+  }
+
+  _showBrowserNotification(title, body) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    new Notification(title, {
+      body: body,
+      icon: '/favicon.png',
+      tag: 'lk-notification',
+      requireInteraction: false,
+    });
   }
 
   // ── Public API ────────────────────────────────────────────────────────
@@ -70,6 +128,9 @@ class SSEClient {
 
     this._es = new EventSource(url);
 
+    // Request browser notification permission (for chat messages + push sounds)
+    this._requestNotificationPermission();
+
     this._es.addEventListener('connected', (e) => {
       const data = JSON.parse(e.data);
       console.debug('[SSE] connected', data);
@@ -86,6 +147,14 @@ class SSEClient {
         const onChatPage = window.location.pathname === '/chat';
         if (!onChatPage) {
           store.unreadChatCount = (store.unreadChatCount || 0) + 1;
+          // Show a browser notification with sound so the user knows
+          // someone sent them a message
+          showToast('info', msg.senderName ? `${msg.senderName}: ${msg.text}` : 'New message');
+          this._playNotificationSound();
+          this._showBrowserNotification(
+            msg.senderName || 'New message',
+            msg.text || ''
+          );
         }
       }
 
@@ -104,6 +173,11 @@ class SSEClient {
       // Show a toast so the user knows something happened
       // (even if they're not on the notifications page)
       showToast('info', notif.title);
+      this._playNotificationSound();
+      this._showBrowserNotification(
+        notif.title || 'New notification',
+        notif.body || ''
+      );
     });
 
     this._es.addEventListener('ping', () => {
