@@ -31,8 +31,8 @@
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity    var(--transition-base),
-    visibility var(--transition-base);
+          opacity    var(--transition-base),
+          visibility var(--transition-base);
   backdrop-filter: blur(2px);
   /* Ensure the overlay itself can receive focus for the trap */
   outline: none;
@@ -117,8 +117,8 @@
   justify-content: center;
   color: var(--color-text-muted);
   transition:
-    background-color var(--transition-fast),
-    color            var(--transition-fast);
+          background-color var(--transition-fast),
+          color            var(--transition-fast);
 }
 
 .adm-modal__close:hover {
@@ -160,7 +160,25 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   7. MOBILE — BOTTOM-SHEET BEHAVIOUR
+   7. SIDEBAR OFFSET — centre within the content area, not the full viewport
+   The overlay is position:fixed so it spans the whole viewport, but the
+   sidebar occupies the left edge. Adding padding-left equal to the sidebar
+   width shifts the flex centring point into the content area.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 769px) {
+  .adm-modal-overlay {
+    padding-left: calc(var(--sidebar-width) + var(--space-4));
+  }
+}
+
+/* Collapsed sidebar is narrower — reduce the offset accordingly */
+body:has(.ktg-sidebar--collapsed) .adm-modal-overlay {
+  padding-left: calc(var(--sidebar-width-collapsed) + var(--space-4));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. MOBILE — BOTTOM-SHEET BEHAVIOUR
    On small screens the modal slides up from the bottom edge
    instead of appearing centred.
    ═══════════════════════════════════════════════════════════════════════ */
