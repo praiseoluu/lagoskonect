@@ -299,10 +299,13 @@ class ReferralController {
 
     private function fetchUser(int $userId): array {
         $stmt = $this->db->prepare(
-            'SELECT id, name, username, email, avatar_url, lga_id, lga_name, state, city,
-                    region, referral_code, referral_count, referred_by_user_id,
-                    status, is_verified, last_seen_at, created_at
-             FROM users WHERE id = ?'
+            'SELECT u.id, u.name, u.username, u.email, u.avatar_url, u.lga_id, u.lga_name, u.state, u.city,
+                    u.region, u.referral_code, u.referral_count, u.referred_by_user_id,
+                    u.status, u.is_verified, u.last_seen_at, u.created_at,
+                    r.name AS referrer_name, r.username AS referrer_username
+             FROM users u
+             LEFT JOIN users r ON r.id = u.referred_by_user_id
+             WHERE u.id = ?'
         );
         $stmt->execute([$userId]);
         $u = $stmt->fetch();
@@ -325,6 +328,8 @@ class ReferralController {
             'referralCode'    => $u['referral_code'],
             'referralCount'   => (int)$u['referral_count'],
             'referredBy'      => (int)$u['referred_by_user_id'],
+            'referredByName'  => $u['referrer_name'] ? $u['referrer_name'] : null,
+            'referredByUsername' => $u['referrer_username'] ? $u['referrer_username'] : null,
             'status'          => $u['status'],
             'isVerified'      => (bool)$u['is_verified'],
             'lastSeenAt'      => $u['last_seen_at'],

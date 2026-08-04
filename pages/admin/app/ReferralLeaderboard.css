@@ -529,6 +529,32 @@
   letter-spacing: .5px;
 }
 
+.rl-profile__referral-count {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.rl-profile__sub {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+}
+
+.rl-referred-by {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border-bottom: 1px dotted var(--color-primary-15);
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+.rl-referred-by:hover {
+  background: var(--color-primary-15);
+  border-bottom-color: var(--color-primary);
+}
+
 /* ── Activity metrics ────────────────────────────────────── */
 
 .rl-section {

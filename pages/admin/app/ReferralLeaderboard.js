@@ -15,6 +15,7 @@ import { AdminLayout }                      from '../../../components/layout/Bas
 import { Modal }                             from '../../../components/base/Modal.js';
 import { store, setPageLoading, showToast } from '../../../core/store.js';
 import { api }                              from '../../../api/client.js';
+import { timeAgo }                          from '../../../utils/date.js';
 
 /* ── Medal SVGs for top-3 positions ─────────────────────────────────────── */
 const MEDAL = {
@@ -516,7 +517,7 @@ export default class ReferralLeaderboardPage extends AdminLayout {
                 <span class="rl-referred__name">${this.esc(e.name || '—')}</span>
               </td>
               <td class="rl-referred__cell"><span class="rl-referred__handle">@${this.esc(e.username || '')}</span></td>
-              <td class="rl-referred__date">${this.esc(e.joinedAt ? new Date(e.joinedAt).toLocaleDateString() : '—')}</td>
+              <td class="rl-referred__date">${timeAgo(e.joinedAt)}</td>
               <td><span class="rl-detail-status rl-detail-status--${confirmed ? 'confirmed' : 'pending'}">${confirmed ? 'Confirmed' : 'Pending'}</span></td>
             </tr>
           `;
@@ -592,12 +593,20 @@ export default class ReferralLeaderboardPage extends AdminLayout {
             <span class="rl-profile__field-value">${this.esc(user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—')}</span>
           </div>
           <div class="rl-profile__field">
+            <span class="rl-profile__field-label">Total Referrals</span>
+            <span class="rl-profile__field-value rl-profile__referral-count">${fmt(total)} ${user.referralCount && user.referralCount !== total ? `<span class="rl-profile__sub">(user card: ${fmt(user.referralCount)})</span>` : ''}</span>
+          </div>
+          <div class="rl-profile__field">
             <span class="rl-profile__field-label">Last Seen</span>
             <span class="rl-profile__field-value">${this.esc(user.lastSeenAt || '—')}</span>
           </div>
           <div class="rl-profile__field">
             <span class="rl-profile__field-label">Referred By</span>
-            <span class="rl-profile__field-value">${this.esc(user.referredBy ? `#${user.referredBy}` : 'Direct sign-up')}</span>
+            <span class="rl-profile__field-value">
+              ${user.referredBy
+                ? `<span class="rl-referred-by" data-ref-id="${user.referredBy}">${user.referredByName ? this.esc(user.referredByName) : '#' + user.referredBy}${user.referredByUsername ? ' (@' + this.esc(user.referredByUsername) + ')' : ''}</span>`
+                : 'Direct sign-up'}
+            </span>
           </div>
         </div>
 
@@ -642,14 +651,26 @@ export default class ReferralLeaderboardPage extends AdminLayout {
 
       this.on(contentEl, 'click', (e) => {
         const btn = e.target.closest('[data-action]');
-        if (!btn) return;
-        const action = btn.dataset.action;
-        if (action === 'prev' && page > 1) {
-          this._detailPage = page - 1;
-          this._showUserReferrals(userId, userName);
-        } else if (action === 'next' && page < totalPages) {
-          this._detailPage = page + 1;
-          this._showUserReferrals(userId, userName);
+        if (btn) {
+          const action = btn.dataset.action;
+          if (action === 'prev' && page > 1) {
+            this._detailPage = page - 1;
+            this._showUserReferrals(userId, userName);
+          } else if (action === 'next' && page < totalPages) {
+            this._detailPage = page + 1;
+            this._showUserReferrals(userId, userName);
+          }
+          return;
+        }
+
+        // Drill into referrer's profile
+        const refLink = e.target.closest('[data-ref-id]');
+        if (refLink) {
+          const refId = parseInt(refLink.dataset.refId, 10);
+          if (refId > 0) {
+            this._detailPage = 1;
+            this._showUserReferrals(refId, userName);
+          }
         }
       });
     }
