@@ -28,8 +28,12 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 # ── Pass PHP API calls through to PHP ─────────────────────────────────
+# [END] stops the rewrite cycle completely (no restart), so PHP receives
+# the original REQUEST_URI (/server/api/v1/…) rather than the rewritten
+# path (/server/index.php). Without [END], the [L]-restart updates
+# REQUEST_URI to the rewritten path and the PHP router can't find the route.
 RewriteCond %{REQUEST_URI} ^/server/api/v1/
-RewriteRule ^server/api/v1/(.*)$ server/index.php [QSA,L]
+RewriteRule ^server/api/v1/(.*)$ server/index.php [QSA,END]
 
 # Allow direct server file access (uploads, etc.)
 RewriteCond %{REQUEST_URI} ^/server/
