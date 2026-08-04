@@ -290,7 +290,7 @@
    ═══════════════════════════════════════════════════════════════════════ */
 .ktg-sidebar__badge {
   background: var(--color-error);
-  color: #fff;
+  color: var(--color-white);
   font-size: 10px;
   font-weight: var(--font-weight-bold);
   padding: 1px 5px;
@@ -533,13 +533,11 @@
 .admin-region-tab--active {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: #fff;
-}
+  color: var(--color-text-on-primary);
 
 .admin-region-tab--active:hover {
   background: var(--color-primary-dark, var(--color-primary));
-  color: #fff;
-}
+  color: var(--color-text-on-primary);
 
 .admin-region-tab:focus-visible {
   outline: 2px solid var(--color-primary);
@@ -566,7 +564,7 @@
 
 /* Brand area: subtle warm gradient base */
 .ktg-sidebar__brand {
-  background: linear-gradient(180deg, #fff 80%, rgba(6,137,39,0.03) 100%);
+  background: linear-gradient(180deg, var(--color-white) 80%, rgba(6,137,39,0.03) 100%);
 }
 .ktg-sidebar__brand-text {
   letter-spacing: -0.02em;
@@ -603,19 +601,19 @@
 /* Footer: elevated */
 .ktg-sidebar__footer {
   border-top: 1px solid var(--color-border-light);
-  background: linear-gradient(180deg, var(--color-surface) 0%, #fff 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-white) 100%);
 }
 
 /* Badge: green glow */
 .ktg-sidebar__badge {
-  box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(220,38,38,0.4);
+  box-shadow: 0 0 0 2px var(--color-white), 0 2px 6px rgba(220,38,38,0.4);
 }
 
 /* Create Reel button styling boost */
 .ktg-sidebar__create-btn,
 .ktg-sidebar__nav-link[data-modal] {
   background: var(--gradient-brand, linear-gradient(135deg,#068927 0%,#0aab32 100%)) !important;
-  color: #fff !important;
+  color: var(--color-text-on-primary) !important;
   border-radius: var(--radius-lg) !important;
   box-shadow: 0 4px 12px rgba(6,137,39,0.3) !important;
   margin: var(--space-2) var(--space-3) !important;
@@ -626,7 +624,7 @@
 .ktg-sidebar__nav-link[data-modal]:hover {
   transform: translateY(-1px) !important;
   box-shadow: 0 6px 18px rgba(6,137,39,0.38) !important;
-  color: #fff !important;
+  color: var(--color-text-on-primary) !important;
 }
 .ktg-sidebar--collapsed .ktg-sidebar__nav-link[data-modal] {
   margin: var(--space-2) auto !important;

@@ -57,11 +57,17 @@ export const referrals = {
     return await _fetch('GET', `/admin/referrals/stats${qs}`);
   },
 
-  /**
-   * Get the complete referral history for a specific user.
-   * @param {number} userId
-   */
-  async adminGetUserReferrals(userId) {
-    return await _fetch('GET', `/admin/referrals/user/${userId}`);
-  },
+   /**
+    * Get the complete referral history for a specific user, plus their
+    * full profile and 30-day activity metrics.
+    * @param {number} userId
+    * @param {{ page?: number, perPage?: number }} [opts]
+    */
+   async adminGetUserReferrals(userId, opts = {}) {
+     const params = new URLSearchParams();
+     if (opts.page)    params.set('page',    opts.page);
+     if (opts.perPage) params.set('perPage', opts.perPage || 20);
+     const qs = params.toString() ? `?${params}` : '';
+     return await _fetch('GET', `/admin/referrals/user/${userId}${qs}`);
+   },
 };

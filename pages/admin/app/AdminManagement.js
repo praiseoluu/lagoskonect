@@ -333,7 +333,7 @@ export default class AdminManagementPage extends AdminLayout {
 
     const actions = canEdit
       ? '<div class="am-card__actions">' +
-          '<button class="am-card__action-btn" data-am-action="edit"    data-am-id="' + a.id + '" title="Edit role">' + EDIT_SVG + '</button>' +
+          '<button class="am-card__action-btn" data-am-action="edit" data-am-id="' + a.id + '" title="Edit admin">' + EDIT_SVG + '</button>' +
           '<button class="am-card__action-btn am-card__action-btn--warn" data-am-action="suspend" data-am-id="' + a.id + '" title="' + (a.status === 'active' ? 'Suspend' : 'Reactivate') + '">' +
             (a.status === 'active'
               ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>'
@@ -432,17 +432,47 @@ export default class AdminManagementPage extends AdminLayout {
   _openEditModal(member) {
     if (!member) return;
     this._editTarget = member;
+    const a = {
+      ...member,
+      firstName: member.firstName || '',
+      lastName:  member.lastName  || '',
+      email:     member.email     || '',
+    };
+
+    const surnameField =
+      '<div class="am-modal-field"><label class="am-modal-label">SURNAME</label>' +
+      '<input class="am-modal-input" id="edit-surname" value="' + this.esc(a.lastName) + '" placeholder="Surname" /></div>';
+
+    const firstNameField =
+      '<div class="am-modal-field"><label class="am-modal-label">FIRST NAME</label>' +
+      '<input class="am-modal-input" id="edit-firstname" value="' + this.esc(a.firstName) + '" placeholder="First name" /></div>';
+
+    const emailField =
+      '<div class="am-modal-field"><label class="am-modal-label">EMAIL ADDRESS</label>' +
+      '<input class="am-modal-input" id="edit-email" value="' + this.esc(a.email) + '" placeholder="email@example.com" /></div>';
+
+    const roleField =
+      '<div class="am-modal-field"><label class="am-modal-label">ROLE</label>' +
+      '<select class="am-modal-select" id="edit-role">' +
+        '<option value="admin"'       + (a.role === 'admin'       ? ' selected' : '') + '>Admin</option>' +
+        '<option value="super_admin"' + (a.role === 'super_admin' ? ' selected' : '') + '>Super Admin</option>' +
+      '</select></div>';
+
+    const passField =
+      '<div class="am-modal-field"><label class="am-modal-label">UPDATE PASSWORD <span class="am-modal-label--hint">(leave blank to keep current)</span></label>' +
+      '<input class="am-modal-input" id="edit-pass" type="password" placeholder="Min 8 characters..." autocomplete="new-password" /></div>';
 
     this._editModal.update({
       title: 'Edit Admin — ' + member.name,
       body:
         '<div class="am-modal-form">' +
-          '<div class="am-modal-field"><label class="am-modal-label">ROLE</label>' +
-            '<select class="am-modal-select" id="edit-role">' +
-              '<option value="admin"'       + (member.role === 'admin'       ? ' selected' : '') + '>Admin</option>' +
-              '<option value="super_admin"' + (member.role === 'super_admin' ? ' selected' : '') + '>Super Admin</option>' +
-            '</select>' +
+          '<div class="am-form-row">' +
+            surnameField +
+            firstNameField +
           '</div>' +
+          emailField +
+          roleField +
+          passField +
         '</div>',
       footer:
         '<div class="am-modal-footer">' +
@@ -459,17 +489,34 @@ export default class AdminManagementPage extends AdminLayout {
     });
   }
 
-  async _submitEdit(btn) {
-    const role = (document.getElementById('edit-role') || {}).value || '';
+   async _submitEdit(btn) {
+    const surname   = (document.getElementById('edit-surname')   || {}).value?.trim() || '';
+    const firstName = (document.getElementById('edit-firstname') || {}).value?.trim() || '';
+    const email     = (document.getElementById('edit-email')     || {}).value?.trim() || '';
+    const role      = (document.getElementById('edit-role')      || {}).value    || 'admin';
+    const pass      = (document.getElementById('edit-pass')      || {}).value    || '';
+
+    if (!firstName || !surname) { showToast('error', 'Name fields are required.'); return; }
+    if (!email) { showToast('error', 'Email is required.'); return; }
+    if (pass && pass.length < 8) { showToast('error', 'Password must be at least 8 characters.'); return; }
+
+    const payload = { surname, firstName, role, email };
+    if (pass) payload.password = pass;
+
     btn.disabled = true; btn.textContent = 'Saving...';
-    const res = await api.adminTeam.updateRole(this._editTarget.id, role);
+    const res = await api.adminTeam.update(this._editTarget.id, payload);
     btn.disabled = false; btn.textContent = 'Save Changes';
 
     if (res.error) { showToast('error', res.error.message); return; }
 
     this._editModal.close();
-    showToast('success', 'Role updated.');
-    this._updateTeamMember(res.data);
+    showToast('success', 'Admin updated.');
+
+    // Update both the team cards and the admin users table
+    this._team     = this._team.map(a => a.id === res.data.id ? res.data : a);
+    this._auAdmins = this._auAdmins.map(a => a.id === res.data.id ? res.data : a);
+    this._refreshTeamGrid();
+    this._renderAdminsTable(document.getElementById('am-users-body'));
   }
 
   async _toggleStatus(member) {
@@ -748,7 +795,7 @@ export default class AdminManagementPage extends AdminLayout {
             '<div class="am-modal-field"><label class="am-modal-label">SURNAME NAME</label><input class="am-modal-input" id="ae-surname" value="' + this.esc(a.lastName || '') + '" placeholder="Surname" /></div>' +
             '<div class="am-modal-field"><label class="am-modal-label">FIRST NAME</label><input class="am-modal-input" id="ae-firstname" value="' + this.esc(a.firstName || '') + '" placeholder="First name" /></div>' +
           '</div>' +
-          '<div class="am-modal-field"><label class="am-modal-label">EMAIL ADDRESS</label><input class="am-modal-input" id="ae-email" value="' + this.esc(a.email) + '" readonly style="opacity:.6;cursor:not-allowed" /></div>' +
+          '<div class="am-modal-field"><label class="am-modal-label">EMAIL ADDRESS</label><input class="am-modal-input" id="ae-email" value="' + this.esc(a.email) + '" placeholder="email@example.com" /></div>' +
           '<div class="am-modal-field"><label class="am-modal-label">ROLE</label>' +
             '<select class="am-modal-select" id="ae-role">' +
               '<option value="admin"'       + (a.role === 'admin'       ? ' selected' : '') + '>Admin</option>' +
@@ -757,7 +804,7 @@ export default class AdminManagementPage extends AdminLayout {
           '</div>' +
           '<div class="am-modal-field"><label class="am-modal-label">STATE</label><input class="am-modal-input" id="ae-state" value="' + this.esc(a.state || '') + '" placeholder="State" /></div>' +
           '<div class="am-modal-field"><label class="am-modal-label">PHONE NUMBER</label><input class="am-modal-input" id="ae-phone" value="' + this.esc(a.phone || '') + '" placeholder="+234 800 000 0000" /></div>' +
-          '<div class="am-modal-field"><label class="am-modal-label">UPDATE PASSWORD <span style="font-weight:400;text-transform:none;letter-spacing:0">(leave blank to keep current)</span></label>' +
+          '<div class="am-modal-field"><label class="am-modal-label">UPDATE PASSWORD <span class="am-modal-label--hint">(leave blank to keep current)</span></label>' +
             '<input class="am-modal-input" id="ae-pass" type="password" placeholder="New password…" autocomplete="new-password" /></div>' +
         '</div>',
       footer:
@@ -774,18 +821,20 @@ export default class AdminManagementPage extends AdminLayout {
     });
   }
 
-  async _submitAdminEdit(btn) {
+   async _submitAdminEdit(btn) {
     const surname   = (document.getElementById('ae-surname')   || {}).value?.trim() || '';
     const firstName = (document.getElementById('ae-firstname') || {}).value?.trim() || '';
-    const role      = (document.getElementById('ae-role')      || {}).value || 'admin';
+    const email     = (document.getElementById('ae-email')     || {}).value?.trim() || '';
+    const role      = (document.getElementById('ae-role')      || {}).value    || 'admin';
     const state     = (document.getElementById('ae-state')     || {}).value?.trim() || '';
     const phone     = (document.getElementById('ae-phone')     || {}).value?.trim() || '';
-    const pass      = (document.getElementById('ae-pass')      || {}).value || '';
+    const pass      = (document.getElementById('ae-pass')      || {}).value    || '';
 
-    if (!surname || !firstName) { showToast('error', 'Name fields are required.'); return; }
+    if (!firstName || !surname) { showToast('error', 'Name fields are required.'); return; }
+    if (!email) { showToast('error', 'Email is required.'); return; }
     if (pass && pass.length < 8) { showToast('error', 'Password must be at least 8 characters.'); return; }
 
-    const payload = { surname, firstName, role, state, phone };
+    const payload = { surname, firstName, role, state, phone, email };
     if (pass) payload.password = pass;
 
     btn.disabled = true; btn.textContent = 'Saving...';

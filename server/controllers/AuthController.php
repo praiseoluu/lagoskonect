@@ -132,14 +132,8 @@ class AuthController {
         $region   = $body['region']        ?? null;
         $referralCode = strtoupper(trim($body['referralCode'] ?? ''));
 
-        if (!$name || !$email || !$username || !$password || !$lgaId || !$region) {
-            Response::error('VALIDATION_ERROR', 'name, email, username, password, lgaId, and region are required.', 422);
-        }
-
-        // Validate region
-        $allowedRegions = ['west', 'east', 'central'];
-        if (!in_array($region, $allowedRegions)) {
-            Response::error('VALIDATION_ERROR', 'Invalid region. Must be west, east, or central.', 422);
+        if (!$name || !$email || !$username || !$password || !$lgaId) {
+            Response::error('VALIDATION_ERROR', 'name, email, username, password, and lgaId are required.', 422);
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -157,11 +151,24 @@ class AuthController {
         }
 
         // Check LGA
-        $lgaStmt = $this->db->prepare('SELECT id, name FROM lgas WHERE id = ?');
+        $lgaStmt = $this->db->prepare('SELECT id, name, region FROM lgas WHERE id = ?');
         $lgaStmt->execute([$lgaId]);
         $lga = $lgaStmt->fetch();
         if (!$lga) {
             Response::error('INVALID_LGA', 'Invalid LGA selected.', 422);
+        }
+
+        // Derive region from the LGA if the client didn't send one
+        // (e.g. user came via a referral link without going through
+        // the region-selector page).
+        if (!$region && !empty($lga['region'])) {
+            $region = $lga['region'];
+        }
+
+        // Validate region
+        $allowedRegions = ['west', 'east', 'central'];
+        if (!in_array($region, $allowedRegions)) {
+            Response::error('VALIDATION_ERROR', 'Invalid region. Must be west, east, or central.', 422);
         }
 
         $referrerId = null;

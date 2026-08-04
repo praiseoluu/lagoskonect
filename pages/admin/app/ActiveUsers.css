@@ -104,9 +104,9 @@
   font-weight: var(--font-weight-bold);
 }
 
-.au-podium__place--gold   .au-podium__avatar { border-color: #FFD700; }
-.au-podium__place--silver .au-podium__avatar { border-color: #C0C0C0; }
-.au-podium__place--bronze .au-podium__avatar { border-color: #CD7F32; }
+.au-podium__place--gold   .au-podium__avatar { border-color: var(--color-gold-border); }
+.au-podium__place--silver .au-podium__avatar { border-color: var(--color-silver-border); }
+.au-podium__place--bronze .au-podium__avatar { border-color: var(--color-bronze-border); }
 
 .au-podium__name {
   font-size: var(--font-size-sm);
@@ -134,9 +134,9 @@
   font-weight: var(--font-weight-bold);
 }
 
-.au-podium__place--gold   .au-podium__block { background: linear-gradient(to bottom, #FFF3B0, #FFD700); }
-.au-podium__place--silver .au-podium__block { background: linear-gradient(to bottom, #E8E8E8, #C0C0C0); }
-.au-podium__place--bronze .au-podium__block { background: linear-gradient(to bottom, #EAC08A, #CD7F32); }
+.au-podium__place--gold   .au-podium__block { background: var(--color-gold-gradient); }
+.au-podium__place--silver .au-podium__block { background: var(--color-silver-gradient); }
+.au-podium__place--bronze .au-podium__block { background: var(--color-bronze-gradient); }
 
 .au-podium__block-rank {
   font-size: var(--font-size-lg);
@@ -316,9 +316,9 @@
   font-weight: var(--font-weight-bold);
 }
 
-.au-table__medal--gold   { background: #FFF3B0; color: #B8860B; }
-.au-table__medal--silver { background: #E8E8E8; color: #666; }
-.au-table__medal--bronze { background: #EAC08A; color: #5C2F0A; }
+.au-table__medal--gold   { background: var(--color-gold-bg); color: var(--color-gold); }
+.au-table__medal--silver { background: var(--color-silver-bg); color: var(--color-silver); }
+.au-table__medal--bronze { background: var(--color-bronze-bg); color: var(--color-bronze); }
 
 .au-rank-num {
   display: inline-flex;
@@ -367,9 +367,9 @@
   font-weight: var(--font-weight-medium);
 }
 
-.au-region-badge--west    { background: #e8f0fe; color: #1a56db; }
-.au-region-badge--central { background: #fef3c7; color: #92400e; }
-.au-region-badge--east    { background: #dcfce7; color: #166534; }
+.au-region-badge--west    { background: var(--color-region-west-bg); color: var(--color-region-west-text); }
+.au-region-badge--central { background: var(--color-region-central-bg); color: var(--color-region-central-text); }
+.au-region-badge--east    { background: var(--color-region-east-bg); color: var(--color-region-east-text); }
 
 /* ── Empty / Loading states ─────────────────────────────────────── */
 

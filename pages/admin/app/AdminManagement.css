@@ -137,7 +137,8 @@
 
 .am-modal-form { display: flex; flex-direction: column; gap: var(--space-4); }
 .am-modal-field { display: flex; flex-direction: column; gap: var(--space-2); }
-.am-modal-label { font-size: 10px; font-weight: var(--font-weight-bold); letter-spacing: var(--letter-spacing-widest); color: var(--color-text-muted); text-transform: uppercase; }
+ .am-modal-label { font-size: 10px; font-weight: var(--font-weight-bold); letter-spacing: var(--letter-spacing-widest); color: var(--color-text-muted); text-transform: uppercase; }
+.am-modal-label--hint { display: block; font-size: var(--font-size-xs); font-weight: var(--font-weight-normal); letter-spacing: 0; margin-top: var(--space-1); }
 
 .am-modal-input, .am-modal-select {
   width: 100%; height: 40px; padding: 0 var(--space-3);
@@ -151,7 +152,7 @@
 .am-modal-footer { display: flex; justify-content: flex-end; gap: var(--space-3); width: 100%; }
 
 /* Danger button */
-.ktg-btn--danger { background: #dc2626; color: #fff; border-color: #dc2626; }
+.ktg-btn--danger { background: var(--color-error); color: var(--color-white); border-color: var(--color-error); }
 .ktg-btn--danger:hover { background: #b91c1c; }
 
 /* Empty */
@@ -267,7 +268,7 @@
   transition: all var(--transition-fast);
 }
 .am-page-btn:hover:not(:disabled):not(.am-page-btn--active) { background: var(--color-surface); color: var(--color-text); }
-.am-page-btn--active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.am-page-btn--active {   background: var(--color-primary); border-color: var(--color-primary); color: var(--color-text-on-primary); }
 .am-page-btn:disabled { opacity: .4; cursor: not-allowed; }
 .am-page-ellipsis { color: var(--color-text-muted); padding: 0 var(--space-1); }
 
@@ -293,7 +294,7 @@
 .am-profile-modal__cam-btn {
   position: absolute; bottom: 2px; right: 2px;
   width: 24px; height: 24px; border-radius: 50%;
-  background: var(--color-primary); color: #fff; border: 2px solid var(--color-bg);
+  background: var(--color-primary); color: var(--color-text-on-primary); border: 2px solid var(--color-bg);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
 }

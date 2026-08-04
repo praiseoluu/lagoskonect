@@ -144,13 +144,13 @@ export default class ReferralLeaderboardPage extends AdminLayout {
        <div id="rl-detail-mount"></div>
      `;
 
-     // Detail modal
-     this._detailModal = this.addChild(new Modal({
-       title: 'Referred Users',
-       size: 'md',
-       body: '<div id="rl-detail-content"><p class="rl-loading">Loading…</p></div>',
-       footer: '<button class="ktg-btn ktg-btn--ghost ktg-btn--md" data-modal-close>Close</button>',
-     }));
+    // Detail modal
+      this._detailModal = this.addChild(new Modal({
+        title: 'User Detail',
+        size: 'lg',
+        body: '<div id="rl-detail-content"><p class="rl-loading">Loading…</p></div>',
+        footer: '<button class="ktg-btn ktg-btn--ghost ktg-btn--md" data-modal-close>Close</button>',
+      }));
      this._detailModal.mount(document.body, { append: true });
    }
 
@@ -446,66 +446,211 @@ export default class ReferralLeaderboardPage extends AdminLayout {
      }
    }
 
-   /* ── Drill-down: show referred users ─────────────────────── */
+    /* ── Drill-down: show full user profile + referrals ────────── */
 
-   async _showUserReferrals(userId, userName) {
-     const contentEl = document.getElementById('rl-detail-content');
-     if (!contentEl) return;
+    async _showUserReferrals(userId, userName) {
+      const contentEl = document.getElementById('rl-detail-content');
+      if (!contentEl) return;
 
-     this._detailModal.setTitle(`Referred by ${this.esc(userName)}`);
-     contentEl.innerHTML = '<div class="rl-loading">Loading referrals…</div>';
-     this._detailModal.open();
+      this._detailModal.setTitle(`User Detail — ${this.esc(userName)}`);
+      contentEl.innerHTML = '<div class="rl-loading">Loading user details…</div>';
+      this._detailModal.open();
 
-     try {
-       const res = await api.referrals.adminGetUserReferrals(userId);
-       if (res.error) {
-         contentEl.innerHTML = `<p class="rl-empty"><p>Failed to load referrals.</p></p>`;
-         return;
-       }
+      try {
+        const res = await api.referrals.adminGetUserReferrals(userId, { perPage: 20 });
+        if (res.error) {
+          contentEl.innerHTML = `<p class="rl-empty">Failed to load user details.</p>`;
+          return;
+        }
 
-       const data = res.data;
-       const entries = data.entries ?? [];
-       const user = data.user ?? {};
+        const data    = res.data;
+        const user    = data.user ?? {};
+        const activity = data.activity ?? {};
+        const entries = data.entries ?? [];
+        const meta    = res.meta ?? {};
+        const total   = meta.total ?? 0;
+        const totalPages = meta.totalPages ?? 1;
+        const page    = this._detailPage ?? 1;
 
-       if (!entries.length) {
-         contentEl.innerHTML = `
-           <div class="rl-empty">
-             <p>No referrals yet for this user.</p>
-             <span>Referred users will appear here once they sign up.</span>
-           </div>
-         `;
-         return;
-       }
+        contentEl.innerHTML = this._renderUserDetail(user, activity, entries, total, totalPages, page, userName);
 
-       contentEl.innerHTML = `
-         <div class="rl-detail-user">
-           <span class="rl-detail-user__name">${this.esc(user.name ?? userName)}</span>
-           <span class="rl-detail-user__handle">@${this.esc(user.username ?? '')}</span>
-           <span class="rl-detail-user__count">${user.referralCount ?? 0} total referrals</span>
-         </div>
-         <div class="rl-detail-table-wrap">
-           <table class="rl-detail-table" aria-label="Referred users">
-             <thead><tr>
-               <th>Name</th>
-               <th>Username</th>
-               <th>Joined</th>
-               <th>Status</th>
-             </tr></thead>
-             <tbody>
-               ${entries.map(e => `
-                 <tr>
-                   <td>${this.esc(e.name ?? '—')}</td>
-                   <td>@${this.esc(e.username ?? '')}</td>
-                   <td>${this.esc(e.joinedAt ? new Date(e.joinedAt).toLocaleDateString() : '—')}</td>
-                   <td><span class="rl-detail-status rl-detail-status--${e.status}">${e.status}</span></td>
-                 </tr>
-               `).join('')}
-             </tbody>
-           </table>
-         </div>
-       `;
-     } catch {
-       contentEl.innerHTML = `<p class="rl-empty"><p>Error loading referrals.</p></p>`;
-     }
-   }
+        this._bindDetailEvents(userId, userName, page, totalPages);
+      } catch {
+        contentEl.innerHTML = `<p class="rl-empty">Error loading user details.</p>`;
+      }
+    }
+
+    _renderUserDetail(user, activity, entries, total, totalPages, page, fallbackName) {
+      const avatar = user.avatarUrl
+        ? `<img src="${this.esc(user.avatarUrl)}" alt="${this.esc(user.name || '')}" class="rl-profile__avatar" />`
+        : `<span class="rl-profile__avatar rl-profile__avatar--initials">${initials(user.name || fallbackName || '?')}</span>`;
+
+      const verifiedBadge = user.isVerified
+        ? `<span class="rl-detail-badge rl-detail-badge--verified"><span class="rl-check-icon"></span> Verified</span>`
+        : `<span class="rl-detail-badge rl-detail-badge--unverified">Unverified</span>`;
+
+      const statusBadge = user.status === 'active'
+        ? `<span class="rl-detail-badge rl-detail-badge--active">${user.status}</span>`
+        : `<span class="rl-detail-badge rl-detail-badge--inactive">${user.status || 'inactive'}</span>`;
+
+      const activityItems = [
+        { label: 'Page Views',     value: fmt(activity.pageViews ?? 0),     icon: ICON_TREND },
+        { label: 'News Posts',      value: fmt(activity.newsPosts ?? 0),     icon: ICON_USERS  },
+        { label: 'Reels',           value: fmt(activity.reels ?? 0),         icon: ICON_USERS  },
+        { label: 'Chat Messages',   value: fmt(activity.chatMessages ?? 0), icon: ICON_USERS  },
+        { label: 'Referrals',       value: fmt(activity.referralCount ?? 0),  icon: ICON_LINK  },
+      ];
+
+      let rowsHtml = '';
+      if (entries.length) {
+        rowsHtml = entries.map(e => {
+          const confirmed = e.status === 'confirmed';
+          const eAvatar = e.avatarUrl
+            ? `<img src="${this.esc(e.avatarUrl)}" alt="${this.esc(e.name || '')}" class="rl-referred__avatar" />`
+            : `<span class="rl-referred__avatar rl-referred__avatar--initials">${initials(e.name || '?')}</span>`;
+
+          return `
+            <tr>
+              <td class="rl-referred__cell">
+                ${eAvatar}
+                <span class="rl-referred__name">${this.esc(e.name || '—')}</span>
+              </td>
+              <td class="rl-referred__cell"><span class="rl-referred__handle">@${this.esc(e.username || '')}</span></td>
+              <td class="rl-referred__date">${this.esc(e.joinedAt ? new Date(e.joinedAt).toLocaleDateString() : '—')}</td>
+              <td><span class="rl-detail-status rl-detail-status--${confirmed ? 'confirmed' : 'pending'}">${confirmed ? 'Confirmed' : 'Pending'}</span></td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        rowsHtml = `
+          <tr><td colspan="4" class="rl-empty-row">
+            <div class="rl-empty">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                   style="opacity:.35;margin-bottom:8px"><circle cx="9" cy="7" r="4"/>
+                   <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/></svg>
+              <p>No referrals yet for this user.</p>
+              <span>Referred users will appear here once they sign up.</span>
+            </div>
+          </td></tr>
+        `;
+      }
+
+      const pager = totalPages > 1
+        ? `<div class="rl-detail-pagination">
+             <button class="ktg-btn ktg-btn--ghost ktg-btn--sm" ${page <= 1 ? 'disabled' : ''} data-action="prev">← Prev</button>
+             <span class="rl-page-info">Page ${page} of ${totalPages}</span>
+             <button class="ktg-btn ktg-btn--ghost ktg-btn--sm" ${page >= totalPages ? 'disabled' : ''} data-action="next">Next →</button>
+           </div>`
+        : '';
+
+      return `
+        <!-- Profile header -->
+        <div class="rl-profile-header">
+          ${avatar}
+          <div class="rl-profile__info">
+            <h3 class="rl-profile__name">${this.esc(user.name || fallbackName || '—')}</h3>
+            <p class="rl-profile__handle">@${this.esc(user.username || '')}</p>
+            <div class="rl-profile__badges">
+              ${verifiedBadge}
+              ${statusBadge}
+            </div>
+          </div>
+          <div class="rl-profile__score">
+            <span class="rl-score__value">${activity.activityScore ?? 0}</span>
+            <span class="rl-score__label">Activity Score</span>
+            <span class="rl-score__period">last ${activity.periodDays ?? 30} days</span>
+          </div>
+        </div>
+
+        <!-- Contact + profile fields -->
+        <div class="rl-profile-grid">
+          <div class="rl-profile__field">
+            <span class="rl-profile__field-label">Email</span>
+            <span class="rl-profile__field-value">${this.esc(user.email || '—')}</span>
+          </div>
+          <div class="rl-profile__field">
+            <span class="rl-profile__field-label">Referral Code</span>
+            <span class="rl-profile__field-value rl-profile__code">${this.esc(user.referralCode || '—')}</span>
+          </div>
+          <div class="rl-profile__field">
+            <span class="rl-profile__field-label">LGA</span>
+            <span class="rl-profile__field-value">${this.esc(user.lgaName || '—')}</span>
+          </div>
+          <div class="rl-profile__field">
+            <span class="rl-profile__field-label">Region</span>
+            <span class="rl-profile__field-value">
+              <span class="rl-region-badge rl-region-badge--${user.region || 'west'}">${REGION_LABELS[user.region || 'west'] || user.region || '—'}</span>
+            </span>
+          </div>
+          <div class="rl-profile__field">
+            <span class="rl-profile__field-label">City / State</span>
+            <span class="rl-profile__field-value">${this.esc(user.city || '—')} / ${this.esc(user.state || '—')}</span>
+          </div>
+          <div class="rl-profile__field">
+            <span class="rl-profile__field-label">Member Since</span>
+            <span class="rl-profile__field-value">${this.esc(user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—')}</span>
+          </div>
+          <div class="rl-profile__field">
+            <span class="rl-profile__field-label">Last Seen</span>
+            <span class="rl-profile__field-value">${this.esc(user.lastSeenAt || '—')}</span>
+          </div>
+          <div class="rl-profile__field">
+            <span class="rl-profile__field-label">Referred By</span>
+            <span class="rl-profile__field-value">${this.esc(user.referredBy ? `#${user.referredBy}` : 'Direct sign-up')}</span>
+          </div>
+        </div>
+
+        <!-- Activity metrics -->
+        <div class="rl-section">
+          <h4 class="rl-section__title">30-Day Activity</h4>
+          <div class="rl-activity-grid">
+            ${activityItems.map(a => `
+              <div class="rl-activity-item">
+                <span class="rl-activity__icon" aria-hidden="true">${a.icon}</span>
+                <span class="rl-activity__value">${a.value}</span>
+                <span class="rl-activity__label">${a.label}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Referred users table -->
+        <div class="rl-section">
+          <h4 class="rl-section__title">Referred Users (${total})</h4>
+          <div class="rl-detail-table-wrap">
+            <table class="rl-detail-table" aria-label="Referred users">
+              <thead><tr>
+                <th>User</th>
+                <th>Username</th>
+                <th>Joined</th>
+                <th>Status</th>
+              </tr></thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
+          ${pager}
+        </div>
+      `;
+    }
+
+    _bindDetailEvents(userId, userName, page, totalPages) {
+      const contentEl = document.getElementById('rl-detail-content');
+      if (!contentEl) return;
+
+      this.on(contentEl, 'click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.dataset.action;
+        if (action === 'prev' && page > 1) {
+          this._detailPage = page - 1;
+          this._showUserReferrals(userId, userName);
+        } else if (action === 'next' && page < totalPages) {
+          this._detailPage = page + 1;
+          this._showUserReferrals(userId, userName);
+        }
+      });
+    }
 }

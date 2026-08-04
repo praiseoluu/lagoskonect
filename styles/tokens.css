@@ -56,6 +56,7 @@
      ───────────────────────────────────────────────────────────────── */
 
   --color-primary:     #068927;
+  --color-primary-rgb: 6, 137, 39;
   --color-primary-90:  #068927E5;
   --color-primary-80:  #068927CC;
   --color-primary-70:  #068927B2;
@@ -68,9 +69,11 @@
      ───────────────────────────────────────────────────────────────── */
 
   --color-bg:             #FFFFFF;
+  --color-white:          #FFFFFF;
   --color-text:           #0F1712;
   --color-text-secondary: #4B5563;
   --color-text-muted:     #9CA3AF;
+  --color-text-on-primary:#FFFFFF;
   --color-sidebar-bg:     #FFFFFF;
   --color-border:         #E5E7EB;
   --color-border-light:   #F3F4F6;
@@ -84,12 +87,17 @@
 
   --color-success:     #068927;
   --color-success-bg:  #06892726;
+  --color-success-15:  #06892726;
   --color-error:       #DC2626;
   --color-error-bg:    #FEE2E2;
+  --color-error-15:    #DC262626;
   --color-warning:     #D97706;
   --color-warning-bg:  #FEF3C7;
-  --color-info:        #2563EB;
+  --color-warning-15:  #D9770626;
+   --color-info:        #2563EB;
+  --color-info-rgb:   37, 99, 235;
   --color-info-bg:     #DBEAFE;
+  --color-info-15:     #2563EB26;
 
   /* ─────────────────────────────────────────────────────────────────────
      5. BADGE / TAG COLOURS
@@ -113,6 +121,35 @@
   --badge-security-text:   #DC2626;
   --badge-event-bg:        #FEF3C7;
   --badge-event-text:      #D97706;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     Medal / trophy colours (podium & leaderboard ranking)
+     Gold, Silver, Bronze — backgrounds and text are paired so the
+     components never touch raw hex values.
+     ───────────────────────────────────────────────────────────────── */
+
+   --color-gold:      #CA9500;
+  --color-gold-bg:     #FFF3B0;
+  --color-gold-border: #FFD700;
+  --color-gold-gradient: linear-gradient(to bottom, #FFF3B0, #FFD700);
+
+  --color-silver:    #9CA3AF;
+  --color-silver-bg: #E5E7EB;
+  --color-silver-border: #C0C0C0;
+  --color-silver-gradient: linear-gradient(to bottom, #E8E8E8, #C0C0C0);
+
+  --color-bronze:    #CD7F32;
+  --color-bronze-bg: #FDE8D1;
+  --color-bronze-border: #CD7F32;
+  --color-bronze-gradient: linear-gradient(to bottom, #EAC08A, #CD7F32);
+
+  /* Region badge colours (West / Central / East) */
+  --color-region-west-bg:    #e8f0fe;
+  --color-region-west-text:  #1a56db;
+  --color-region-central-bg: #fef3c7;
+  --color-region-central-text: #92400e;
+  --color-region-east-bg:    #dcfce7;
+  --color-region-east-text:  #166534;
 
   /* ─────────────────────────────────────────────────────────────────────
      6. TYPOGRAPHY — FONT STACK
@@ -257,10 +294,21 @@
 
   --focus-ring: 0 0 0 3px rgba(6, 137, 39, 0.25);
 
-
   /* ─────────────────────────────────────────────────────────────────────
-     18. PREMIUM DESIGN TOKENS (v2 — elevation & gradients)
-     ───────────────────────────────────────────────────────────────── */
+      18. PREMIUM DESIGN TOKENS
+        18a. Dark surface tokens (for dark-themed dashboard panels
+             e.g. the System Health card within the light theme)
+        18b. Elevation & gradients
+      ───────────────────────────────────────────────────────────────── */
+
+  --color-dark-bg:             #0f1712;
+  --color-dark-bg-card:        #0f1712;
+  --color-dark-text:           #ffffff;
+  --color-dark-text-secondary: rgba(255,255,255,0.6);
+  --color-dark-text-muted:     rgba(255,255,255,0.5);
+  --color-dark-border:         rgba(255,255,255,0.08);
+  --color-dark-surface:        rgba(255,255,255,0.05);
+  --color-success-muted:       #4ade80;
 
   /* Multi-layer card shadows for depth */
   --shadow-card:           0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
@@ -294,14 +342,33 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --color-bg:             #0F1712;
+    --color-white:          #0F1712;
     --color-text:           #F9FAFB;
     --color-text-secondary: #D1D5DB;
     --color-text-muted:     #6B7280;
+    --color-text-on-primary:#0F1712;
     --color-sidebar-bg:     #111B14;
     --color-border:         #1F2D22;
     --color-border-light:   #192B1C;
     --color-surface:        #141F17;
     --color-surface-hover:  #1A2B1D;
+
+    --color-success-bg:  #06892726;
+    --color-error-bg:    #7F1D1D33;
+    --color-warning-bg:  #78350F33;
+    --color-info-bg:     #1E3A8A33;
+
+    --color-gold-bg:     #784C0033;
+    --color-silver-bg:   #37415133;
+    --color-bronze-bg:   #7F3B0033;
+
+    --color-bg-card:     #141F17;
+    --color-primary-5:   rgba(6,137,39,0.05);
+    --color-primary-15:  #06892726;
+
+    --shadow-card:           0 1px 3px rgba(0,0,0,0.30), 0 4px 16px rgba(0,0,0,0.25);
+    --shadow-card-hover:     0 8px 28px rgba(0,0,0,0.40), 0 2px 8px rgba(0,0,0,0.30);
+    --shadow-primary-glow:   0 4px 16px rgba(6,137,39,0.40), 0 1px 4px rgba(6,137,39,0.28);
   }
 }
 */

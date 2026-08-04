@@ -241,10 +241,17 @@ class ReferralController {
     // ── Admin: per-user referral history ──────────────────────────
     // GET /admin/referrals/user/:userId
 
+    /**
+     * GET /admin/referrals/user/:userId
+     * Returns full profile, activity metrics, and the paginated list of
+     * users this citizen has referred.
+     */
     public function getUserReferrals(int $userId): void {
         $this->requireAdmin();
 
         $user = $this->fetchUser($userId);
+
+        $activity = $this->fetchActivityMetrics((int)$user['id']);
 
         $page    = max(1, (int)($_GET['page']    ?? 1));
         $perPage = min(50, max(1, (int)($_GET['perPage'] ?? 20)));
@@ -279,12 +286,7 @@ class ReferralController {
         }, $rows);
 
         Response::json(
-            ['user' => [
-                'userId'       => (int)$user['id'],
-                'name'         => $user['name'],
-                'username'     => $user['username'],
-                'referralCount'=> (int)$user['referral_count'],
-            ], 'entries' => $entries],
+            ['user' => $user, 'activity' => $activity, 'entries' => $entries],
             200,
             ['total'      => $total,
              'page'       => $page,
@@ -297,12 +299,94 @@ class ReferralController {
 
     private function fetchUser(int $userId): array {
         $stmt = $this->db->prepare(
-            'SELECT id, name, username, referral_code, referral_count FROM users WHERE id = ?'
+            'SELECT id, name, username, email, avatar_url, lga_id, lga_name, state, city,
+                    region, referral_code, referral_count, referred_by_user_id,
+                    status, is_verified, last_seen_at, created_at
+             FROM users WHERE id = ?'
         );
         $stmt->execute([$userId]);
-        $user = $stmt->fetch();
-        if (!$user) Response::error('NOT_FOUND', 'User not found.', 404);
-        return $user;
+        $u = $stmt->fetch();
+        if (!$u) Response::error('NOT_FOUND', 'User not found.', 404);
+
+        $region = $u['region'] ?? null;
+        $lgaName = $u['lga_name'] ?: '—';
+
+        return [
+            'userId'          => (int)$u['id'],
+            'name'            => $u['name'],
+            'username'        => $u['username'],
+            'email'           => $u['email'],
+            'avatarUrl'       => $u['avatar_url'] ?: null,
+            'lgaId'           => $u['lga_id'] ? (int)$u['lga_id'] : null,
+            'lgaName'         => $lgaName,
+            'city'            => $u['city'],
+            'state'           => $u['state'],
+            'region'          => $region,
+            'referralCode'    => $u['referral_code'],
+            'referralCount'   => (int)$u['referral_count'],
+            'referredBy'      => (int)$u['referred_by_user_id'],
+            'status'          => $u['status'],
+            'isVerified'      => (bool)$u['is_verified'],
+            'lastSeenAt'      => $u['last_seen_at'],
+            'createdAt'       => $u['created_at'],
+        ];
+    }
+
+    /**
+     * Computes 30-day activity metrics for a user.
+     * Weights: page_views=1, news=5, reels=5, chat=2, referrals=3
+     */
+    private function fetchActivityMetrics(int $userId): array {
+        $days = 30;
+
+        $pvStmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM page_views
+             WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)"
+        );
+        $pvStmt->execute([$userId]);
+        $pageViews = (int)$pvStmt->fetchColumn();
+
+        $newsStmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM news
+             WHERE author_id = ? AND status = 'published'
+               AND published_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)"
+        );
+        $newsStmt->execute([$userId]);
+        $newsPosts = (int)$newsStmt->fetchColumn();
+
+        $reelStmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM reels
+             WHERE author_id = ? AND status = 'published'
+               AND published_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)"
+        );
+        $reelStmt->execute([$userId]);
+        $reels = (int)$reelStmt->fetchColumn();
+
+        $chatStmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM lga_chat_messages
+             WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)"
+        );
+        $chatStmt->execute([$userId]);
+        $chatMessages = (int)$chatStmt->fetchColumn();
+
+        $referralCount = 0;
+        $rcStmt = $this->db->prepare(
+            'SELECT referral_count FROM users WHERE id = ?'
+        );
+        $rcStmt->execute([$userId]);
+        $referralCount = (int)$rcStmt->fetchColumn();
+
+        $activityScore = $pageViews * 1 + $newsPosts * 5 + $reels * 5 + $chatMessages * 2 + $referralCount * 3;
+
+        return [
+            'pageViews'       => $pageViews,
+            'newsPosts'       => $newsPosts,
+            'reels'           => $reels,
+            'chatMessages'    => $chatMessages,
+            'referralCount'   => $referralCount,
+            'activityScore'   => $activityScore,
+            'periodDays'      => $days,
+        ];
     }
 
     private function minePayload(array $user): array {

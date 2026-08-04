@@ -165,7 +165,7 @@ class AdminManagementController {
             }
         }
 
-        if (array_key_exists('role', $body)) {
+         if (array_key_exists('role', $body)) {
             $role = trim($body['role']);
             if (!in_array($role, ['super_admin', 'admin'], true)) {
                 Response::error('VALIDATION_ERROR', 'Invalid role.', 422);
@@ -175,6 +175,20 @@ class AdminManagementController {
             }
             $fields[] = 'role = ?';
             $values[] = $role;
+        }
+
+        if (array_key_exists('email', $body)) {
+            $email = trim($body['email']);
+            if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                Response::error('VALIDATION_ERROR', 'Invalid email.', 422);
+            }
+            $dupStmt = $this->db->prepare('SELECT id FROM admins WHERE email = ? AND id != ?');
+            $dupStmt->execute([$email, $id]);
+            if ($dupStmt->fetch()) {
+                Response::error('DUPLICATE', 'An admin with this email already exists.', 409);
+            }
+            $fields[] = 'email = ?';
+            $values[] = $email ?: null;
         }
 
         // Optional password reset

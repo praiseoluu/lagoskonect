@@ -108,7 +108,7 @@
 .adm-btn--primary {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-text-on-primary);
 }
 
 .adm-btn--primary:hover:not(:disabled) {
