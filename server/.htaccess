@@ -1,7 +1,36 @@
-RewriteEngine On
+Options -Indexes
 
-# Allow direct access to uploads
-RewriteCond %{REQUEST_URI} ^/server/uploads/
-RewriteRule ^ - [L]
+# Block direct access to sensitive files
+<FilesMatch "\.(sql|env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /server/
+
+    # ── 1. Loop prevention ────────────────────────────────────────────────
+    # index.php MUST pass through without being rewritten again.
+    # Without this rule, Apache/LiteSpeed re-processes this .htaccess after
+    # the rewrite and catches index.php in the catch-all below → 508 loop.
+    RewriteRule ^index\.php$ - [L]
+
+    # ── 2. Allow direct file/directory access (uploads, static assets) ────
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # ── 3. Route API requests → index.php with _route param ───────────────
+    # This handles two cases:
+    #   a) LiteSpeed re-runs this .htaccess after the root .htaccess rewrote
+    #      to /server/index.php — rule 1 above already stops it, so this
+    #      never fires for that case.
+    #   b) Requests that reach /server/ directly (bypassing root .htaccess)
+    #      — this routes them correctly and passes _route so index.php doesn't
+    #      have to rely on REDIRECT_URL (which LiteSpeed may not set).
+    RewriteCond %{REQUEST_URI} ^/server/api/v1/ [NC]
+    RewriteRule ^api/v1/(.*)$ index.php?_route=$1 [QSA,L]
+</IfModule>
 
 CGIPassAuth On
