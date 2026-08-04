@@ -28,12 +28,11 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 # ── Pass PHP API calls through to PHP ─────────────────────────────────
-# [END] stops the rewrite cycle completely (no restart), so PHP receives
-# the original REQUEST_URI (/server/api/v1/…) rather than the rewritten
-# path (/server/index.php). Without [END], the [L]-restart updates
-# REQUEST_URI to the rewritten path and the PHP router can't find the route.
+# The route segment is passed as _route= so server/index.php can read it
+# from $_GET regardless of whether REDIRECT_URL or [END] are supported
+# (varies between Apache and LiteSpeed on cPanel hosts).
 RewriteCond %{REQUEST_URI} ^/server/api/v1/
-RewriteRule ^server/api/v1/(.*)$ server/index.php [QSA,END]
+RewriteRule ^server/api/v1/(.*)$ /server/index.php?_route=$1 [QSA,L]
 
 # Allow direct server file access (uploads, etc.)
 RewriteCond %{REQUEST_URI} ^/server/

@@ -1,0 +1,12 @@
+# Prevent directory listing
+Options -Indexes
+
+# Prevent execution of PHP/scripts in uploads directory
+<FilesMatch "\.(php|php\d|phtml|phar|pl|py|cgi|sh|bash)$">
+    Require all denied
+</FilesMatch>
+
+# Deny .htaccess access to itself
+<Files ".htaccess">
+    Require all denied
+</Files>

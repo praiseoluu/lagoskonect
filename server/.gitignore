@@ -1,9 +1,8 @@
 # Environment & credentials — NEVER commit these
 .env
-config/oauth.php
 
 # Uploaded user files — not part of the codebase
-uploads/
+
 
 # Compiled/cached files
 *.log

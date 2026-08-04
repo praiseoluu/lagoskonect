@@ -56,15 +56,18 @@ header('Content-Type: application/json; charset=UTF-8');
 
 $method  = $_SERVER['REQUEST_METHOD'];
 
-// When Apache internally rewrites to this file (via mod_rewrite), it stores
-// the *original* request URI in REDIRECT_URL and updates REQUEST_URI to the
-// rewritten path (e.g. /server/index.php). Reading REDIRECT_URL first lets
-// the router see the real API path regardless of Apache/LiteSpeed flag support.
-$originalUri = $_SERVER['REDIRECT_URL'] ?? $_SERVER['REQUEST_URI'];
-$rawPath = parse_url($originalUri, PHP_URL_PATH);
-
-// Strip /server/api/v1 prefix
-$path = preg_replace('#^/server/api/v1#', '', $rawPath);
+// The .htaccess rewrite passes the route segment as ?_route=<path>.
+// This is the most portable approach: it works on Apache and LiteSpeed
+// regardless of whether REDIRECT_URL is populated or [END] is supported.
+// Fall back to stripping the prefix from REQUEST_URI for direct calls.
+if (isset($_GET['_route'])) {
+    $path = '/' . trim($_GET['_route'], '/');
+    unset($_GET['_route']); // prevent leaking into controller query-string handling
+} else {
+    $originalUri = $_SERVER['REDIRECT_URL'] ?? $_SERVER['REQUEST_URI'];
+    $rawPath     = parse_url($originalUri, PHP_URL_PATH);
+    $path        = preg_replace('#^/server/api/v1#', '', $rawPath);
+}
 $path = rtrim($path, '/');
 if ($path === '') $path = '/';
 
