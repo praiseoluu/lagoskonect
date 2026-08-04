@@ -55,9 +55,15 @@ header('Content-Type: application/json; charset=UTF-8');
 // ── Parse request ─────────────────────────────────────────────────────────
 
 $method  = $_SERVER['REQUEST_METHOD'];
-$rawPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Strip /api/v1 prefix
+// When Apache internally rewrites to this file (via mod_rewrite), it stores
+// the *original* request URI in REDIRECT_URL and updates REQUEST_URI to the
+// rewritten path (e.g. /server/index.php). Reading REDIRECT_URL first lets
+// the router see the real API path regardless of Apache/LiteSpeed flag support.
+$originalUri = $_SERVER['REDIRECT_URL'] ?? $_SERVER['REQUEST_URI'];
+$rawPath = parse_url($originalUri, PHP_URL_PATH);
+
+// Strip /server/api/v1 prefix
 $path = preg_replace('#^/server/api/v1#', '', $rawPath);
 $path = rtrim($path, '/');
 if ($path === '') $path = '/';
