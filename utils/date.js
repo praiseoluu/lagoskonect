@@ -5,6 +5,30 @@
  */
 
 /**
+ * Parses a timestamp coming from the API.
+ *
+ * The API stores and returns UTC (the DB session and PHP are both pinned to
+ * it), but MySQL DATETIME has no timezone marker, so the wire format is a bare
+ * "YYYY-MM-DD HH:MM:SS". A bare string like that is parsed as *browser-local*
+ * time, which silently displaced every timestamp by the gap between the
+ * viewer's timezone and the host's. Marking it as UTC makes the instant
+ * absolute; the browser then renders it in whatever timezone the viewer is in.
+ *
+ * Values that already carry a zone or offset are passed through untouched.
+ *
+ * @param {string|Date} date
+ * @returns {Date}
+ */
+export function parseServerDate(date) {
+  if (date instanceof Date) return date;
+  if (typeof date !== 'string') return new Date(date);
+
+  return /[Zz]|[+-]\d{2}:\d{2}$|[+-]\d{4}$/.test(date)
+    ? new Date(date)
+    : new Date(date.trim().replace(' ', 'T') + 'Z');
+}
+
+/**
  * Returns a human-readable relative time string.
  * e.g. "2 hours ago", "3 days ago", "just now"
  * @param {string|Date} date
@@ -12,16 +36,7 @@
  */
 export function timeAgo(date) {
   const now = Date.now();
-  // MySQL DATETIME values ("YYYY-MM-DD HH:MM:SS") are stored in the server's
-  // local timezone (set via MySQL's time_zone variable).  When this frontend
-  // runs in the same timezone — which is the normal case for a single-region
-  // deployment — treating the value as local time gives the correct diff.
-  // Appending "Z" would incorrectly shift the timestamp by the UTC offset.
-  let normalised = date;
-  if (typeof date === 'string' && !/[Zz]|[+-]\d{2}:\d{2}|[+-]\d{4}$/.test(date)) {
-    normalised = date.replace(' ', 'T');
-  }
-  const then = new Date(normalised).getTime();
+  const then = parseServerDate(date).getTime();
   const diff = Math.floor((now - then) / 1000); // seconds
 
   if (diff < 60) return 'just now';
@@ -50,7 +65,7 @@ export function timeAgo(date) {
  * @returns {string}
  */
 export function formatDate(date) {
-  return new Date(date).toLocaleDateString('en-NG', {
+  return parseServerDate(date).toLocaleDateString('en-NG', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
 }
@@ -61,7 +76,7 @@ export function formatDate(date) {
  * @returns {string}
  */
 export function formatDateTime(date) {
-  return new Date(date).toLocaleString('en-NG', {
+  return parseServerDate(date).toLocaleString('en-NG', {
     day: 'numeric', month: 'long', year: 'numeric',
     hour: 'numeric', minute: '2-digit', hour12: true,
   });
@@ -84,7 +99,7 @@ export function formatDuration(seconds) {
  * @returns {string}
  */
 export function friendlyDate(date) {
-  const d = new Date(date);
+  const d = parseServerDate(date);
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);

@@ -28,6 +28,12 @@ class Database {
 
         try {
             self::$instance = new PDO($dsn, $user, $pass, $options);
+            // Pin the session to UTC so NOW() does not depend on how the host
+            // OS happens to be configured. MySQL defaults time_zone to SYSTEM,
+            // and shared hosting is often set to a timezone that has nothing to
+            // do with the audience, which silently shifted every stored
+            // timestamp. Must stay in step with the UTC default set in env.php.
+            self::$instance->exec("SET time_zone = '+00:00'");
         } catch (PDOException $e) {
             // Never expose DB details in production
             http_response_code(500);

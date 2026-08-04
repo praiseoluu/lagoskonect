@@ -11,6 +11,9 @@ import { Dropdown } from '../../../components/base/Forms.js';
 import { showToast, setPageLoading } from '../../../core/store.js';
 import { router } from '../../../core/router.js';
 import { api } from '../../../api/client.js';
+import { parseServerDate } from '../../../utils/date.js';
+
+const _pad = (n) => String(n).padStart(2, '0');
 
 const CATEGORIES = [
   'Health', 'Infrastructure', 'Education', 'Environment',
@@ -382,9 +385,12 @@ export default class AdminNewsFormPage extends AdminLayout {
     // Schedule date/time pickers if pre-existing
     if (ex?.scheduledAt) {
       this._scheduleEnabled = true;
-      const dt = new Date(ex.scheduledAt);
-      const dateStr = dt.toISOString().split('T')[0];
-      const timeStr = dt.toTimeString().slice(0, 5);
+      // Stored as UTC; the pickers show the admin's own local time. The date
+      // part must come from the same clock as the time part — reading the date
+      // off toISOString() (UTC) next to a local time could land on the wrong day.
+      const dt = parseServerDate(ex.scheduledAt);
+      const dateStr = `${dt.getFullYear()}-${_pad(dt.getMonth() + 1)}-${_pad(dt.getDate())}`;
+      const timeStr = `${_pad(dt.getHours())}:${_pad(dt.getMinutes())}`;
       this._datePicker = this.addChild(new Input({ type: 'date', label: 'Date', value: dateStr }));
       this._datePicker.mount($('#date-mount'));
       this._timePicker = this.addChild(new Input({ type: 'time', label: 'Time', value: timeStr }));
@@ -650,7 +656,12 @@ export default class AdminNewsFormPage extends AdminLayout {
       const date = this._datePicker?.getValue();
       const time = this._timePicker?.getValue();
       if (date && time) {
-        scheduledAt = `${date}T${time}:00`;
+        // The pickers give a local wall-clock time, but the cron compares
+        // scheduled_at against NOW(), which is UTC. Send the same instant
+        // expressed in UTC so the article publishes when the admin meant.
+        const local = new Date(`${date}T${time}:00`);
+        scheduledAt = `${local.getUTCFullYear()}-${_pad(local.getUTCMonth() + 1)}-${_pad(local.getUTCDate())}`
+                    + ` ${_pad(local.getUTCHours())}:${_pad(local.getUTCMinutes())}:00`;
       } else {
         showToast('error', 'Please set a date and time for scheduling.');
         return;
