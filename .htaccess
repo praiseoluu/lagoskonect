@@ -28,7 +28,14 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 # ── Pass PHP API calls through to PHP ─────────────────────────────────
-RewriteRule ^server - [L]
+RewriteCond %{REQUEST_URI} ^/server/api/v1/
+RewriteRule ^server/api/v1/(.*)$ server/index.php [QSA,L]
+
+# Allow direct server file access (uploads, etc.)
+RewriteCond %{REQUEST_URI} ^/server/
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
 # ── Everything else → SPA entry point ─────────────────────────────────
 RewriteRule ^ index.html [L]

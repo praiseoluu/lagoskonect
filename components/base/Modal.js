@@ -245,6 +245,22 @@ export class Modal extends Component {
     }
   }
 
+  /**
+   * Replaces the modal title without a full re-render.
+   * Falls back to a full re-render if the title element is not in the DOM.
+   *
+   * @param {string} title  Title text
+   */
+  setTitle(title) {
+    const titleEl = this.$('.adm-modal__title');
+    if (titleEl) {
+      titleEl.textContent = title;
+    } else {
+      this.props.title = title;
+      this._rerender();
+    }
+  }
+
   /* ── Focus management ─────────────────────────────────────────────────── */
 
   /**
