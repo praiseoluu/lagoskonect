@@ -26,6 +26,7 @@ import { users } from './users.js';
 import { referrals } from './referrals.js';
 import { newsletter } from './newsletter.js';
 import { newsImport } from './newsImport.js';
+import { withdrawals } from './withdrawals.js';
 import {
   MOCK,
   MOCK_SLOW_MS,
@@ -106,4 +107,5 @@ export const api = {
   referrals,
   newsletter,
   newsImport,
+  withdrawals,
 };

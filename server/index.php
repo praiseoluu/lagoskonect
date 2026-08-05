@@ -46,6 +46,7 @@ require_once __DIR__ . '/utils/Settings.php';
 require_once __DIR__ . '/utils/NotificationService.php';
 require_once __DIR__ . '/controllers/TwoFactorController.php';
 require_once __DIR__ . '/controllers/ReferralController.php';
+require_once __DIR__ . '/controllers/WithdrawalController.php';
 require_once __DIR__ . '/controllers/NewsletterController.php';
 
 // ── CORS + Content-Type ───────────────────────────────────────────────────
@@ -143,6 +144,29 @@ try {
 
     } elseif ($path === '/referrals/contest' && $method === 'GET') {
         (new ReferralController())->getContest();
+
+    // ── Referral payouts (citizen) ───────────────────────────────────────
+    } elseif ($path === '/referrals/payout' && $method === 'GET') {
+        (new WithdrawalController())->summary();
+
+    } elseif ($path === '/referrals/payout-account' && $method === 'PUT') {
+        (new WithdrawalController())->saveAccount();
+
+    } elseif ($path === '/referrals/withdrawals' && $method === 'POST') {
+        (new WithdrawalController())->request();
+
+    } elseif ($path === '/referrals/withdrawals' && $method === 'GET') {
+        (new WithdrawalController())->myRequests();
+
+    // ── Referral payouts (admin) ─────────────────────────────────────────
+    } elseif ($path === '/admin/withdrawals' && $method === 'GET') {
+        (new WithdrawalController())->adminList();
+
+    } elseif (preg_match('#^/admin/withdrawals/(\d+)/pay$#', $path, $m) && $method === 'POST') {
+        (new WithdrawalController())->markPaid((int) $m[1]);
+
+    } elseif (preg_match('#^/admin/withdrawals/(\d+)/reject$#', $path, $m) && $method === 'POST') {
+        (new WithdrawalController())->reject((int) $m[1]);
 
     } elseif ($method === 'GET' && $path === '/auth/sse-token') {
         $payload = requireAuth();

@@ -47,6 +47,66 @@ class EmailService {
         return self::send($toEmail, $subject, $html);
     }
 
+    /**
+     * Sent once an admin confirms a referral payout has actually been
+     * transferred. The account number is masked to the last four digits: the
+     * recipient knows which account they gave us, and a forwarded or
+     * intercepted email does not hand over the full number.
+     */
+    public static function sendPayoutConfirmation(
+        string $toEmail,
+        string $toName,
+        float $amount,
+        string $bankName,
+        string $accountNumber,
+        ?string $reference = null
+    ): bool {
+        $name    = htmlspecialchars($toName, ENT_QUOTES, 'UTF-8');
+        $bank    = htmlspecialchars($bankName, ENT_QUOTES, 'UTF-8');
+        $masked  = str_repeat('•', max(0, strlen($accountNumber) - 4)) . substr($accountNumber, -4);
+        $money   = 'NGN ' . number_format($amount, 2);
+        $support = htmlspecialchars(self::supportEmail(), ENT_QUOTES, 'UTF-8');
+        $appUrl  = htmlspecialchars(self::appUrl(), ENT_QUOTES, 'UTF-8');
+
+        $refRow = $reference
+            ? '<tr><td style="padding:6px 0;color:#6b7280;font-size:14px;">Reference</td>'
+              . '<td style="padding:6px 0;text-align:right;font-size:14px;color:#0a150c;">'
+              . htmlspecialchars($reference, ENT_QUOTES, 'UTF-8') . '</td></tr>'
+            : '';
+
+        $html = self::wrap('Referral payout sent', <<<HTML
+          <p style="margin:0 0 6px;font-size:13px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#068927;">Payout Confirmed</p>
+          <h1 style="margin:0 0 12px;font-size:22px;font-weight:700;color:#0a150c;line-height:1.3;">{$money} is on its way</h1>
+          <p style="margin:0 0 20px;font-size:15px;color:#4b5563;line-height:1.7;">
+            Hi {$name}, your referral earnings have been transferred to the account below.
+            Bank transfers usually land within minutes, but can occasionally take a few hours.
+          </p>
+          <table style="width:100%;border-collapse:collapse;margin:0 0 24px;border-top:1px solid #e5e7eb;">
+            <tr><td style="padding:6px 0;color:#6b7280;font-size:14px;">Amount</td>
+                <td style="padding:6px 0;text-align:right;font-size:14px;font-weight:700;color:#0a150c;">{$money}</td></tr>
+            <tr><td style="padding:6px 0;color:#6b7280;font-size:14px;">Bank</td>
+                <td style="padding:6px 0;text-align:right;font-size:14px;color:#0a150c;">{$bank}</td></tr>
+            <tr><td style="padding:6px 0;color:#6b7280;font-size:14px;">Account</td>
+                <td style="padding:6px 0;text-align:right;font-size:14px;color:#0a150c;">{$masked}</td></tr>
+            {$refRow}
+          </table>
+          <p style="margin:0 0 28px;font-size:15px;color:#4b5563;line-height:1.7;">
+            Your referral balance has been updated to reflect this payout. Keep sharing your link to earn more.
+          </p>
+          <a href="{$appUrl}/referrals"
+             style="display:inline-block;background:#068927;color:#ffffff;text-decoration:none;
+                    padding:13px 28px;border-radius:8px;font-size:14px;font-weight:600;">
+            View my referrals
+          </a>
+          <p style="margin:32px 0 0;font-size:13px;color:#9ca3af;line-height:1.6;">
+            If this payment has not arrived within 24 hours, reply to this email or contact
+            <a href="mailto:{$support}" style="color:#068927;text-decoration:none;">{$support}</a>.
+          </p>
+        HTML, $support, $appUrl);
+
+        return self::send($toEmail, "Your {$money} referral payout has been sent", $html);
+    }
+
     public static function sendNewsAlert(string $toEmail, string $toName, string $title, string $summary, string $url): bool {
         $escapedTitle   = htmlspecialchars($title,   ENT_QUOTES, 'UTF-8');
         $escapedSummary = htmlspecialchars($summary, ENT_QUOTES, 'UTF-8');
