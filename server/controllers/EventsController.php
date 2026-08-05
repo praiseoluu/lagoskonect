@@ -31,7 +31,8 @@
  *   replace the polling loop with a message queue (Redis pub/sub).
  */
 class EventsController {
-    private PDO $db;
+    /** Null while the poll loop is idle — see the sleep in stream(). */
+    private ?PDO $db;
 
     public function __construct() {
         $this->db = Database::connect();
@@ -123,6 +124,10 @@ class EventsController {
         $stmt->execute([$userId]);
         $lastNotifId = (int) $stmt->fetchColumn();
 
+        // The handshake statements would otherwise stay in scope for the whole
+        // stream, and each one keeps the connection it was prepared on alive.
+        unset($stmt, $sseStmt, $userStmt);
+
         // ── Send initial connection event ─────────────────────────────────
         $this->emit('connected', [
             'userId'      => $userId,
@@ -152,12 +157,37 @@ class EventsController {
         while (hrtime(true) < $deadline) {
             if (connection_aborted()) break;
 
+            // Release the database connection before going idle.
+            //
+            // Guarding the PHP process is not enough on its own. This loop
+            // spends nearly all of its five minutes asleep, and holding a
+            // MySQL connection open across every one of those naps means each
+            // connected browser permanently occupies one. Shared hosting caps
+            // max_user_connections low, so a modest number of simultaneous
+            // users exhausts the pool and every other request in the app dies
+            // with "Database connection failed" until a tab is closed.
+            //
+            // Dropping it here means a connection is only held for the brief
+            // query burst, cutting concurrent usage by roughly an order of
+            // magnitude.
+            //
+            // Every reference has to go, and a PDOStatement counts: it keeps
+            // its parent PDO alive on its own. Leaving the statement handles
+            // from this iteration in scope was enough to hold the connection
+            // open right through the sleep.
+            unset($msgStmt, $notifStmt, $newMessages, $newNotifs);
+            $this->db = null;
+            Database::disconnect();
+
             sleep(2); // poll every 2 seconds
 
             // Re-check wall clock and disconnect after sleep so we don't start
             // a fresh DB round-trip when we're already past the deadline.
             if (hrtime(true) >= $deadline) break;
             if (connection_aborted()) break;
+
+            // Idle period over — take a connection again for this round.
+            $this->db = Database::connect();
 
             // ── New chat messages ──────────────────────────────────────────
             $msgStmt = $this->db->prepare('

@@ -43,4 +43,20 @@ class Database {
 
         return self::$instance;
     }
+
+    /**
+     * Drops the pooled connection so the server can reclaim it.
+     *
+     * Ordinary requests never need this: PHP closes the handle when the
+     * request ends. It exists for the SSE stream, which stays alive for
+     * minutes at a time and would otherwise occupy one of the account's few
+     * MySQL connections for its whole lifetime. The next connect() call
+     * transparently opens a fresh one.
+     *
+     * Callers must also release their own reference (PDO only disconnects
+     * once every reference is gone).
+     */
+    public static function disconnect(): void {
+        self::$instance = null;
+    }
 }
