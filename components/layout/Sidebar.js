@@ -15,11 +15,11 @@
  * @version 2.0.0
  */
 
-import { Component }  from '../../core/component.js';
-import { Avatar }     from '../base/UI.js';
-import { store }      from '../../core/store.js';
-import { router }     from '../../core/router.js';
-import { t }          from '../../core/i18n.js';
+import { Component }  from '../../core/component.js?v=20260805c';
+import { Avatar }     from '../base/UI.js?v=20260805c';
+import { store }      from '../../core/store.js?v=20260805c';
+import { router }     from '../../core/router.js?v=20260805c';
+import { t }          from '../../core/i18n.js?v=20260805c';
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 const VALID_REGIONS  = Object.freeze(['west', 'central', 'east']);
@@ -80,7 +80,7 @@ function getBrandName() {
    Base Sidebar
    ══════════════════════════════════════════════════════════════════════════ */
 export class Sidebar extends Component {
-  static styles = '/components/layout/Sidebar.css';
+  static styles = '/components/layout/Sidebar.css?v=20260805c';
 
   constructor(props = {}) {
     super(props);
@@ -367,9 +367,9 @@ export class WebSidebar extends Sidebar {
     this.delegate('[data-logout]', 'click', async () => {
       try {
         const [{ clearSession }, { showToast }, { sseClient }] = await Promise.all([
-          import('../../utils/storage.js'),
-          import('../../core/store.js'),
-          import('../../core/sseClient.js?v=20260805b'),
+          import('../../utils/storage.js?v=20260805c'),
+          import('../../core/store.js?v=20260805c'),
+          import('../../core/sseClient.js?v=20260805c'),
         ]);
         sseClient.disconnect();
         clearSession();
@@ -533,8 +533,8 @@ export class AdminSidebar extends Sidebar {
     this.delegate('[data-logout]', 'click', async () => {
       try {
         const [{ clearSession }, { api }] = await Promise.all([
-          import('../../utils/storage.js'),
-          import('../../api/client.js'),
+          import('../../utils/storage.js?v=20260805c'),
+          import('../../api/client.js?v=20260805c'),
         ]);
         await api.auth.adminLogout();
         clearSession();

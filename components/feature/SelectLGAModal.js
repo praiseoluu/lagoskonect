@@ -31,10 +31,10 @@
  * @version 2.0.0
  */
 
-import { Component }        from '../../core/component.js';
-import { store, showToast } from '../../core/store.js';
-import { router }           from '../../core/router.js';
-import { api }              from '../../api/client.js';
+import { Component }        from '../../core/component.js?v=20260805c';
+import { store, showToast } from '../../core/store.js?v=20260805c';
+import { router }           from '../../core/router.js?v=20260805c';
+import { api }              from '../../api/client.js?v=20260805c';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
 const ICON_MAP_PIN = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -66,7 +66,7 @@ const SKELETON_COUNT = 12;
    Component
    ══════════════════════════════════════════════════════════════════════════ */
 export class SelectLGAModal extends Component {
-  static styles = '/components/feature/SelectLGAModal.css';
+  static styles = '/components/feature/SelectLGAModal.css?v=20260805c';
 
   constructor(props = {}) {
     super(props);
@@ -470,7 +470,7 @@ export class SelectLGAModal extends Component {
 
       // Persist to session so the update survives a page refresh
       try {
-        const { saveSession } = await import('../../utils/storage.js');
+        const { saveSession } = await import('../../utils/storage.js?v=20260805c');
         const existing = JSON.parse(sessionStorage.getItem('adm_auth') || '{}');
         saveSession({
           token: existing.token,

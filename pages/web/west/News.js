@@ -6,12 +6,12 @@
  * Falls back to newest article if no headline is set.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
-import { Button } from '../../../components/base/Button.js';
-import { router } from '../../../core/router.js';
-import { setPageLoading } from '../../../core/store.js';
-import { api } from '../../../api/client.js';
-import { t } from '../../../core/i18n.js';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
+import { Button } from '../../../components/base/Button.js?v=20260805c';
+import { router } from '../../../core/router.js?v=20260805c';
+import { setPageLoading } from '../../../core/store.js?v=20260805c';
+import { api } from '../../../api/client.js?v=20260805c';
+import { t } from '../../../core/i18n.js?v=20260805c';
 
 function formatDate(iso) {
   if (!iso) return '';
@@ -45,7 +45,7 @@ function stripMarkdown(str) {
 }
 
 export default class NewsPage extends WebLayout {
-  static styles = '/pages/web/app/News.css';
+  static styles = '/pages/web/app/News.css?v=20260805c';
 
   constructor(props) {
     super({ title: t('news.title'), ...props });
