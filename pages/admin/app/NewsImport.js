@@ -16,6 +16,7 @@
 import { AdminLayout } from '../../../components/layout/BaseLayout.js';
 import { showToast, setPageLoading } from '../../../core/store.js';
 import { api } from '../../../api/client.js';
+import { BASE_URL } from '../../../api/_fetch.js';
 import { formatDateTime } from '../../../utils/date.js';
 
 const COUNTRIES = [
@@ -200,6 +201,14 @@ export default class NewsImportPage extends AdminLayout {
     }
 
     el.innerHTML = items.map(a => this._card(a)).join('');
+
+    // Bound as a listener rather than an inline onerror attribute: the CSP
+    // sets script-src without 'unsafe-inline', so inline handlers never run.
+    el.querySelectorAll('.ni-card__media img').forEach((img) => {
+      img.addEventListener('error', () => {
+        img.closest('.ni-card')?.classList.add('ni-card--noimg');
+      });
+    });
   }
 
   _card(a) {
@@ -216,16 +225,20 @@ export default class NewsImportPage extends AdminLayout {
         ? `<button class="ni-btn" data-restore="${this.esc(a.externalId)}">Restore</button>`
         : `<span class="ni-state ni-state--published">${ICON_CHECK} Published</span>`;
 
-    // Plenty of feed items arrive with no image, and some URLs 404. Rather
-    // than leave a dead grey column, drop the media track entirely in both
-    // cases and let the text use the full width.
+    // Article images come from arbitrary news domains, which the site's CSP
+    // (img-src 'self' plus a short allowlist) blocks outright. Routing them
+    // through our own origin makes them load. Items with no image, or whose
+    // image 404s, drop the media track so the text uses the full width.
+    const proxied = a.image
+      ? `${BASE_URL}/admin/news/import/image?url=${encodeURIComponent(a.image)}`
+      : '';
+
     return `
       <article class="ni-card ni-card--${state}${a.image ? '' : ' ni-card--noimg'}"
                data-id="${this.esc(a.externalId)}">
         ${a.image
           ? `<div class="ni-card__media">
-               <img src="${this.esc(a.image)}" alt="" loading="lazy"
-                    onerror="this.closest('.ni-card').classList.add('ni-card--noimg')" />
+               <img src="${this.esc(proxied)}" alt="" loading="lazy" />
              </div>`
           : ''}
 
