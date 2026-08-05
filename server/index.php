@@ -401,6 +401,11 @@ try {
     } elseif ($path === '/admin/news/import/quota' && $method === 'GET') {
         (new NewsImportController())->quota();
 
+    // Image proxy. Unauthenticated by necessity (an <img> cannot send a
+    // Bearer header); it only serves URLs already present in the feed cache.
+    } elseif ($path === '/admin/news/import/image' && $method === 'GET') {
+        (new NewsImportController())->image();
+
     } elseif ($path === '/admin/news/import/approve' && $method === 'POST') {
         (new NewsImportController())->approve();
 

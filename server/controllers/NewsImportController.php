@@ -101,7 +101,10 @@ class NewsImportController {
         $summary    = trim((string) ($body['summary'] ?? ''));
         $articleTxt = trim((string) ($body['body'] ?? ''));
         $category   = trim((string) ($body['category'] ?? '')) ?: 'General';
-        $imageUrl   = trim((string) ($body['imageUrl'] ?? '')) ?: null;
+        // Copy the picture into our own storage rather than hotlinking the
+        // publisher. Citizens would otherwise be blocked by the CSP, and the
+        // remote file could vanish at any time.
+        $imageUrl   = $this->mirrorImage(trim((string) ($body['imageUrl'] ?? '')));
         $sourceUrl  = trim((string) ($body['sourceUrl'] ?? '')) ?: null;
         $sourceName = trim((string) ($body['sourceName'] ?? '')) ?: null;
         $breaking   = !empty($body['breaking']);
@@ -156,6 +159,62 @@ class NewsImportController {
         }
 
         Response::json(['newsId' => $newsId, 'status' => 'published'], 201);
+    }
+
+    // ── GET /admin/news/import/image?url=… ────────────────────────────────
+    //
+    // Streams a remote article image through this origin.
+    //
+    // Why this exists: the site's CSP allows img-src 'self' plus a short
+    // allowlist, and articles arrive from arbitrary news domains that can
+    // never be on it. Loading them directly is blocked by the browser, so the
+    // review screen showed empty boxes.
+    //
+    // Deliberately not behind the Bearer check: an <img> tag cannot send an
+    // Authorization header. The guard instead is that the URL must already
+    // appear in a cached feed payload, so this can only ever fetch images the
+    // provider handed us. That makes it useless as a general purpose proxy.
+
+    public function image(): void {
+        $url = trim($_GET['url'] ?? '');
+
+        if ($url === '' || !$this->isCachedImageUrl($url)) {
+            header_remove('Content-Type');
+            http_response_code(404);
+            exit;
+        }
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS      => 3,
+            CURLOPT_TIMEOUT        => 12,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_PROTOCOLS      => CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_REDIR_PROTOCOLS=> CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_USERAGENT      => 'LagosKonect/1.0 (+https://lagoskonect.com)',
+        ]);
+
+        $body   = curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $mime   = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        curl_close($ch);
+
+        $mime = trim(explode(';', $mime)[0]);
+
+        if ($body === false || $status < 200 || $status >= 300 || !str_starts_with($mime, 'image/')) {
+            header_remove('Content-Type');
+            http_response_code(404);
+            exit;
+        }
+
+        header_remove('Content-Type');
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . strlen($body));
+        header('Cache-Control: public, max-age=86400');
+        echo $body;
+        exit;
     }
 
     // ── POST /admin/news/import/dismiss ───────────────────────────────────
@@ -230,6 +289,86 @@ class NewsImportController {
         }
 
         return $articles;
+    }
+
+    /**
+     * True when the URL is the image of an article in a live cache entry.
+     * This is what stops the proxy being an open redirect/SSRF tool: only
+     * URLs the provider itself gave us can ever be fetched.
+     */
+    private function isCachedImageUrl(string $url): bool {
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        $stmt = $this->db->query('SELECT payload FROM news_import_cache WHERE expires_at > NOW()');
+        foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $payload) {
+            $decoded = json_decode($payload, true);
+            if (!is_array($decoded)) continue;
+
+            foreach (($decoded['top_news'] ?? []) as $cluster) {
+                foreach (($cluster['news'] ?? []) as $item) {
+                    if (!empty($item['image']) && $item['image'] === $url) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Copies a remote image into our own object storage and returns the
+     * resulting same-origin /media URL.
+     *
+     * Published articles keep their image forever this way, instead of
+     * hotlinking a publisher's server that may move or delete the file. It
+     * also keeps the URL on an origin the CSP already permits.
+     *
+     * Returns null when the image cannot be fetched; the article is still
+     * published, just without a picture.
+     */
+    private function mirrorImage(string $url): ?string {
+        if ($url === '') return null;
+
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+        if (!in_array($scheme, ['http', 'https'], true)) return null;
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS      => 3,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_PROTOCOLS      => CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_REDIR_PROTOCOLS=> CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_USERAGENT      => 'LagosKonect/1.0 (+https://lagoskonect.com)',
+        ]);
+
+        $body   = curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $mime   = trim(explode(';', (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE))[0]);
+        curl_close($ch);
+
+        if ($body === false || $status < 200 || $status >= 300) return null;
+        if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'image/gif'], true)) return null;
+        if (strlen($body) > 8 * 1024 * 1024) return null;
+
+        $tmp = tempnam(sys_get_temp_dir(), 'nimg');
+        if ($tmp === false) return null;
+
+        try {
+            file_put_contents($tmp, $body);
+            $key = S3::makeKey('news', S3::mimeToExt($mime));
+            return S3::upload($tmp, $key, $mime);
+        } catch (Throwable) {
+            return null;   // storage unavailable: publish without an image
+        } finally {
+            @unlink($tmp);
+        }
     }
 
     private function alreadyImported(string $externalId): bool {
