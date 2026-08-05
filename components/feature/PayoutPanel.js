@@ -289,13 +289,23 @@ export class PayoutPanel extends Component {
 
     this._busy = true;
     const btn = this.$('#payout-save-id');
+    const label = btn?.textContent;
     if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+    // Restores the button on every path that does not repaint the panel.
+    // Returning early on an error used to leave it stuck on "Saving…", which
+    // looked like a hang and hid the message explaining what actually failed.
+    const done = () => {
+      this._busy = false;
+      if (btn && btn.isConnected) { btn.disabled = false; btn.textContent = label; }
+    };
 
     try {
       if (idType) {
         const res = await api.users.updateProfile({ idType });
         if (res.error) {
           showToast('error', res.error.message || 'Could not save the ID type.');
+          done();
           return;
         }
       }
@@ -304,14 +314,20 @@ export class PayoutPanel extends Component {
         const up = await api.users.uploadIdDocument(file);
         if (up.error) {
           showToast('error', up.error.message || 'Could not upload that document.');
+          done();
           return;
         }
       }
 
       showToast('success', 'Identification saved.');
-      await this._load();
-    } finally {
       this._busy = false;
+      await this._load();   // repaints, so the button is rebuilt from scratch
+    } catch (err) {
+      // A thrown error (network drop, unreadable response) must not strand
+      // the button either.
+      showToast('error', 'Something went wrong saving your identification.');
+      console.error('[payout] identity save failed', err);
+      done();
     }
   }
 

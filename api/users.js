@@ -75,20 +75,47 @@ export const users = {
   },
 
   async uploadIdDocument(file) {
+    const auth = JSON.parse(sessionStorage.getItem('adm_auth') || 'null');
+    const token = auth?.token || '';
+    const formData = new FormData();
+    formData.append('document', file, file.name);
+
+    let response;
     try {
-      const auth = JSON.parse(sessionStorage.getItem('adm_auth') || 'null');
-      const token = auth?.token || '';
-      const formData = new FormData();
-      formData.append('document', file, file.name);
-      const response = await fetch(`${BASE_URL}/users/me/id-document`, {
+      response = await fetch(`${BASE_URL}/users/me/id-document`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      return await response.json();
     } catch {
-      return { error: { code: 'UPLOAD_ERROR', message: 'Failed to upload ID document.' } };
+      return { error: { code: 'NETWORK_ERROR', message: 'Could not reach the server. Check your connection and try again.' } };
     }
+
+    // Read the body as text first. A failed upload often answers with an HTML
+    // error page or a PHP notice rather than JSON, and parsing that blindly
+    // turned every distinct failure into one unhelpful "Failed to upload"
+    // with no status code to go on.
+    const raw = await response.text();
+
+    let parsed = null;
+    try { parsed = JSON.parse(raw); } catch { /* not JSON */ }
+
+    if (parsed?.error) return parsed;
+
+    if (!response.ok) {
+      return {
+        error: {
+          code: 'UPLOAD_ERROR',
+          message: `Upload failed (HTTP ${response.status}). ${raw.slice(0, 140)}`.trim(),
+        },
+      };
+    }
+
+    if (!parsed) {
+      return { error: { code: 'UPLOAD_ERROR', message: 'The server returned an unreadable response.' } };
+    }
+
+    return parsed;
   },
 
   // ── Admin: user management ────────────────────────────────────────────

@@ -153,9 +153,23 @@ class UserController {
         $uploadDir = __DIR__ . '/../uploads/id-documents/';
         $destPath  = $uploadDir . $safeName;
 
-        if (!is_dir($uploadDir)) mkdir($uploadDir, 0750, true);
+        // Say which step failed, and record it. Both of these previously
+        // surfaced as a bare "Could not save file" with nothing in the log,
+        // which is unusable when the real problem is a directory that cannot
+        // be created or written on the host.
+        if (!is_dir($uploadDir) && !@mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+            error_log("[IdUpload] cannot create directory: {$uploadDir}");
+            Response::error('UPLOAD_ERROR', 'Could not create the upload folder on the server.', 500);
+        }
+
+        if (!is_writable($uploadDir)) {
+            error_log("[IdUpload] directory not writable: {$uploadDir}");
+            Response::error('UPLOAD_ERROR', 'The upload folder is not writable on the server.', 500);
+        }
+
         if (!move_uploaded_file($file['tmp_name'], $destPath)) {
-            Response::error('UPLOAD_ERROR', 'Could not save file.', 500);
+            error_log("[IdUpload] move_uploaded_file failed -> {$destPath}");
+            Response::error('UPLOAD_ERROR', 'Could not save the uploaded file.', 500);
         }
 
         $base       = rtrim(getenv('BASE_URL') ?: '', '/');
