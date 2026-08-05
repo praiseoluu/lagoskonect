@@ -12,9 +12,9 @@ Options -Indexes
 
     # ── 1. Loop prevention ────────────────────────────────────────────────
     # index.php MUST pass through without being rewritten again.
-    # Without this rule, Apache/LiteSpeed re-processes this .htaccess after
-    # the rewrite and catches index.php in the catch-all below → 508 loop.
-    RewriteRule ^index\.php$ - [L]
+    # [END] halts the full rewrite cycle (not just the current pass like [L])
+    # which is required on LiteSpeed where [L] alone does not prevent re-entry.
+    RewriteRule ^index\.php$ - [END]
 
     # ── 2. Allow direct file/directory access (uploads, static assets) ────
     RewriteCond %{REQUEST_FILENAME} -f [OR]

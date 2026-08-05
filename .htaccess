@@ -32,7 +32,7 @@ RewriteRule ^ - [L]
 # from $_GET regardless of whether REDIRECT_URL or [END] are supported
 # (varies between Apache and LiteSpeed on cPanel hosts).
 RewriteCond %{REQUEST_URI} ^/server/api/v1/
-RewriteRule ^server/api/v1/(.*)$ /server/index.php?_route=$1 [QSA,L]
+RewriteRule ^server/api/v1/(.*)$ /server/index.php?_route=$1 [QSA,END]
 
 # Allow direct server file access (uploads, etc.)
 RewriteCond %{REQUEST_URI} ^/server/
