@@ -339,7 +339,16 @@ class ReferralController {
 
     /**
      * Computes 30-day activity metrics for a user.
-     * Weights: page_views=1, news=5, reels=5, chat=2, referrals=3
+     *
+     * Weights (effort-based):
+     *   Page views       × 1  — passive browsing
+     *   Chat messages    × 3  — takes engagement
+     *   News posts       × 10 — written content creation
+     *   Reels            × 15 — video production, highest effort
+     *   Direct referrals × 20 — bringing real people to the platform
+     *
+     * Plus a referral network bonus: +20% of the sum of all referred
+     * users' own scores (attributed back to the referrer).
      */
     private function fetchActivityMetrics(int $userId): array {
         $days = 30;
@@ -374,23 +383,54 @@ class ReferralController {
         $chatStmt->execute([$userId]);
         $chatMessages = (int)$chatStmt->fetchColumn();
 
-        $referralCount = 0;
         $rcStmt = $this->db->prepare(
             'SELECT referral_count FROM users WHERE id = ?'
         );
         $rcStmt->execute([$userId]);
         $referralCount = (int)$rcStmt->fetchColumn();
 
-        $activityScore = $pageViews * 1 + $newsPosts * 5 + $reels * 5 + $chatMessages * 2 + $referralCount * 3;
+        // Own score (direct activity only)
+        $ownScore = $pageViews * 1
+                  + $chatMessages * 3
+                  + $newsPosts * 10
+                  + $reels * 15
+                  + $referralCount * 20;
+
+        // Referral network bonus: 20% of the sum of referred users' own scores
+        $bonusStmt = $this->db->prepare("
+            SELECT COALESCE(ROUND(SUM(
+                (SELECT COUNT(*) FROM page_views pv
+                 WHERE pv.user_id = ru.id
+                   AND pv.created_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)) * 1
+                + (SELECT COUNT(*) FROM lga_chat_messages cm
+                   WHERE cm.user_id = ru.id
+                     AND cm.created_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)) * 3
+                + (SELECT COUNT(*) FROM news n
+                   WHERE n.author_id = ru.id AND n.status = 'published'
+                     AND n.published_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)) * 10
+                + (SELECT COUNT(*) FROM reels re
+                   WHERE re.author_id = ru.id AND re.status = 'published'
+                     AND re.published_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)) * 15
+                + COALESCE(ru.referral_count, 0) * 20
+            ) * 0.20), 0)
+            FROM users ru
+            WHERE ru.referred_by_user_id = ?
+        ");
+        $bonusStmt->execute([$userId]);
+        $referralNetworkBonus = (int)$bonusStmt->fetchColumn();
+
+        $activityScore = $ownScore + $referralNetworkBonus;
 
         return [
-            'pageViews'       => $pageViews,
-            'newsPosts'       => $newsPosts,
-            'reels'           => $reels,
-            'chatMessages'    => $chatMessages,
-            'referralCount'   => $referralCount,
-            'activityScore'   => $activityScore,
-            'periodDays'      => $days,
+            'pageViews'            => $pageViews,
+            'newsPosts'            => $newsPosts,
+            'reels'                => $reels,
+            'chatMessages'         => $chatMessages,
+            'referralCount'        => $referralCount,
+            'ownScore'             => $ownScore,
+            'referralNetworkBonus' => $referralNetworkBonus,
+            'activityScore'        => $activityScore,
+            'periodDays'           => $days,
         ];
     }
 

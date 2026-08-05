@@ -2,6 +2,149 @@
 
 .au-page { max-width: 1200px; }
 
+/* ── Scoring Guide ──────────────────────────────────────────────── */
+
+.au-scoring-guide {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+  overflow: hidden;
+}
+
+.au-scoring-guide__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  list-style: none;
+  user-select: none;
+}
+
+.au-scoring-guide__summary::-webkit-details-marker { display: none; }
+
+.au-scoring-guide__summary svg:first-child {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.au-scoring-guide__summary span { flex: 1; }
+
+.au-scoring-guide__chevron {
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.au-scoring-guide[open] .au-scoring-guide__chevron { transform: rotate(180deg); }
+
+.au-scoring-guide__summary:hover { background: var(--color-surface-hover); }
+
+.au-scoring-guide__body {
+  padding: 0 var(--space-5) var(--space-5);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.au-scoring-guide__intro {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: var(--space-4) 0;
+}
+
+.au-scoring-guide__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-5);
+}
+
+.au-scoring-guide__table thead th {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.au-scoring-guide__table tbody td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.au-scoring-guide__table tbody tr:last-child td { border-bottom: none; }
+
+.au-scoring-guide__table tbody td:first-child {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.au-scoring-guide__pts {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  white-space: nowrap;
+  font-size: var(--font-size-base);
+}
+
+.au-scoring-guide__bonus {
+  background: var(--color-primary-5, rgba(0,100,255,.03));
+  border: 1px solid var(--color-primary-15);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.au-scoring-guide__bonus strong {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.au-scoring-guide__bonus p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-2);
+}
+
+.au-scoring-guide__bonus p:last-child { margin-bottom: 0; }
+
+.au-scoring-guide__formula {
+  font-family: monospace;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+}
+
+.au-scoring-guide__formula code { font-size: inherit; }
+
+/* ── Bonus pill ─────────────────────────────────────────────────── */
+
+.au-bonus-pill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-success-15);
+  color: var(--color-success);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.au-table__num-muted { color: var(--color-text-muted); }
+
 /* ── Stats Row ──────────────────────────────────────────────────── */
 
 .au-stats-row {

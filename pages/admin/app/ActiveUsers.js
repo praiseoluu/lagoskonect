@@ -72,6 +72,81 @@ export default class ActiveUsersPage extends AdminLayout {
     return `<div id="au-root" class="au-page"></div>`;
   }
 
+  /* ── Scoring guide (static HTML, no data needed) ─────────────────── */
+
+  _scoringGuideHtml() {
+    return `
+      <details class="au-scoring-guide" id="au-scoring-guide">
+        <summary class="au-scoring-guide__summary">
+          ${ICON_ACTIVITY}
+          <span>How is the activity score calculated?</span>
+          <svg class="au-scoring-guide__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="au-scoring-guide__body">
+          <p class="au-scoring-guide__intro">
+            Every action is worth points — but harder actions are worth more.
+            A citizen who films a reel or writes a news post contributes far more
+            effort than one who passively browses, so the weights reflect that.
+          </p>
+
+          <table class="au-scoring-guide__table" aria-label="Scoring weights">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Points each</th>
+                <th>Why</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${ICON_ACTIVITY}<span>Page view</span></td>
+                <td class="au-scoring-guide__pts">×&thinsp;1</td>
+                <td>Passive browsing — no real effort required</td>
+              </tr>
+              <tr>
+                <td>${ICON_CHAT}<span>Chat message</span></td>
+                <td class="au-scoring-guide__pts">×&thinsp;3</td>
+                <td>Takes deliberate engagement with the community</td>
+              </tr>
+              <tr>
+                <td>${ICON_NEWS}<span>News post</span></td>
+                <td class="au-scoring-guide__pts">×&thinsp;10</td>
+                <td>Written content creation takes time and thought</td>
+              </tr>
+              <tr>
+                <td>${ICON_REEL}<span>Reel uploaded</span></td>
+                <td class="au-scoring-guide__pts">×&thinsp;15</td>
+                <td>Video production — the highest-effort citizen contribution</td>
+              </tr>
+              <tr>
+                <td>${ICON_LINK}<span>Direct referral</span></td>
+                <td class="au-scoring-guide__pts">×&thinsp;20</td>
+                <td>Bringing a real person to the platform is uniquely valuable</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="au-scoring-guide__bonus">
+            <strong>Referral network bonus</strong>
+            <p>
+              Referrers don't just earn points for signing people up — they also earn
+              <strong>+20% of each referred user's own score</strong> during the same period.
+              This rewards citizens whose recruits actually stay active on the platform,
+              not just those who get people to register and disappear.
+            </p>
+            <p class="au-scoring-guide__formula">
+              <code>Total score = own score + Σ(referred users' own scores) × 0.20</code>
+            </p>
+            <p>
+              The "Bonus" column in the table below shows the network bonus portion
+              separately so you can see who has built a genuinely active referral network.
+            </p>
+          </div>
+        </div>
+      </details>
+    `;
+  }
+
   async onContentReady() {
     setPageLoading(true);
     this._renderShell();
@@ -97,10 +172,12 @@ export default class ActiveUsersPage extends AdminLayout {
           <p class="ktg-page-header__eyebrow">Platform Analytics</p>
           <h1 class="ktg-page-header__title">Top Active Users</h1>
           <p class="ktg-page-header__subtitle">
-            Most engaged citizens ranked by activity score — page views, posts, reels, chat &amp; referrals
+            Most engaged citizens ranked by an effort-weighted activity score — views ×1 · chat ×3 · news ×10 · reels ×15 · referrals ×20, plus a 20% referral network bonus
           </p>
         </div>
       </div>
+
+      ${this._scoringGuideHtml()}
 
       <!-- Stats row -->
       <div class="au-stats-row" id="au-stats">
@@ -221,11 +298,11 @@ export default class ActiveUsersPage extends AdminLayout {
       const rank = this._leaderboard.indexOf(entry) + 1;
       const initl = initials(entry.name ?? '?');
       const avatar = entry.avatarUrl
-        ? `<img src="${this.esc(entry.avatarUrl)}" alt="" class="au-podium__avatar" loading="lazy" />`
-        : `<span class="au-podium__avatar au-podium__avatar--initials">${initl}</span>`;
+          ? `<img src="${this.esc(entry.avatarUrl)}" alt="" class="au-podium__avatar" loading="lazy" />`
+          : `<span class="au-podium__avatar au-podium__avatar--initials">${initl}</span>`;
       const podiumClass = rank === 1 ? 'au-podium__place--gold'
-                        : rank === 2 ? 'au-podium__place--silver'
-                        : 'au-podium__place--bronze';
+          : rank === 2 ? 'au-podium__place--silver'
+              : 'au-podium__place--bronze';
 
       return `
         <div class="au-podium__place ${podiumClass}" style="--podium-h:${heights[i]}">
@@ -246,8 +323,8 @@ export default class ActiveUsersPage extends AdminLayout {
   _visibleRows() {
     const q = this._search.toLowerCase();
     return q
-      ? this._leaderboard.filter(e => (e.name ?? '').toLowerCase().includes(q))
-      : this._leaderboard;
+        ? this._leaderboard.filter(e => (e.name ?? '').toLowerCase().includes(q))
+        : this._leaderboard;
   }
 
   _renderTable() {
@@ -279,28 +356,32 @@ export default class ActiveUsersPage extends AdminLayout {
             <th class="au-table__rank">#</th>
             <th>Citizen</th>
             <th>LGA</th>
-            <th class="au-table__num">Score</th>
-            <th class="au-table__num">Views</th>
-            <th class="au-table__num">Posts</th>
-            <th class="au-table__num">Reels</th>
-            <th class="au-table__num">Chat</th>
-            <th class="au-table__num">Refs</th>
+            <th class="au-table__num" title="Own score + referral network bonus">Total Score</th>
+            <th class="au-table__num" title="Page views ×1">Views</th>
+            <th class="au-table__num" title="Chat messages ×3">Chat</th>
+            <th class="au-table__num" title="News posts ×10">Posts</th>
+            <th class="au-table__num" title="Reels ×15">Reels</th>
+            <th class="au-table__num" title="Direct referrals ×20">Refs</th>
+            <th class="au-table__num" title="+20% of referred users' own scores">Bonus</th>
           </tr>
         </thead>
         <tbody>
           ${rows.map((entry, i) => {
-            const rank = offset + i + 1;
-            const medal = rank <= 3
-              ? `<span class="au-table__medal au-table__medal--${rank === 1 ? 'gold' : rank === 2 ? 'silver' : 'bronze'}">#${rank}</span>`
-              : `<span class="au-rank-num">${rank}</span>`;
-            const initl = initials(entry.name ?? entry.username ?? '?');
-            const avatar = entry.avatarUrl
-              ? `<img src="${this.esc(entry.avatarUrl)}" alt="" class="au-avatar" loading="lazy" />`
-              : `<span class="au-avatar au-avatar--initials" aria-hidden="true">${initl}</span>`;
-            const regionKey = entry.region ?? 'west';
-            const regionBadge = `<span class="au-region-badge au-region-badge--${regionKey}">${REGION_LABELS[regionKey] ?? regionKey}</span>`;
+      const rank = offset + i + 1;
+      const medal = rank <= 3
+          ? `<span class="au-table__medal au-table__medal--${rank === 1 ? 'gold' : rank === 2 ? 'silver' : 'bronze'}">#${rank}</span>`
+          : `<span class="au-rank-num">${rank}</span>`;
+      const initl = initials(entry.name ?? entry.username ?? '?');
+      const avatar = entry.avatarUrl
+          ? `<img src="${this.esc(entry.avatarUrl)}" alt="" class="au-avatar" loading="lazy" />`
+          : `<span class="au-avatar au-avatar--initials" aria-hidden="true">${initl}</span>`;
 
-            return `
+      const bonus = entry.referralNetworkBonus ?? 0;
+      const bonusCell = bonus > 0
+          ? `<span class="au-bonus-pill">+${fmt(bonus)}</span>`
+          : `<span class="au-table__num-muted">—</span>`;
+
+      return `
               <tr class="au-table__row${rank <= 3 ? ' au-table__row--top' : ''}">
                 <td class="au-table__rank" aria-label="Rank ${rank}">${medal}</td>
                 <td>
@@ -315,13 +396,14 @@ export default class ActiveUsersPage extends AdminLayout {
                 <td>${this.esc(entry.lgaName ?? '—')}</td>
                 <td class="au-table__num au-table__num--strong">${fmt(entry.activityScore ?? 0)}</td>
                 <td class="au-table__num">${fmt(entry.pageViews ?? 0)}</td>
+                <td class="au-table__num">${fmt(entry.chatMessages ?? 0)}</td>
                 <td class="au-table__num">${fmt(entry.newsPosts ?? 0)}</td>
                 <td class="au-table__num">${fmt(entry.reels ?? 0)}</td>
-                <td class="au-table__num">${fmt(entry.chatMessages ?? 0)}</td>
                 <td class="au-table__num">${fmt(entry.referrals ?? 0)}</td>
+                <td class="au-table__num">${bonusCell}</td>
               </tr>
             `;
-          }).join('')}
+    }).join('')}
         </tbody>
       </table>
     `;

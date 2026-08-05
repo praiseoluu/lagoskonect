@@ -21,7 +21,7 @@ class AdminUserController {
 
     public function list(): void {
         $this->requireAdmin();
-        $p = Paginator::params($_GET, 20);
+        $p = Paginator::params($_GET, 30);
 
         $search    = trim($_GET['search']  ?? '');
         $lgaId     = (int) ($_GET['lgaId'] ?? 0);
@@ -62,7 +62,7 @@ class AdminUserController {
 
         $stmt = $this->db->prepare("
             SELECT * FROM users {$whereStr}
-            ORDER BY created_at DESC
+            ORDER BY id ASC
             LIMIT ? OFFSET ?
         ");
         $stmt->execute([...$params, $p['limit'], $p['offset']]);

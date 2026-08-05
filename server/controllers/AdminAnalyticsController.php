@@ -969,6 +969,16 @@ class AdminAnalyticsController {
 
      // ── GET /admin/analytics/top-active-users ────────────────────────
      // ?region=west|central|east&range=7d|30d|90d|365d
+     //
+     // Scoring weights (effort-weighted):
+     //   Page views       × 1  — passive browsing
+     //   Chat messages    × 3  — takes engagement
+     //   News posts       × 10 — written content creation
+     //   Reels            × 15 — video production, highest effort
+     //   Direct referrals × 20 — bringing real people to the platform
+     //
+     // Referral network bonus: +20% of each referred user's own score
+     // is added to the referrer's total (two-pass CTE).
 
      public function getTopActiveUsers(): void {
          $this->requireAdmin();
@@ -981,99 +991,106 @@ class AdminAnalyticsController {
          $quotedRegion = $region ? $this->db->quote($region) : '';
          $regionWhere  = $region ? " AND u.lga_id IN (SELECT id FROM lgas WHERE region = {$quotedRegion})" : '';
 
-         // Compute an activity score per citizen user.
-         // Weights: page_views=1, news=5, reels=5, chat=2, referrals=3
+         // Two-pass CTE:
+         //   Pass 1 (own_scores)      — compute each user's own weighted score
+         //   Pass 2 (network_bonuses) — sum 20% of each referred user's own_score
+         //                              and attribute it back to the referrer
          $stmt = $this->db->prepare("
+             WITH own_scores AS (
+                 SELECT
+                     u.id,
+                     u.name,
+                     u.username,
+                     u.avatar_url,
+                     u.lga_id,
+                     l.name                    AS lga_name,
+                     l.region,
+                     u.referral_count,
+                     u.referred_by_user_id,
+                     COALESCE(pv.views,    0)  AS page_views,
+                     COALESCE(n.posts,     0)  AS news_posts,
+                     COALESCE(r.posts,     0)  AS reels,
+                     COALESCE(m.messages,  0)  AS chat_messages,
+                     COALESCE(pv.views,    0) * 1
+                     + COALESCE(m.messages,0) * 3
+                     + COALESCE(n.posts,   0) * 10
+                     + COALESCE(r.posts,   0) * 15
+                     + COALESCE(u.referral_count, 0) * 20  AS own_score
+                 FROM users u
+                 LEFT JOIN lgas l ON l.id = u.lga_id
+                 LEFT JOIN (
+                     SELECT user_id, COUNT(*) AS views
+                     FROM page_views
+                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
+                     GROUP BY user_id
+                 ) pv ON pv.user_id = u.id
+                 LEFT JOIN (
+                     SELECT author_id, COUNT(*) AS posts
+                     FROM news
+                     WHERE status = 'published'
+                       AND published_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
+                     GROUP BY author_id
+                 ) n ON n.author_id = u.id
+                 LEFT JOIN (
+                     SELECT author_id, COUNT(*) AS posts
+                     FROM reels
+                     WHERE status = 'published'
+                       AND published_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
+                     GROUP BY author_id
+                 ) r ON r.author_id = u.id
+                 LEFT JOIN (
+                     SELECT user_id, COUNT(*) AS messages
+                     FROM lga_chat_messages
+                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
+                     GROUP BY user_id
+                 ) m ON m.user_id = u.id
+                 WHERE u.role = 'citizen'
+                   AND u.status = 'active'
+                   AND u.last_seen_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
+                   {$regionWhere}
+             ),
+             network_bonuses AS (
+                 SELECT
+                     referred.referred_by_user_id          AS referrer_id,
+                     ROUND(SUM(referred.own_score) * 0.20) AS network_bonus
+                 FROM own_scores referred
+                 WHERE referred.referred_by_user_id IS NOT NULL
+                 GROUP BY referred.referred_by_user_id
+             )
              SELECT
-                 u.id,
-                 u.name,
-                 u.username,
-                 u.avatar_url,
-                 u.lga_id,
-                 l.name AS lga_name,
-                 l.region,
-                 u.referral_count,
-                 COALESCE(pv.views, 0)    AS page_views,
-                 COALESCE(n.posts, 0)     AS news_posts,
-                 COALESCE(r.posts, 0)     AS reels,
-                 COALESCE(m.messages, 0)  AS chat_messages,
-                 COALESCE(pv.views, 0) * 1
-                 + COALESCE(n.posts, 0) * 5
-                 + COALESCE(r.posts, 0) * 5
-                 + COALESCE(m.messages, 0) * 2
-                 + COALESCE(u.referral_count, 0) * 3 AS activity_score
-             FROM users u
-             LEFT JOIN lgas l ON l.id = u.lga_id
-             LEFT JOIN (
-                 SELECT user_id, COUNT(*) AS views
-                 FROM page_views
-                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
-                 GROUP BY user_id
-             ) pv ON pv.user_id = u.id
-             LEFT JOIN (
-                 SELECT author_id, COUNT(*) AS posts
-                 FROM news
-                 WHERE status = 'published'
-                   AND published_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
-                   {$regionWhere}
-                 GROUP BY author_id
-             ) n ON n.author_id = u.id
-             LEFT JOIN (
-                 SELECT author_id, COUNT(*) AS posts
-                 FROM reels
-                 WHERE status = 'published'
-                   AND published_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
-                   {$regionWhere}
-                 GROUP BY author_id
-             ) r ON r.author_id = u.id
-             LEFT JOIN (
-                 SELECT user_id, COUNT(*) AS messages
-                 FROM lga_chat_messages
-                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
-                   {$regionWhere}
-                 GROUP BY user_id
-             ) m ON m.user_id = u.id
-             WHERE u.role = 'citizen'
-               AND u.status = 'active'
-               AND u.last_seen_at >= DATE_SUB(NOW(), INTERVAL {$days} DAY)
-               {$regionWhere}
+                 os.*,
+                 COALESCE(nb.network_bonus, 0)                    AS referral_network_bonus,
+                 os.own_score + COALESCE(nb.network_bonus, 0)     AS activity_score
+             FROM own_scores os
+             LEFT JOIN network_bonuses nb ON nb.referrer_id = os.id
              ORDER BY activity_score DESC
-             LIMIT 10
+             LIMIT 100
          ");
          $stmt->execute();
 
          $rows = $stmt->fetchAll();
          $top3 = array_slice($rows, 0, 3);
 
+         $shape = fn($row) => [
+             'userId'               => (int) $row['id'],
+             'name'                 => $row['name'],
+             'username'             => $row['username'],
+             'avatarUrl'            => $row['avatar_url'] ?: null,
+             'lgaName'              => $row['lga_name'] ?? '—',
+             'region'               => $row['region'] ?? null,
+             'activityScore'        => (int) $row['activity_score'],
+             'ownScore'             => (int) $row['own_score'],
+             'referralNetworkBonus' => (int) $row['referral_network_bonus'],
+             'pageViews'            => (int) $row['page_views'],
+             'newsPosts'            => (int) $row['news_posts'],
+             'reels'                => (int) $row['reels'],
+             'chatMessages'         => (int) $row['chat_messages'],
+             'referrals'            => (int) $row['referral_count'],
+         ];
+
          Response::json([
-             'top3'  => array_map(fn($row) => [
-                 'userId'      => (int) $row['id'],
-                 'name'        => $row['name'],
-                 'username'    => $row['username'],
-                 'avatarUrl'   => $row['avatar_url'] ?: null,
-                 'lgaName'     => $row['lga_name'] ?? '—',
-                 'region'      => $row['region'] ?? null,
-                 'activityScore' => (int) $row['activity_score'],
-                 'pageViews'   => (int) $row['page_views'],
-                 'newsPosts'   => (int) $row['news_posts'],
-                 'reels'       => (int) $row['reels'],
-                 'chatMessages'=> (int) $row['chat_messages'],
-                 'referrals'   => (int) $row['referral_count'],
-             ], $top3),
-             'leaderboard' => array_map(fn($row) => [
-                 'userId'      => (int) $row['id'],
-                 'name'        => $row['name'],
-                 'username'    => $row['username'],
-                 'avatarUrl'   => $row['avatar_url'] ?: null,
-                 'lgaName'     => $row['lga_name'] ?? '—',
-                 'region'      => $row['region'] ?? null,
-                 'activityScore' => (int) $row['activity_score'],
-                 'pageViews'   => (int) $row['page_views'],
-                 'newsPosts'   => (int) $row['news_posts'],
-                 'reels'       => (int) $row['reels'],
-                 'chatMessages'=> (int) $row['chat_messages'],
-                 'referrals'   => (int) $row['referral_count'],
-             ], $rows),
+             'top3'        => array_map($shape, $top3),
+             'leaderboard' => array_map($shape, $rows),
          ]);
      }
 

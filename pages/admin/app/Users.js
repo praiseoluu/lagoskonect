@@ -43,7 +43,7 @@ export default class UsersPage extends AdminLayout {
     });
     this._users        = [];
     this._page         = 1;
-    this._perPage      = 10;
+    this._perPage      = 30;
     this._search       = '';
     this._lgaFilter    = 0;
     this._statusFilter = '';
