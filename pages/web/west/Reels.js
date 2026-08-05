@@ -171,6 +171,7 @@ export default class ReelsPage extends WebLayout {
           ${timeStr ? `<span class="rf-item__time">${timeStr}</span>` : ''}
         </div>
 
+        ${caption ? `<p class="rf-item__caption">${caption}</p>` : ''}
         <button class="rf-item__tap"
                 data-action="${hasVideo ? 'playpause' : 'open'}"
                 aria-label="${hasVideo ? 'Play or pause video' : 'Open reel'}"
@@ -214,7 +215,6 @@ export default class ReelsPage extends WebLayout {
       </div>
 
       <div class="rf-item__below">
-        ${caption ? `<p class="rf-item__caption">${caption}</p>` : ''}
         <div class="rf-item__action-bar">
           <button class="rf-item__btn${isLiked ? ' rf-item__btn--liked' : ''}"
                   data-action="like"
