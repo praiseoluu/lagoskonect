@@ -261,6 +261,113 @@ class EventsController {
         }
     }
 
+    // ── GET /events/poll ──────────────────────────────────────────────────
+    //
+    // Short-lived replacement for the SSE stream.
+    //
+    // stream() keeps one PHP entry process occupied for its whole five-minute
+    // life, so each open browser tab permanently consumes one. This account's
+    // entry-process limit is 20, which the site was hitting thousands of times
+    // a day and taking everything down with it, login included.
+    //
+    // This returns whatever is new and exits immediately, so a tab occupies a
+    // process for a few milliseconds per interval instead of continuously.
+    //
+    // Cursors come from the client. On the very first call it has none, so we
+    // hand back the current head positions without any rows: the caller wants
+    // to know what happens from now on, not to replay history.
+
+    public function poll(): void {
+        $auth   = requireAuth();
+        $userId = (int) $auth['userId'];
+        $lgaId  = (int) ($auth['lgaId'] ?? 0);
+
+        $hasCursor   = isset($_GET['lastMsgId']) && isset($_GET['lastNotifId']);
+        $lastMsgId   = (int) ($_GET['lastMsgId']   ?? 0);
+        $lastNotifId = (int) ($_GET['lastNotifId'] ?? 0);
+
+        if (!$hasCursor) {
+            $m = $this->db->prepare('SELECT COALESCE(MAX(id), 0) FROM lga_chat_messages WHERE lga_id = ?');
+            $m->execute([$lgaId]);
+            $n = $this->db->prepare('SELECT COALESCE(MAX(id), 0) FROM notifications WHERE user_id = ?');
+            $n->execute([$userId]);
+
+            Response::json([
+                'messages'      => [],
+                'notifications' => [],
+                'lastMsgId'     => (int) $m->fetchColumn(),
+                'lastNotifId'   => (int) $n->fetchColumn(),
+            ]);
+            return;
+        }
+
+        // ── New chat messages ────────────────────────────────────────────
+        $msgStmt = $this->db->prepare('
+            SELECT * FROM lga_chat_messages
+            WHERE lga_id = ? AND id > ?
+            ORDER BY id ASC
+            LIMIT 20
+        ');
+        $msgStmt->execute([$lgaId, $lastMsgId]);
+
+        $messages = [];
+        foreach ($msgStmt->fetchAll() as $msg) {
+            $reactions = json_decode($msg['reactions'] ?? '{}', true) ?: [];
+            $replyTo   = $msg['reply_to'] ? json_decode($msg['reply_to'], true) : null;
+
+            $messages[] = [
+                'id'        => (int) $msg['id'],
+                'lgaId'     => (int) $msg['lga_id'],
+                'userId'    => (int) $msg['user_id'],
+                'userName'  => $msg['user_name'],
+                'avatarUrl' => $msg['avatar_url'],
+                'text'      => $msg['text'],
+                'mediaUrl'  => $msg['media_url'],
+                'fileUrl'   => $msg['file_url'],
+                'fileName'  => $msg['file_name'],
+                'fileSize'  => $msg['file_size'],
+                'reactions' => empty($reactions) ? (object) [] : $reactions,
+                'replyTo'   => $replyTo,
+                'createdAt' => $msg['created_at'],
+            ];
+            $lastMsgId = (int) $msg['id'];
+        }
+
+        // ── New notifications ────────────────────────────────────────────
+        $notifStmt = $this->db->prepare('
+            SELECT * FROM notifications
+            WHERE user_id = ? AND id > ?
+            ORDER BY id ASC
+            LIMIT 10
+        ');
+        $notifStmt->execute([$userId, $lastNotifId]);
+
+        $notifications = [];
+        foreach ($notifStmt->fetchAll() as $notif) {
+            $notifications[] = [
+                'id'             => (int) $notif['id'],
+                'userId'         => (int) $notif['user_id'],
+                'category'       => $notif['category'],
+                'priority'       => $notif['priority'],
+                'title'          => $notif['title'],
+                'body'           => $notif['body'],
+                'actorName'      => $notif['actor_name'],
+                'actorAvatarUrl' => $notif['actor_avatar_url'],
+                'linkTo'         => $notif['link_to'],
+                'isRead'         => (bool) $notif['is_read'],
+                'createdAt'      => $notif['created_at'],
+            ];
+            $lastNotifId = (int) $notif['id'];
+        }
+
+        Response::json([
+            'messages'      => $messages,
+            'notifications' => $notifications,
+            'lastMsgId'     => $lastMsgId,
+            'lastNotifId'   => $lastNotifId,
+        ]);
+    }
+
     // ── SSE wire format ───────────────────────────────────────────────────
 
     /**
