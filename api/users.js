@@ -74,6 +74,23 @@ export const users = {
     return await _fetch('GET', `/users/profile/${encodeURIComponent(username)}`, null, false);
   },
 
+  async uploadIdDocument(file) {
+    try {
+      const auth = JSON.parse(sessionStorage.getItem('adm_auth') || 'null');
+      const token = auth?.token || '';
+      const formData = new FormData();
+      formData.append('document', file, file.name);
+      const response = await fetch(`${BASE_URL}/users/me/id-document`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData,
+      });
+      return await response.json();
+    } catch {
+      return { error: { code: 'UPLOAD_ERROR', message: 'Failed to upload ID document.' } };
+    }
+  },
+
   // ── Admin: user management ────────────────────────────────────────────
 
   /**

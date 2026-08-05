@@ -34,6 +34,8 @@ require_once __DIR__ . '/controllers/AdminAuthController.php';
 require_once __DIR__ . '/controllers/AdminAnalyticsController.php';
 require_once __DIR__ . '/controllers/AdminUserController.php';
 require_once __DIR__ . '/controllers/AdminNewsController.php';
+require_once __DIR__ . '/utils/WorldNewsService.php';
+require_once __DIR__ . '/controllers/NewsImportController.php';
 require_once __DIR__ . '/controllers/AdminReelController.php';
 require_once __DIR__ . '/controllers/ModerationController.php';
 require_once __DIR__ . '/controllers/AdminAdvertController.php';
@@ -183,6 +185,9 @@ try {
 
     } elseif ($path === '/users/me/username' && $method === 'PATCH') {
         (new UserController())->updateUsername();
+
+    } elseif ($path === '/users/me/id-document' && $method === 'POST') {
+        (new UserController())->uploadIdDocument();
 
     } elseif (preg_match('#^/users/profile/([a-zA-Z0-9_\-]{3,30})$#', $path, $m) && $method === 'GET') {
         (new UserController())->getPublicProfile($m[1]);
@@ -386,6 +391,24 @@ try {
 
     } elseif ($path === '/admin/news' && $method === 'POST') {
         (new AdminNewsController())->create();
+
+    // ── Admin News Import (World News API review queue) ───────────────────
+    // Declared before the /admin/news/(\d+) patterns so the literal segments
+    // are not swallowed by the numeric-id routes.
+    } elseif ($path === '/admin/news/import/feed' && $method === 'GET') {
+        (new NewsImportController())->feed();
+
+    } elseif ($path === '/admin/news/import/quota' && $method === 'GET') {
+        (new NewsImportController())->quota();
+
+    } elseif ($path === '/admin/news/import/approve' && $method === 'POST') {
+        (new NewsImportController())->approve();
+
+    } elseif ($path === '/admin/news/import/dismiss' && $method === 'POST') {
+        (new NewsImportController())->dismiss();
+
+    } elseif ($path === '/admin/news/import/restore' && $method === 'POST') {
+        (new NewsImportController())->restore();
 
     } elseif (preg_match('#^/admin/news/(\d+)$#', $path, $m) && $method === 'GET') {
         (new AdminNewsController())->getById((int) $m[1]);

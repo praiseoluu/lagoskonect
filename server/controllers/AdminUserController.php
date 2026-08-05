@@ -352,6 +352,11 @@ class AdminUserController {
             'mustChangePassword'  => (bool) ($u['must_change_password'] ?? false),
             'createdAt'           => $u['created_at'],
             'lastSeenAt'          => $u['last_seen_at'],
+            'bankName'            => $u['bank_name']           ?? null,
+            'bankAccountNumber'   => $u['bank_account_number'] ?? null,
+            'bankAccountName'     => $u['bank_account_name']   ?? null,
+            'idType'              => $u['id_type']             ?? null,
+            'idDocumentUrl'       => $u['id_document_url']     ?? null,
         ];
     }
 }

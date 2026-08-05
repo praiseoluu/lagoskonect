@@ -34,6 +34,7 @@ const LANGS = [
 const SECTIONS = [
   { id: 'section-profile', key: 'settings.secProfile' },
   { id: 'section-referrals', key: 'settings.referrals' },
+  { id: 'section-payment', key: 'settings.secPayment' },
   { id: 'section-language', key: 'settings.secLanguage' },
   { id: 'section-notifications', key: 'settings.secNotifications' },
   { id: 'section-privacy', key: 'settings.secPrivacy' },
@@ -98,6 +99,7 @@ export default class SettingsPage extends WebLayout {
                   href="#${s.id}" data-section="${s.id}">
                   ${s.id === 'section-profile' ? this._navIcon('profile') : ''}
                   ${s.id === 'section-referrals' ? this._navIcon('star') : ''}
+                  ${s.id === 'section-payment' ? this._navIcon('payment') : ''}
                   ${s.id === 'section-language' ? this._navIcon('language') : ''}
                   ${s.id === 'section-notifications' ? this._navIcon('bell') : ''}
                   ${s.id === 'section-privacy' ? this._navIcon('shield') : ''}
@@ -127,7 +129,16 @@ export default class SettingsPage extends WebLayout {
             </div>
           </section>
 
-          <!-- 3. Language Preferences -->
+          <!-- 3. Payment Details & Verification -->
+          <section class="settings-section" id="section-payment">
+            <h2 class="settings-section__title">Payment & Verification</h2>
+            <p class="settings-section__desc">Add your bank account so we can pay your referral and activity rewards. Upload a government-issued ID to complete verification.</p>
+            <div class="settings-card">
+              ${this._renderPaymentSection()}
+            </div>
+          </section>
+
+          <!-- 4. Language Preferences -->
           <section class="settings-section" id="section-language">
             <h2 class="settings-section__title">${this.esc(t('settings.languageHeading'))}</h2>
             <div class="settings-card">
@@ -157,6 +168,7 @@ export default class SettingsPage extends WebLayout {
     `;
 
     this._mountProfileInputs(root);
+    this._mountPaymentInputs(root);
     this._mountNotifToggles(root);
     this._mountPrivacyControls(root);
     this._bindNavLinks(root);
@@ -308,6 +320,85 @@ export default class SettingsPage extends WebLayout {
       <!-- Save button -->
       <div class="settings-form-footer">
         <div id="save-profile-mount"></div>
+      </div>
+    `;
+  }
+
+  _renderPaymentSection() {
+    const user = store.currentUser;
+    const idUrl = user?.idDocumentUrl || null;
+    const idType = user?.idType || '';
+
+    return `
+      <!-- Bank Account -->
+      <div class="settings-payment-block">
+        <div class="settings-payment-block__header">
+          <div class="settings-privacy-row__icon settings-privacy-row__icon--green" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+          </div>
+          <div>
+            <p class="settings-privacy-row__label">Bank Account</p>
+            <p class="settings-privacy-row__desc">Enter your Nigerian bank account to receive referral and activity payments.</p>
+          </div>
+        </div>
+        <div class="settings-form-grid settings-payment-grid">
+          <div class="settings-form-field">
+            <label class="settings-field-label">Bank Name</label>
+            <div id="bank-name-mount"></div>
+          </div>
+          <div class="settings-form-field">
+            <label class="settings-field-label">Account Number</label>
+            <div id="bank-account-number-mount"></div>
+          </div>
+          <div class="settings-form-field settings-form-field--full">
+            <label class="settings-field-label">Account Name (as on bank record)</label>
+            <div id="bank-account-name-mount"></div>
+          </div>
+        </div>
+        <div class="settings-form-footer">
+          <div id="save-payment-mount"></div>
+        </div>
+      </div>
+
+      <div class="settings-card__divider"></div>
+
+      <!-- ID Document -->
+      <div class="settings-payment-block">
+        <div class="settings-payment-block__header">
+          <div class="settings-privacy-row__icon settings-privacy-row__icon--green" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 10h.01M11 10h6M7 14h10"/></svg>
+          </div>
+          <div>
+            <p class="settings-privacy-row__label">Identity Document</p>
+            <p class="settings-privacy-row__desc">Upload a clear photo or scan of your government-issued ID. Accepted: JPEG, PNG, WebP, PDF (max 10 MB).</p>
+          </div>
+        </div>
+        <div class="settings-form-grid settings-payment-grid">
+          <div class="settings-form-field">
+            <label class="settings-field-label">ID Type</label>
+            <select class="settings-select" id="id-type-select" aria-label="ID Type">
+              <option value="">— Select type —</option>
+              <option value="NIN" ${idType === 'NIN' ? 'selected' : ''}>NIN</option>
+              <option value="Voter's Card" ${idType === "Voter's Card" ? 'selected' : ''}>Voter's Card</option>
+              <option value="Driver's Licence" ${idType === "Driver's Licence" ? 'selected' : ''}>Driver's Licence</option>
+              <option value="International Passport" ${idType === 'International Passport' ? 'selected' : ''}>International Passport</option>
+            </select>
+          </div>
+          <div class="settings-form-field">
+            <label class="settings-field-label">Upload Document</label>
+            <div class="settings-id-upload-row">
+              <input type="file" id="id-document-input" class="settings-avatar__file-input"
+                accept="image/jpeg,image/png,image/webp,application/pdf" aria-label="Upload ID document" />
+              <button class="settings-id-upload-btn" id="id-upload-btn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                ${idUrl ? 'Replace document' : 'Choose file'}
+              </button>
+              ${idUrl ? `<a href="${this.esc(idUrl)}" target="_blank" rel="noopener noreferrer" class="settings-id-view-link">View uploaded</a>` : ''}
+              <span class="settings-id-filename" id="id-filename">${idUrl ? '✓ Document on file' : 'No file selected'}</span>
+            </div>
+            <p class="settings-id-upload-status" id="id-upload-status" aria-live="polite"></p>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -520,6 +611,10 @@ export default class SettingsPage extends WebLayout {
     }));
     this._addressInput.mount(root.querySelector('#address-mount'));
 
+    this._bankNameInput          = null;
+    this._bankAccountNumberInput = null;
+    this._bankAccountNameInput   = null;
+
     const saveBtn = this.addChild(new Button({
       label: t('settings.saveProfile'),
       icon: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -533,6 +628,54 @@ export default class SettingsPage extends WebLayout {
       onClick: () => this._saveProfile(saveBtn),
     }));
     saveBtn.mount(root.querySelector('#save-profile-mount'));
+  }
+
+  _mountPaymentInputs(root) {
+    const user = store.currentUser;
+
+    this._bankNameInput = this.addChild(new Input({
+      id: 'field-bank-name', name: 'bankName',
+      value: user?.bankName || '',
+      placeholder: 'e.g. First Bank, GTBank, Access Bank…',
+    }));
+    this._bankNameInput.mount(root.querySelector('#bank-name-mount'));
+
+    this._bankAccountNumberInput = this.addChild(new Input({
+      id: 'field-bank-account-number', name: 'bankAccountNumber',
+      value: user?.bankAccountNumber || '',
+      placeholder: '10-digit account number',
+      type: 'tel',
+    }));
+    this._bankAccountNumberInput.mount(root.querySelector('#bank-account-number-mount'));
+
+    this._bankAccountNameInput = this.addChild(new Input({
+      id: 'field-bank-account-name', name: 'bankAccountName',
+      value: user?.bankAccountName || '',
+      placeholder: 'Full name as it appears on your bank account',
+    }));
+    this._bankAccountNameInput.mount(root.querySelector('#bank-account-name-mount'));
+
+    const savePaymentBtn = this.addChild(new Button({
+      label: 'Save Payment Details',
+      icon: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+        <polyline points="17 21 17 13 7 13 7 21"/>
+        <polyline points="7 3 7 8 15 8"/>
+      </svg>`,
+      iconPosition: 'left',
+      variant: 'primary', size: 'md',
+      onClick: () => this._savePaymentDetails(savePaymentBtn),
+    }));
+    savePaymentBtn.mount(root.querySelector('#save-payment-mount'));
+
+    // ID document upload
+    const idUploadBtn = root.querySelector('#id-upload-btn');
+    const idFileInput = root.querySelector('#id-document-input');
+    if (idUploadBtn && idFileInput) {
+      this.on(idUploadBtn, 'click', () => idFileInput.click());
+      this.on(idFileInput, 'change', (e) => this._handleIdUpload(e, root));
+    }
   }
 
   _wireUsernameEdit(root) {
@@ -816,6 +959,70 @@ export default class SettingsPage extends WebLayout {
     showToast('success', t('settings.profileUpdated'));
   }
 
+  async _savePaymentDetails(btn) {
+    const bankName          = this._bankNameInput?.getValue()?.trim() || null;
+    const bankAccountNumber = this._bankAccountNumberInput?.getValue()?.trim() || null;
+    const bankAccountName   = this._bankAccountNameInput?.getValue()?.trim() || null;
+    const idType = this.getContentEl()?.querySelector('#id-type-select')?.value || null;
+
+    btn.setLoading(true);
+    const res = await api.users.updateProfile({ bankName, bankAccountNumber, bankAccountName, idType });
+    btn.setLoading(false);
+
+    if (res.error) { showToast('error', res.error.message || 'Failed to save payment details.'); return; }
+
+    store.currentUser = { ...store.currentUser, bankName, bankAccountNumber, bankAccountName, idType };
+    saveSession({
+      token: JSON.parse(sessionStorage.getItem('adm_auth') || '{}').token,
+      role: store.role,
+      user: store.currentUser,
+    });
+    showToast('success', 'Payment details saved.');
+  }
+
+  async _handleIdUpload(e, root) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    if (!allowed.includes(file.type)) {
+      showToast('error', 'Only JPEG, PNG, WebP or PDF files are accepted.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('error', 'File must be under 10 MB.');
+      return;
+    }
+
+    const statusEl  = root.querySelector('#id-upload-status');
+    const filenameEl = root.querySelector('#id-filename');
+    if (statusEl)  statusEl.textContent = 'Uploading…';
+    if (filenameEl) filenameEl.textContent = file.name;
+
+    const idType = root.querySelector('#id-type-select')?.value || null;
+    if (idType) await api.users.updateProfile({ idType });
+
+    const res = await api.users.uploadIdDocument(file);
+    if (res.error) {
+      if (statusEl) statusEl.textContent = res.error.message || 'Upload failed.';
+      showToast('error', res.error.message || 'Failed to upload ID document.');
+      return;
+    }
+
+    store.currentUser = { ...store.currentUser, idDocumentUrl: res.data?.idDocumentUrl, idType };
+    saveSession({
+      token: JSON.parse(sessionStorage.getItem('adm_auth') || '{}').token,
+      role: store.role,
+      user: store.currentUser,
+    });
+
+    if (statusEl) statusEl.textContent = '✓ Uploaded successfully';
+    const uploadBtn = root.querySelector('#id-upload-btn');
+    if (uploadBtn) uploadBtn.textContent = 'Replace document';
+    showToast('success', 'ID document uploaded.');
+  }
+
   async _saveNotifPref(key, val) {
     const res = await api.users.updateNotifPrefs({ [key]: val });
     if (res.error) showToast('error', t('settings.errNotifSave'));
@@ -891,6 +1098,7 @@ export default class SettingsPage extends WebLayout {
     const icons = {
       profile: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
       star: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+      payment: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>`,
       language: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>`,
       bell: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>`,
       shield: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,

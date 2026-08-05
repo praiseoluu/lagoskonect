@@ -134,6 +134,7 @@ export default {
         subtitle: 'Manage your account and security protocol.',
         secProfile: 'Edit Profile',
         referrals: 'Referral Contest',
+        secPayment: 'Payment & Verification',
         secLanguage: 'Language',
         secNotifications: 'Notifications',
         secPrivacy: 'Privacy & Security',

@@ -73,6 +73,35 @@ class UserController {
             $values[] = $bio ?: null;
         }
 
+        if (isset($body['bankName'])) {
+            $fields[] = 'bank_name = ?';
+            $values[] = mb_substr(trim($body['bankName']), 0, 100) ?: null;
+        }
+
+        if (isset($body['bankAccountNumber'])) {
+            $acct = preg_replace('/\D/', '', trim($body['bankAccountNumber']));
+            if ($acct && (strlen($acct) < 8 || strlen($acct) > 20)) {
+                Response::error('VALIDATION_ERROR', 'Bank account number must be 8–20 digits.', 422);
+            }
+            $fields[] = 'bank_account_number = ?';
+            $values[] = $acct ?: null;
+        }
+
+        if (isset($body['bankAccountName'])) {
+            $fields[] = 'bank_account_name = ?';
+            $values[] = mb_substr(trim($body['bankAccountName']), 0, 100) ?: null;
+        }
+
+        if (isset($body['idType'])) {
+            $allowed = ['NIN', 'Voter\'s Card', 'Driver\'s Licence', 'International Passport', ''];
+            $idType  = trim($body['idType']);
+            if ($idType && !in_array($idType, $allowed, true)) {
+                Response::error('VALIDATION_ERROR', 'Invalid ID type.', 422);
+            }
+            $fields[] = 'id_type = ?';
+            $values[] = $idType ?: null;
+        }
+
         if (empty($fields)) {
             Response::error('VALIDATION_ERROR', 'No valid fields to update.', 422);
         }
@@ -83,6 +112,60 @@ class UserController {
         $this->db->prepare($sql)->execute($values);
 
         $user = $this->fetchUser($auth['userId']);
+        Response::json($this->sanitise($user));
+    }
+
+    // ── POST /users/me/id-document ───────────────────────────────────────
+
+    public function uploadIdDocument(): void {
+        $auth = requireRole('citizen');
+
+        if (empty($_FILES['document'])) {
+            Response::error('VALIDATION_ERROR', 'No file uploaded. Use multipart/form-data with field "document".', 422);
+        }
+
+        $file = $_FILES['document'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Response::error('UPLOAD_ERROR', 'File upload failed.', 422);
+        }
+
+        // Max 10 MB
+        if ($file['size'] > 10 * 1024 * 1024) {
+            Response::error('VALIDATION_ERROR', 'File size must not exceed 10 MB.', 422);
+        }
+
+        $mime = mime_content_type($file['tmp_name']);
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+        if (!in_array($mime, $allowedMimes, true)) {
+            Response::error('VALIDATION_ERROR', 'Only JPEG, PNG, WebP images and PDFs are allowed.', 422);
+        }
+
+        $ext = match($mime) {
+            'image/jpeg'      => 'jpg',
+            'image/png'       => 'png',
+            'image/webp'      => 'webp',
+            'application/pdf' => 'pdf',
+            default           => 'jpg',
+        };
+
+        $userId    = $auth['userId'];
+        $safeName  = 'id_' . $userId . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+        $uploadDir = __DIR__ . '/../uploads/id-documents/';
+        $destPath  = $uploadDir . $safeName;
+
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0750, true);
+        if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+            Response::error('UPLOAD_ERROR', 'Could not save file.', 500);
+        }
+
+        $base       = rtrim(getenv('BASE_URL') ?: '', '/');
+        $serverBase = preg_replace('#/api/v1$#', '', $base);
+        $docUrl     = $serverBase . '/uploads/id-documents/' . $safeName;
+
+        $this->db->prepare('UPDATE users SET id_document_url = ?, updated_at = NOW() WHERE id = ?')
+                 ->execute([$docUrl, $userId]);
+
+        $user = $this->fetchUser($userId);
         Response::json($this->sanitise($user));
     }
 
@@ -405,6 +488,11 @@ class UserController {
             'address'           => $user['address'] ?? null,
             'mustChangePassword'=> (bool) ($user['must_change_password'] ?? false),
             'createdAt'         => $user['created_at'],
+            'bankName'          => $user['bank_name']           ?? null,
+            'bankAccountNumber' => $user['bank_account_number'] ?? null,
+            'bankAccountName'   => $user['bank_account_name']   ?? null,
+            'idType'            => $user['id_type']             ?? null,
+            'idDocumentUrl'     => $user['id_document_url']     ?? null,
         ];
     }
 }
