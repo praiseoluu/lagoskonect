@@ -332,6 +332,9 @@ try {
         (new TwoFactorController())->useBackupCode();
 
     // ── SSE ─────────────────────────────────────────────────────────────────
+    } elseif ($path === '/events/poll' && $method === 'GET') {
+        (new EventsController())->poll();
+
     } elseif ($path === '/events/stream' && $method === 'GET') {
         // SSE: don't set JSON content-type — EventsController sets text/event-stream
         (new EventsController())->stream();

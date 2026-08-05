@@ -1,48 +1,58 @@
 /**
- * Lagos Konect — SSE Client
+ * Lagos Konect — Realtime Client
  * ============================================================
- * Manages a single persistent Server-Sent Events connection
- * for the entire app session.
+ * Keeps the sidebar badges, chat and notifications up to date.
  *
- * Opens one EventSource to GET /events/stream (authenticated via
- * token in the URL since EventSource doesn't support custom headers).
+ * This used to hold a Server-Sent Events stream open for the whole session.
+ * That cost one PHP entry process per open tab, continuously: the stream
+ * lives for five minutes and sleeps through nearly all of it, but the process
+ * is occupied the entire time. The hosting account allows 20 entry processes
+ * in total, shared with every ordinary page load and API call, so a handful of
+ * simultaneous visitors exhausted them and the whole site failed — login
+ * included. cPanel recorded the limit being hit 4507 times in one day.
  *
- * Events handled:
- *   connected        — stream opened, confirms userId/lgaId
- *   new_message      — new chat message in the user's LGA
- *   new_notification — a notification was created for this user
- *   ping             — keepalive (ignored, browser handles reconnect)
- *   session_revoked  — account suspended; immediately clears session & redirects
+ * It now asks "anything new?" on an interval and the connection closes
+ * straight away, so a tab occupies a process for a few milliseconds per poll
+ * rather than permanently. The trade is latency: updates arrive within the
+ * poll interval instead of instantly.
  *
- * Usage:
- *   import { sseClient } from './sseClient.js';
- *   sseClient.connect();   // call once in WebLayout.afterMount
- *   sseClient.disconnect(); // call on logout
+ * Polling also authenticates with the normal Bearer token, which removes the
+ * short-lived SSE token exchange entirely — that endpoint wrote a row and
+ * deleted expired ones on every single connect.
  *
- * The module writes directly to the store so all components
- * (Sidebar badge, Chat page, Notifications page) react automatically.
- *
- * Chat page integration:
- *   Chat.js registers a message handler via sseClient.onMessage()
- *   so new messages appear instantly without polling.
- *   Chat.js removes the handler on unmount so only the chat page
- *   appends messages to the DOM — other pages just update the badge.
+ * The public API is unchanged, so callers need no edits:
+ *   sseClient.connect();       // WebLayout.afterMount
+ *   sseClient.onMessage(fn);   // Chat page
+ *   sseClient.disconnect();    // logout
  */
 
 import { store, showToast } from '../core/store.js';
-import { BASE_URL } from '../api/_fetch.js';
-import { api }    from '../api/client.js';
+import { _fetch } from '../api/_fetch.js';
 
-class SSEClient {
+/** How often to check for new activity while the tab is visible. */
+const POLL_INTERVAL_MS = 12_000;
+
+/**
+ * While the tab is hidden we only poll every Nth tick. A backgrounded tab
+ * still gets its notifications, just less promptly, and costs proportionally
+ * less of the shared process pool.
+ */
+const HIDDEN_TICK_DIVISOR = 5;
+
+/** Back off to this after repeated failures so a struggling server is not hammered. */
+const BACKOFF_INTERVAL_MS = 60_000;
+
+class RealtimeClient {
   constructor() {
-    this._es             = null;   // EventSource instance
-    this._retryDelay     = 3000;   // ms before reconnect attempt
-    this._retryTimer     = null;
-    this._heartbeatTimer = null;   // periodic session-validity check
+    this._timer          = null;
+    this._lastMsgId      = null;   // null until the first poll sets the cursors
+    this._lastNotifId    = null;
+    this._inFlight       = false;  // guards against overlapping polls
+    this._tickCount      = 0;
+    this._failures       = 0;
     this._onMessage      = null;   // optional DOM handler (Chat page only)
-    this._audioContext   = null;   // Web Audio API context for notification sound
+    this._audioContext   = null;
     this._notificationPermission = 'default';
-    this._consecutiveFailures = 0; // track repeated stream failures to avoid hammering a down server
   }
 
   _ensureAudio() {
@@ -104,11 +114,11 @@ class SSEClient {
   // ── Public API ────────────────────────────────────────────────────────
 
   /**
-   * Open the SSE stream. Safe to call multiple times — only one
-   * connection is kept open at a time.
+   * Start watching for new activity. Safe to call repeatedly — only one
+   * poll loop runs at a time.
    */
   async connect() {
-    if (this._es) return; // already connected
+    if (this._timer) return;
 
     const auth = (() => {
       try { return JSON.parse(sessionStorage.getItem('adm_auth')); } catch { return null; }
@@ -116,169 +126,31 @@ class SSEClient {
 
     if (!auth?.token) return; // not authenticated
 
-    // Exchange the long-lived JWT for a short-lived SSE token so the
-    // main JWT is never exposed in URLs or server access logs.
-    const { data, error } = await api.auth.getSseToken();
-    if (error || !data?.token) {
-      console.warn('[SSE] could not obtain exchange token — retrying in 5s', error?.message);
-      this._retryTimer = setTimeout(() => this.connect(), 5000);
-      return;
-    }
-
-    const url = `${BASE_URL}/events/stream?token=${encodeURIComponent(data.token)}`;
-
-    this._es = new EventSource(url);
-
-    // Request browser notification permission (for chat messages + push sounds)
     this._requestNotificationPermission();
 
-    this._es.addEventListener('connected', (e) => {
-      const data = JSON.parse(e.data);
-      console.debug('[SSE] connected', data);
-      this._retryDelay = 3000;       // reset backoff on success
-      this._consecutiveFailures = 0; // clear failure count — server is healthy
-    });
+    // First call returns the current head positions and no rows, so we report
+    // what happens from now on rather than replaying the backlog as "new".
+    await this._poll();
 
-    this._es.addEventListener('new_message', (e) => {
-      const msg = JSON.parse(e.data);
-      const currentUserId = store.currentUser?.id;
-
-      // Always update the sidebar unread badge (unless it's our own message)
-      if (msg.userId !== currentUserId) {
-        // Only increment if user is NOT on the chat page right now
-        const onChatPage = window.location.pathname === '/chat';
-        if (!onChatPage) {
-          store.unreadChatCount = (store.unreadChatCount || 0) + 1;
-          // Show a browser notification with sound so the user knows
-          // someone sent them a message
-          showToast('info', msg.senderName ? `${msg.senderName}: ${msg.text}` : 'New message');
-          this._playNotificationSound();
-          this._showBrowserNotification(
-              msg.senderName || 'New message',
-              msg.text || ''
-          );
-        }
-      }
-
-      // If a Chat page handler is registered, forward the message to it
-      if (this._onMessage) {
-        this._onMessage(msg);
-      }
-    });
-
-    this._es.addEventListener('new_notification', (e) => {
-      const notif = JSON.parse(e.data);
-
-      // Increment sidebar badge
-      store.unreadNotificationCount = (store.unreadNotificationCount || 0) + 1;
-
-      // Show a toast so the user knows something happened
-      // (even if they're not on the notifications page)
-      showToast('info', notif.title);
-      this._playNotificationSound();
-      this._showBrowserNotification(
-          notif.title || 'New notification',
-          notif.body || ''
-      );
-    });
-
-    this._es.addEventListener('ping', () => {
-      // Keepalive — nothing to do
-    });
-
-    // Immediate suspension / session revocation pushed by the server.
-    // The admin suspends a user → the backend broadcasts this event to that
-    // user's SSE stream → the client immediately clears the session without
-    // waiting for the next API call.
-    this._es.addEventListener('session_revoked', (e) => {
-      let reason = 'suspended';
-      try { reason = JSON.parse(e.data)?.reason || reason; } catch { /* noop */ }
-      console.warn('[SSE] session_revoked', reason);
-      showToast('error', 'Your account has been suspended. Please contact support.');
-      sessionStorage.removeItem('adm_auth');
-      setTimeout(() => window.location.replace('/'), 2500);
-    });
-
-    this._es.onerror = () => {
-      // EventSource auto-reconnects, but we also do our own backoff
-      // in case the token expired or the server restarted.
-      this._es?.close();
-      this._es = null;
-
-      this._consecutiveFailures++;
-
-      // Give up retrying after 8 consecutive failures (~4 min of backoff).
-      // The session heartbeat below will resume connection attempts every 60 s
-      // once the server recovers, without hammering it during an outage.
-      if (this._consecutiveFailures > 8) {
-        console.warn('[SSE] too many consecutive failures — pausing retries; heartbeat will resume');
-        return;
-      }
-
-      this._retryTimer = setTimeout(() => {
-        this._retryDelay = Math.min(this._retryDelay * 2, 30000); // cap at 30s
-        this.connect();
-      }, this._retryDelay);
-    };
-
-    // ── Session heartbeat ─────────────────────────────────────────────────
-    // Poll every 60 s to detect account suspension for users who are idle.
-    // Any authenticated _fetch() call already checks for ACCOUNT_SUSPENDED;
-    // this heartbeat ensures suspended users are force-logged-out within 60 s
-    // even if they make no other requests.
-    //
-    // IMPORTANT — do NOT use getSseToken() here. That endpoint writes to the
-    // database on every call (INSERT sse_token + DELETE expired rows), so
-    // calling it every 60 s per user causes heavy unnecessary DB writes and
-    // PHP process churn that can exhaust the server's resource limit.
-    // getProfile() is a simple SELECT with no side-effects.
-    if (this._heartbeatTimer) clearInterval(this._heartbeatTimer);
-    this._heartbeatTimer = setInterval(async () => {
-      if (!sessionStorage.getItem('adm_auth')) return;
-
-      // If the SSE stream is open, suspension will arrive via the
-      // session_revoked event — no need to poll at all.
-      if (this._es?.readyState === EventSource.OPEN) return;
-
-      // SSE is down: use a cheap read-only call so _fetch.js can detect
-      // ACCOUNT_SUSPENDED and redirect, without touching the DB.
-      await api.users.getProfile().catch(() => {});
-
-      // Also attempt to reconnect if we previously gave up after too many
-      // failures — server may have recovered.
-      if (this._consecutiveFailures > 8 && !this._es && !this._retryTimer) {
-        console.debug('[SSE] heartbeat triggering reconnect attempt after pause');
-        this._consecutiveFailures = 0;
-        this._retryDelay = 3000;
-        this.connect();
-      }
-    }, 60_000);
+    this._timer = setInterval(() => this._tick(), POLL_INTERVAL_MS);
   }
 
-  /**
-   * Close the SSE connection. Call on logout.
-   */
+  /** Stop polling. Call on logout. */
   disconnect() {
-    if (this._retryTimer) {
-      clearTimeout(this._retryTimer);
-      this._retryTimer = null;
+    if (this._timer) {
+      clearInterval(this._timer);
+      this._timer = null;
     }
-    if (this._heartbeatTimer) {
-      clearInterval(this._heartbeatTimer);
-      this._heartbeatTimer = null;
-    }
-    if (this._es) {
-      this._es.close();
-      this._es = null;
-    }
-    this._onMessage = null;
-    this._consecutiveFailures = 0;
-    this._retryDelay = 3000;
-    console.debug('[SSE] disconnected');
+    this._onMessage   = null;
+    this._lastMsgId   = null;
+    this._lastNotifId = null;
+    this._failures    = 0;
+    this._tickCount   = 0;
+    console.debug('[realtime] disconnected');
   }
 
   /**
-   * Register a handler to receive new_message events directly.
+   * Register a handler to receive new messages directly.
    * Only one handler is supported at a time — the Chat page.
    * @param {function|null} handler  - receives the message object, or null to remove
    */
@@ -286,15 +158,87 @@ class SSEClient {
     this._onMessage = handler;
   }
 
-  /**
-   * Whether the SSE connection is currently open.
-   * @returns {boolean}
-   */
+  /** Whether the poll loop is running. */
   get connected() {
-    return this._es?.readyState === EventSource.OPEN;
+    return this._timer !== null;
+  }
+
+  // ── Internals ─────────────────────────────────────────────────────────
+
+  _tick() {
+    this._tickCount++;
+
+    // A hidden tab polls at a fifth of the rate.
+    if (document.hidden && this._tickCount % HIDDEN_TICK_DIVISOR !== 0) return;
+
+    // After repeated failures, only try every Nth tick until one succeeds.
+    if (this._failures > 3) {
+      const slowEvery = Math.round(BACKOFF_INTERVAL_MS / POLL_INTERVAL_MS);
+      if (this._tickCount % slowEvery !== 0) return;
+    }
+
+    this._poll();
+  }
+
+  async _poll() {
+    if (this._inFlight) return;          // previous poll still running
+    if (!sessionStorage.getItem('adm_auth')) return;
+
+    this._inFlight = true;
+    try {
+      const qs = (this._lastMsgId !== null && this._lastNotifId !== null)
+        ? `?lastMsgId=${this._lastMsgId}&lastNotifId=${this._lastNotifId}`
+        : '';
+
+      // _fetch attaches the Bearer token and already handles ACCOUNT_SUSPENDED
+      // by clearing the session, which is why no separate heartbeat is needed.
+      const { data, error } = await _fetch('GET', '/events/poll' + qs);
+
+      if (error || !data) {
+        this._failures++;
+        return;
+      }
+
+      this._failures = 0;
+
+      const first = this._lastMsgId === null;
+      this._lastMsgId   = data.lastMsgId   ?? this._lastMsgId;
+      this._lastNotifId = data.lastNotifId ?? this._lastNotifId;
+
+      if (first) return;  // cursor-priming call carries no rows
+
+      (data.messages      || []).forEach((m) => this._handleMessage(m));
+      (data.notifications || []).forEach((n) => this._handleNotification(n));
+    } finally {
+      this._inFlight = false;
+    }
+  }
+
+  _handleMessage(msg) {
+    const currentUserId = store.currentUser?.id;
+
+    if (msg.userId !== currentUserId) {
+      // Only badge it when the user is not already looking at the chat page.
+      const onChatPage = window.location.pathname.endsWith('/chat');
+      if (!onChatPage) {
+        store.unreadChatCount = (store.unreadChatCount || 0) + 1;
+        showToast('info', msg.userName ? `${msg.userName}: ${msg.text}` : 'New message');
+        this._playNotificationSound();
+        this._showBrowserNotification(msg.userName || 'New message', msg.text || '');
+      }
+    }
+
+    if (this._onMessage) this._onMessage(msg);
+  }
+
+  _handleNotification(notif) {
+    store.unreadNotificationCount = (store.unreadNotificationCount || 0) + 1;
+    showToast('info', notif.title);
+    this._playNotificationSound();
+    this._showBrowserNotification(notif.title || 'New notification', notif.body || '');
   }
 }
 
 // ── Singleton ─────────────────────────────────────────────────────────────
 
-export const sseClient = new SSEClient();
+export const sseClient = new RealtimeClient();
