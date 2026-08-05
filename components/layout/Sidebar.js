@@ -113,6 +113,7 @@ export class Sidebar extends Component {
   render() {
     const { collapsed, currentRoute } = this.state;
     const navItems = this.getNavItems();
+    const activePath = this._activePath(navItems, currentRoute);
     const regionSelector = this.getRegionSelector();
 
     return `
@@ -140,7 +141,7 @@ export class Sidebar extends Component {
         <!-- Nav -->
         <nav class="ktg-sidebar__nav" aria-label="${t('nav.pageLinks') || 'Page navigation'}">
           <ul class="ktg-sidebar__nav-list" role="list">
-            ${navItems.map((item) => this._renderNavItem(item, currentRoute)).join('')}
+            ${navItems.map((item) => this._renderNavItem(item, currentRoute, activePath)).join('')}
           </ul>
         </nav>
 
@@ -155,11 +156,41 @@ export class Sidebar extends Component {
 
   /* ── Nav item renderer ────────────────────────────────────────────────── */
 
+  /**
+   * Which nav path best describes the current route.
+   *
+   * Matching is prefix-based so /admin/news/42/edit still lights up
+   * /admin/news. But when one nav path is a prefix of another, a route under
+   * the deeper one matches both and two entries highlight at once. Resolving
+   * to the longest matching path means the most specific entry wins and every
+   * other one stays inactive.
+   *
+   * @private
+   * @returns {string|null}
+   */
+  _activePath(navItems, currentRoute) {
+    let best = null;
+
+    for (const item of navItems) {
+      const matches = item.exact
+        ? currentRoute === item.path
+        : currentRoute === item.path || currentRoute.startsWith(`${item.path}/`);
+
+      if (matches && (best === null || item.path.length > best.length)) {
+        best = item.path;
+      }
+    }
+
+    return best;
+  }
+
   /** @private */
-  _renderNavItem(item, currentRoute) {
-    const isActive = item.exact
-      ? currentRoute === item.path
-      : currentRoute === item.path || currentRoute.startsWith(`${item.path}/`);
+  _renderNavItem(item, currentRoute, activePath = null) {
+    const isActive = activePath !== null
+      ? item.path === activePath
+      : (item.exact
+          ? currentRoute === item.path
+          : currentRoute === item.path || currentRoute.startsWith(`${item.path}/`));
 
     const badgeHtml = item.badge
       ? `<span class="ktg-sidebar__badge" aria-label="${item.badge} unread">
@@ -447,6 +478,7 @@ export class AdminSidebar extends Sidebar {
       { path: '/admin',                   label: t('adminNav.dashboard'),  icon: ICON.dashboard, exact: true },
       { path: '/admin/users',             label: t('adminNav.users'),      icon: ICON.users      },
       { path: '/admin/news',              label: t('adminNav.news'),       icon: ICON.news       },
+      { path: '/admin/news/import',       label: 'Import News',            icon: ICON.news       },
       { path: '/admin/reels',             label: t('adminNav.reels'),      icon: ICON.reels      },
       { path: '/admin/chat',              label: t('adminNav.chat'),       icon: ICON.chat       },
       { path: '/admin/referrals',         label: 'Referral Contest',       icon: ICON.star       },
