@@ -118,6 +118,13 @@ export default class WithdrawalsPage extends AdminLayout {
             <span>@${this.esc(u.username || '')}</span>
             <span class="wd-card__meta">${this.esc(u.email || '')}${u.phone ? ' · ' + this.esc(u.phone) : ''}</span>
             <span class="wd-card__meta">${this.esc(u.lgaName || '—')} · ${u.referralCount ?? 0} referrals</span>
+
+            <span class="wd-id">
+              ${u.idType ? `<span class="wd-id__type">${this.esc(u.idType)}</span>` : `<span class="wd-id__none">No ID on file</span>`}
+              ${u.idDocumentUrl
+                ? `<a class="wd-id__link" href="${this.esc(u.idDocumentUrl)}" target="_blank" rel="noopener noreferrer">View ID</a>`
+                : ''}
+            </span>
           </div>
 
           <div class="wd-pay-to">

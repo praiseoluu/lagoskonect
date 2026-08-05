@@ -410,3 +410,28 @@
   .um-left__status-card { flex: 1; min-width: 200px; }
   .um-fields-grid  { grid-template-columns: 1fr; }
 }
+/* ── Identity & payout (read-only KYC block in the citizen modal) ────────── */
+
+.um-id-link {
+  color: var(--color-primary, #068927);
+  font-weight: var(--font-weight-semibold, 600);
+  text-decoration: none;
+}
+
+.um-id-link:hover { text-decoration: underline; }
+
+.um-id-missing { color: var(--color-text-muted, #9ca3af); }
+
+/* Inline preview of the uploaded document. Capped so a large scan cannot
+   push the rest of the profile off screen; removes itself if the file is a
+   PDF or otherwise not renderable as an image. */
+.um-id-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 260px;
+  margin-top: 8px;
+  border: 1px solid var(--color-border-light, #f3f4f6);
+  border-radius: var(--radius-md, 8px);
+  object-fit: contain;
+  background: var(--color-surface, #f9fafb);
+}

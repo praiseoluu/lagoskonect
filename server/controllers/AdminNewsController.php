@@ -455,7 +455,7 @@ class AdminNewsController {
         }
 
         $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
-        $mime = mime_content_type($file['tmp_name']);
+        $mime = Mime::detect($file['tmp_name']);
         if (!in_array($mime, $allowedMimes, true)) {
             Response::error('VALIDATION_ERROR', 'Only JPEG, PNG or WebP images are allowed.', 422);
         }
@@ -465,7 +465,7 @@ class AdminNewsController {
         }
 
         try {
-            $mime = mime_content_type($file['tmp_name']);
+            $mime = Mime::detect($file['tmp_name']);
             $ext  = S3::mimeToExt($mime);
             $key  = S3::makeKey('news', $ext);
             $url  = S3::upload($file['tmp_name'], $key, $mime);

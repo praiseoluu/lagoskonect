@@ -133,13 +133,13 @@ class AdminReelController {
         }
 
         $allowedMimes = ['video/mp4', 'video/quicktime', 'video/webm'];
-        $mime = mime_content_type($file['tmp_name']);
+        $mime = Mime::detect($file['tmp_name']);
         if (!in_array($mime, $allowedMimes, true)) {
             Response::error('VALIDATION_ERROR', 'Only MP4, MOV, or WebM video files are allowed.', 422);
         }
 
         try {
-            $mime      = mime_content_type($file['tmp_name']);
+            $mime      = Mime::detect($file['tmp_name']);
             $ext       = S3::mimeToExt($mime);
             $videoKey  = S3::makeKey('admin_reels', $ext);
             $videoUrl  = S3::upload($file['tmp_name'], $videoKey, $mime);
@@ -148,7 +148,7 @@ class AdminReelController {
             $thumbUrl = null;
             if (!empty($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] === UPLOAD_ERR_OK) {
                 $thumbFile = $_FILES['thumbnail'];
-                $thumbMime = mime_content_type($thumbFile['tmp_name']);
+                $thumbMime = Mime::detect($thumbFile['tmp_name']);
                 $thumbKey  = S3::makeKey('thumbnails', S3::mimeToExt($thumbMime));
                 $thumbUrl  = S3::upload($thumbFile['tmp_name'], $thumbKey, $thumbMime);
             }

@@ -10,6 +10,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/jwt.php';
 require_once __DIR__ . '/utils/Response.php';
 require_once __DIR__ . '/utils/Validator.php';
+require_once __DIR__ . '/utils/Mime.php';
 require_once __DIR__ . '/utils/JWT.php';
 require_once __DIR__ . '/utils/Paginator.php';
 require_once __DIR__ . '/middleware/auth.php';

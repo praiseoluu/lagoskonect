@@ -53,11 +53,17 @@ class WithdrawalController {
             'pendingAmount'   => $b['pending'],
             'availableAmount' => $b['available'],
             'minWithdrawal'   => self::MIN_WITHDRAWAL,
-            'payoutAccount'   => $u['payout_account_number'] ? [
-                'bankName'      => $u['payout_bank_name'],
-                'accountNumber' => $u['payout_account_number'],
-                'accountName'   => $u['payout_account_name'],
+            'payoutAccount'   => $u['bank_account_number'] ? [
+                'bankName'      => $u['bank_name'],
+                'accountNumber' => $u['bank_account_number'],
+                'accountName'   => $u['bank_account_name'],
             ] : null,
+            // Identity travels with the payout summary so the panel can show
+            // the citizen what an admin will see before releasing their money.
+            'identity'        => [
+                'idType'        => $u['id_type'] ?? null,
+                'idDocumentUrl' => $u['id_document_url'] ?? null,
+            ],
             'openRequest'     => $open ? $this->format($open) : null,
         ]);
     }
@@ -82,7 +88,7 @@ class WithdrawalController {
 
         $this->db->prepare('
             UPDATE users
-               SET payout_bank_name = ?, payout_account_number = ?, payout_account_name = ?, updated_at = NOW()
+               SET bank_name = ?, bank_account_number = ?, bank_account_name = ?, updated_at = NOW()
              WHERE id = ?
         ')->execute([$bank, $number, $name, $userId]);
 
@@ -100,7 +106,7 @@ class WithdrawalController {
 
         $u = $this->userRow($userId);
 
-        if (!$u['payout_account_number']) {
+        if (!$u['bank_account_number']) {
             Response::error('NO_PAYOUT_ACCOUNT', 'Add your bank account details before requesting a withdrawal.', 422);
         }
 
@@ -128,7 +134,7 @@ class WithdrawalController {
             VALUES (?, ?, ?, ?, ?, "pending", NOW())
         ')->execute([
             $userId, $amount,
-            $u['payout_bank_name'], $u['payout_account_number'], $u['payout_account_name'],
+            $u['bank_name'], $u['bank_account_number'], $u['bank_account_name'],
         ]);
 
         $id = (int) $this->db->lastInsertId();
@@ -164,9 +170,13 @@ class WithdrawalController {
         $where  = in_array($status, ['pending', 'paid', 'rejected'], true) ? 'w.status = ?' : '1=1';
         $params = $where === '1=1' ? [] : [$status];
 
+        // Identity comes along too: an admin about to transfer real money
+        // wants to see the ID the citizen uploaded, and whether the name on it
+        // matches the account they are paying.
         $stmt = $this->db->prepare("
             SELECT w.*, u.name AS user_name, u.username, u.email AS user_email,
-                   u.phone AS user_phone, u.lga_name, u.referral_count
+                   u.phone AS user_phone, u.lga_name, u.referral_count,
+                   u.id_type, u.id_document_url, u.is_verified
               FROM withdrawal_requests w
               JOIN users u ON u.id = w.user_id
              WHERE {$where}
@@ -185,6 +195,9 @@ class WithdrawalController {
                 'phone'         => $r['user_phone'],
                 'lgaName'       => $r['lga_name'],
                 'referralCount' => (int) $r['referral_count'],
+                'isVerified'    => (bool) $r['is_verified'],
+                'idType'        => $r['id_type'],
+                'idDocumentUrl' => $r['id_document_url'],
             ];
             return $out;
         }, $stmt->fetchAll());
@@ -327,7 +340,8 @@ class WithdrawalController {
     private function userRow(int $id): array {
         $stmt = $this->db->prepare('
             SELECT id, name, username, email, referral_count,
-                   payout_bank_name, payout_account_number, payout_account_name
+                   bank_name, bank_account_number, bank_account_name,
+                   id_type, id_document_url
               FROM users WHERE id = ? LIMIT 1
         ');
         $stmt->execute([$id]);

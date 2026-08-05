@@ -134,7 +134,7 @@ class UserController {
             Response::error('VALIDATION_ERROR', 'File size must not exceed 10 MB.', 422);
         }
 
-        $mime = mime_content_type($file['tmp_name']);
+        $mime = Mime::detect($file['tmp_name']);
         $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
         if (!in_array($mime, $allowedMimes, true)) {
             Response::error('VALIDATION_ERROR', 'Only JPEG, PNG, WebP images and PDFs are allowed.', 422);
@@ -186,7 +186,7 @@ class UserController {
 
         // Validate MIME type
         $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $mime = mime_content_type($file['tmp_name']);
+        $mime = Mime::detect($file['tmp_name']);
         if (!in_array($mime, $allowedMimes, true)) {
             Response::error('VALIDATION_ERROR', 'Only image files are allowed.', 422);
         }
