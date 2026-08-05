@@ -19,3 +19,158 @@
 [08-Jul-2026 15:52:55 UTC] [Email] Resend API error 403: {"statusCode":403,"message":"The adamawakonect.com domain is not verified. Please, add and verify your domain on https://resend.com/domains","name":"validation_error"}
 [21-Jul-2026 15:05:05 UTC] [WhatsApp] Missing WHATSAPP_PHONE_NUMBER_ID or WHATSAPP_ACCESS_TOKEN
 [24-Jul-2026 16:24:42 UTC] [WhatsApp] Missing WHATSAPP_PHONE_NUMBER_ID or WHATSAPP_ACCESS_TOKEN
+[30-Jul-2026 11:35:16 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_email'
+[30-Jul-2026 11:38:17 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_email'
+[30-Jul-2026 18:16:25 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_email'
+[30-Jul-2026 18:16:31 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_email'
+[30-Jul-2026 18:16:36 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_email'
+[30-Jul-2026 18:16:39 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_email'
+[04-Aug-2026 10:01:08 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:01:08 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:01:08 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:01:08 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:01:08 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:02:51 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:02:51 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:02:51 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:02:51 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:02:51 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:03:02 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:03:02 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:03:02 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:03:02 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:03:02 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:03:16 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:03:16 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:03:16 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:03:16 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:03:16 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:03:39 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:03:39 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:03:39 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:03:39 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:03:39 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:03:49 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:03:49 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:03:49 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:03:49 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:03:49 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:04:47 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:04:47 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:04:47 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:04:47 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:04:47 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:04:57 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:04:57 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:04:57 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:04:57 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:04:57 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:04:58 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:04:58 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:04:58 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:04:58 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:04:58 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:09:43 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:09:43 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:09:43 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:09:43 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:09:43 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:10:34 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:10:34 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:10:34 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:10:34 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:10:34 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:11:12 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:11:12 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:11:12 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:11:12 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:11:12 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:11:43 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:11:43 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:11:43 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:11:43 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:11:43 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:11:47 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:11:47 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:11:47 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:11:47 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:11:47 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:11:52 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:11:52 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:11:52 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:11:52 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:11:52 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:14:02 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:14:02 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:14:02 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:14:02 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:14:02 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:21:24 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:21:24 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:21:24 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:21:24 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:21:24 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:21:30 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:21:30 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:21:30 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:21:30 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:21:30 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:26:24 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:26:24 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:26:24 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:26:24 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:26:24 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:27:56 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:27:56 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:27:56 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:27:56 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:27:56 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:27:59 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:27:59 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:27:59 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:27:59 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:27:59 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:29:06 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:29:06 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:29:06 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:29:06 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:29:06 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:29:15 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:29:15 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:29:15 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:29:15 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:29:15 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 10:29:37 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 399
+[04-Aug-2026 10:29:37 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 400
+[04-Aug-2026 10:29:37 UTC] PHP Warning:  Undefined array key "referral_code" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 403
+[04-Aug-2026 10:29:37 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 406
+[04-Aug-2026 10:29:37 UTC] PHP Warning:  Undefined array key "referral_count" in /home/lgkonect/public_html/server/controllers/ReferralController.php on line 409
+[04-Aug-2026 13:11:56 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_username'
+[04-Aug-2026 21:04:21 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_username'
+[04-Aug-2026 21:06:59 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_username'
+[04-Aug-2026 22:26:18 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_username'
+[04-Aug-2026 22:26:30 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_username'
+[05-Aug-2026 12:32:30 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 261 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 12:32:33 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 12:32:42 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 12:32:49 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 12:38:55 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_username'
+[05-Aug-2026 12:44:50 UTC] DB Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'uq_users_username'
+[05-Aug-2026 12:49:21 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 12:52:10 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 12:54:10 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:00:36 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:00:46 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:00:50 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:00:55 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:01:40 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 261 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:01:40 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:01:50 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 261 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:01:51 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:08:01 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:08:06 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:09:15 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:09:24 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 261 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:09:25 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:09:28 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
+[05-Aug-2026 13:09:33 UTC] Server Error: ChatController::assertLgaInRegion(): Argument #1 ($lgaId) must be of type int, null given, called in /home/lgkonect/public_html/server/controllers/ChatController.php on line 280 in /home/lgkonect/public_html/server/controllers/ChatController.php:668
