@@ -236,7 +236,7 @@ router.register('web', [
   },
   {
     path:      '/reels',
-    component: () => import('./pages/web/app/Reels.js'),
+    component: () => import('./pages/web/app/Reels.js?v=20260805a'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reels' },
   },
@@ -310,7 +310,7 @@ router.register('web', [
   },
   {
     path:      '/west/reels',
-    component: () => import('./pages/web/west/Reels.js'),
+    component: () => import('./pages/web/west/Reels.js?v=20260805a'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reels — Lagos West' },
   },
@@ -384,7 +384,7 @@ router.register('web', [
   },
   {
     path:      '/central/reels',
-    component: () => import('./pages/web/central/Reels.js'),
+    component: () => import('./pages/web/central/Reels.js?v=20260805a'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reels — Lagos Central' },
   },
@@ -458,7 +458,7 @@ router.register('web', [
   },
   {
     path:      '/east/reels',
-    component: () => import('./pages/web/east/Reels.js'),
+    component: () => import('./pages/web/east/Reels.js?v=20260805a'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reels — Lagos East' },
   },
@@ -570,6 +570,12 @@ router.register('admin', [
     component: () => import('./pages/admin/app/NewsImport.js'),
     guards:    [requireAdmin],
     meta:      { title: 'Import News' },
+  },
+  {
+    path:      '/admin/withdrawals',
+    component: () => import('./pages/admin/app/Withdrawals.js?v=20260805a'),
+    guards:    [requireAdmin],
+    meta:      { title: 'Referral Payouts' },
   },
   {
     path:      '/admin/news/:id',

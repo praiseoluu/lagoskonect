@@ -7,6 +7,7 @@
 import { WebLayout }                  from '../../../components/layout/BaseLayout.js';
 import { setPageLoading, showToast }  from '../../../core/store.js';
 import { api }                        from '../../../api/client.js';
+import { PayoutPanel } from '../../../components/feature/PayoutPanel.js';
 import { timeAgo }                    from '../../../utils/date.js';
 
 export default class ReferralsPage extends WebLayout {
@@ -96,6 +97,8 @@ export default class ReferralsPage extends WebLayout {
           </div>
         </div>
 
+        <div id="payout-mount"></div>
+
         <div class="ref-history-card">
           <h2 class="ref-history-card__title">Referral History</h2>
           ${this._history.length ? `
@@ -128,6 +131,14 @@ export default class ReferralsPage extends WebLayout {
     `;
 
         this._bindEvents(root, link);
+
+        // Referral earnings and withdrawals. Lives in its own component so the
+        // payout rules are not duplicated across the regional copies.
+        const payoutMount = root.querySelector('#payout-mount');
+        if (payoutMount) {
+            this._payoutPanel = this.addChild(new PayoutPanel());
+            this._payoutPanel.mount(payoutMount);
+        }
     }
 
     _bindEvents(root, link) {

@@ -26,7 +26,7 @@ function fmtCount(n) {
 }
 
 export default class ReelsPage extends WebLayout {
-  static styles = '/pages/web/app/Reels.css';
+  static styles = '/pages/web/app/Reels.css?v=20260805a';
 
   constructor(props) {
     super({ title: t('reels.title'), ...props });

@@ -482,6 +482,7 @@ export class AdminSidebar extends Sidebar {
       { path: '/admin/reels',             label: t('adminNav.reels'),      icon: ICON.reels      },
       { path: '/admin/chat',              label: t('adminNav.chat'),       icon: ICON.chat       },
       { path: '/admin/referrals',         label: 'Referral Contest',       icon: ICON.star       },
+      { path: '/admin/withdrawals',       label: 'Referral Payouts',       icon: ICON.star       },
       { path: '/admin/content-moderation',label: t('adminNav.moderation'), icon: ICON.contentMod },
       { path: '/admin/adverts',           label: t('adminNav.adverts'),    icon: ICON.advert     },
       { path: '/admin/lga-data',          label: t('adminNav.lgaData'),    icon: ICON.lgaData    },
