@@ -387,10 +387,129 @@
 @media (min-width: 640px) {
   .rf-wrap { align-items: center; }
   .rf-feed {
-    max-width: 420px;
+    /* Reels are shot portrait, so the feed stays a centred column rather than
+       stretching across the window — object-fit: cover would crop the top and
+       bottom off a portrait video in a very wide box. 420px left a lot of bare
+       background on a laptop, so this is the widest the column can go while
+       still reading as a phone-shaped feed. */
+    max-width: 560px;
     width: 100%;
     box-shadow: 0 0 0 1px var(--color-border, #e5e7eb);
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TikTok-style layout
+   Caption sits over the video at every width, the way short-video feeds
+   conventionally read. On a wide screen the action buttons move out of the
+   strip beneath the video and become a vertical rail beside it, which is what
+   removes the large empty margins the old 420px column left behind.
+   Light theme throughout — only the arrangement changes.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Caption overlaid on the video.
+   Both this and the author line are anchored to the bottom of the media. The
+   caption reserves space at its foot for the author row to sit in, which keeps
+   the two stacked correctly whether the caption runs to one line or three. */
+.rf-item__caption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 3;
+  padding: 60px 16px 46px;
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.45;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.55);
+  background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.38) 60%, transparent 100%);
+  -webkit-line-clamp: 3;
+  pointer-events: none;
+}
+
+/* Author row occupies the space the caption leaves. The caption already
+   supplies the gradient behind it, so this one drops its own. */
+.rf-item__video-info {
+  z-index: 4;
+  background: none;
+  padding: 0 16px 14px;
+}
+
+@media (min-width: 900px) {
+  .rf-feed {
+    /* The column cap is replaced by the video + rail group, centred below. */
+    max-width: none;
+    width: 100%;
+    box-shadow: none;
+  }
+
+  .rf-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 16px 24px;
+    border-bottom: none;
+    background: var(--color-bg, #f9fafb);
+  }
+
+  /* Portrait stage. Height-driven so the 9:16 video is never cropped. */
+  .rf-item__media {
+    flex: 0 0 auto;
+    height: 100%;
+    max-height: calc(100dvh - var(--topbar-height, 64px) - 32px);
+    aspect-ratio: 9 / 16;
+    border-radius: 14px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.14);
+  }
+
+  /* Action buttons become the rail, bottom-aligned against the video. */
+  .rf-item__below {
+    flex: 0 0 auto;
+    align-self: flex-end;
+    background: transparent;
+    border-top: none;
+    padding-bottom: 10px;
+  }
+
+  .rf-item__action-bar {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 0;
+  }
+
+  .rf-item__btn {
+    flex-direction: column;
+    gap: 5px;
+    width: 56px;
+    padding: 0;
+    background: none;
+    font-size: 12px;
+  }
+
+  .rf-item__btn:hover,
+  .rf-item__btn:focus-visible { background: none; }
+
+  /* The icon itself carries the circular button surface. */
+  .rf-item__btn svg {
+    width: 46px;
+    height: 46px;
+    padding: 12px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+    transition: background 0.15s, transform 0.15s;
+  }
+
+  .rf-item__btn:hover svg { transform: translateY(-1px); background: #f3f4f6; }
+  .rf-item__btn--liked svg { background: #fff0f1; }
+
+  /* Share is last in the rail, so the auto margin from the row layout goes. */
+  .rf-item__btn--share { margin-left: 0; }
+
+  /* The comment drawer belongs to the video, not the full-width item. */
+  .rf-item__comment-drawer { border-radius: 0 0 14px 14px; }
 }
 
 /* ── Accessibility ────────────────────────────────────────────────────────── */

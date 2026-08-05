@@ -87,13 +87,35 @@ RewriteRule ^ index.html [L]
   ExpiresActive On
   # HTML — no cache (always fresh for the SPA shell)
   ExpiresByType text/html                 "access plus 0 seconds"
-  # JS/CSS — cache with versioning
-  ExpiresByType application/javascript    "access plus 1 year"
-  ExpiresByType text/css                  "access plus 1 year"
+  # JS/CSS — revalidate on every load.
+  #
+  # These were cached for a year, and only /app.js carries a ?v= query. Every
+  # other module and stylesheet is fetched from an unversioned URL, so once a
+  # visitor had them they kept them: a browser could still be running months-old
+  # JavaScript against a freshly deployed backend, which is exactly how a
+  # retired endpoint ends up silently delivering nothing to real users.
+  #
+  # Revalidation costs one conditional request per file, answered with an empty
+  # 304 when nothing changed, and static files never touch PHP so this does not
+  # consume entry processes. Correctness is worth far more than the saved bytes.
+  ExpiresByType application/javascript    "access plus 0 seconds"
+  ExpiresByType text/css                  "access plus 0 seconds"
   # Images / fonts
   ExpiresByType image/svg+xml             "access plus 1 year"
   ExpiresByType image/png                 "access plus 1 year"
   ExpiresByType image/jpeg                "access plus 1 year"
   ExpiresByType image/webp                "access plus 1 year"
   ExpiresByType font/woff2                "access plus 1 year"
+</IfModule>
+
+# Belt and braces for the rule above: mod_expires is not guaranteed to be
+# loaded on this host, and a blank Cache-Control leaves the browser to invent
+# its own heuristic freshness. mod_headers is demonstrably active (it sets the
+# CSP and HSTS above), so state the policy explicitly. "no-cache" does not mean
+# "do not store" — the file is still cached, it just has to be revalidated,
+# which normally returns an empty 304.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
 </IfModule>
