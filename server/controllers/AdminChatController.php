@@ -405,7 +405,7 @@ class AdminChatController {
             Response::error('VALIDATION_ERROR', 'File size must not exceed 25 MB.', 422);
         }
 
-        $mime = mime_content_type($file['tmp_name']);
+        $mime = Mime::detect($file['tmp_name']);
         $allowedMimes = [
             'image/jpeg', 'image/png', 'image/gif', 'image/webp',
             'application/pdf',

@@ -111,7 +111,7 @@ class ReelController {
         }
 
         // Validate MIME type
-        $mime = mime_content_type($file['tmp_name']);
+        $mime = Mime::detect($file['tmp_name']);
         $allowedMimes = [
             'video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo',
             'image/jpeg', 'image/png', 'image/gif', 'image/webp',
@@ -151,7 +151,7 @@ class ReelController {
             $thumbUrl = null;
             if (!empty($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] === UPLOAD_ERR_OK) {
                 $thumbFile = $_FILES['thumbnail'];
-                $thumbMime = mime_content_type($thumbFile['tmp_name']);
+                $thumbMime = Mime::detect($thumbFile['tmp_name']);
                 $thumbKey  = S3::makeKey('thumbnails', S3::mimeToExt($thumbMime));
                 $thumbUrl  = S3::upload($thumbFile['tmp_name'], $thumbKey, $thumbMime);
             }

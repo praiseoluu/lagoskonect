@@ -38,8 +38,9 @@ export class PayoutPanel extends Component {
 
     this.delegate('#payout-edit',   'click', () => { this._editing = true;  this._paint(); });
     this.delegate('#payout-cancel', 'click', () => { this._editing = false; this._paint(); });
-    this.delegate('#payout-save',   'click', () => this._saveAccount());
-    this.delegate('#payout-request','click', () => this._request());
+    this.delegate('#payout-save',    'click', () => this._saveAccount());
+    this.delegate('#payout-save-id', 'click', () => this._saveIdentity());
+    this.delegate('#payout-request', 'click', () => this._request());
   }
 
   async _load() {
@@ -86,9 +87,61 @@ export class PayoutPanel extends Component {
       </dl>
 
       ${this._accountHtml()}
+      ${this._identityHtml()}
       ${this._actionHtml()}
       ${this._historyHtml()}
     `;
+  }
+
+  /**
+   * Identity verification.
+   *
+   * Lives here rather than only under Settings because this is where a citizen
+   * is thinking about being paid, and it is the document an admin looks at
+   * before releasing the money. Uploading is not enforced — an admin can still
+   * decline a request with no ID attached — but the panel says plainly that a
+   * payout is likely to be held up without one.
+   */
+  _identityHtml() {
+    const id = this._data.identity || {};
+    const has = !!id.idDocumentUrl;
+
+    const preview = has
+      ? `<a class="payout__id-view" href="${this.esc(id.idDocumentUrl)}" target="_blank" rel="noopener noreferrer">View uploaded document</a>`
+      : '';
+
+    return `
+      <div class="payout__identity">
+        <p class="payout__form-title">Identity verification</p>
+
+        <div class="payout__id-state ${has ? 'payout__id-state--ok' : 'payout__id-state--missing'}">
+          ${has
+            ? `<span>${this.esc(id.idType || 'Document')} on file</span> ${preview}`
+            : `<span>No identification uploaded. Payouts may be held until you add one.</span>`}
+        </div>
+
+        <div class="payout__fields">
+          <label class="payout__field">
+            <span>ID type</span>
+            <select id="pf-idtype">
+              <option value="">Select…</option>
+              ${['NIN', "Voter's Card", "Driver's Licence", 'International Passport']
+                .map((t) => `<option value="${this.esc(t)}" ${id.idType === t ? 'selected' : ''}>${this.esc(t)}</option>`)
+                .join('')}
+            </select>
+          </label>
+          <label class="payout__field">
+            <span>Upload a clear photo or scan</span>
+            <input id="pf-iddoc" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
+          </label>
+        </div>
+
+        <div class="payout__form-actions">
+          <button class="payout__btn" id="payout-save-id" type="button">
+            ${has ? 'Update identification' : 'Save identification'}
+          </button>
+        </div>
+      </div>`;
   }
 
   _accountHtml() {
@@ -209,6 +262,57 @@ export class PayoutPanel extends Component {
     showToast('success', 'Bank details saved.');
     this._editing = false;
     await this._load();
+  }
+
+  /**
+   * Saves the ID type and, if one was chosen, the document itself.
+   *
+   * The two are separate endpoints — the type is an ordinary profile field,
+   * the file is a multipart upload — so either can be updated on its own.
+   * Someone correcting only the type should not have to re-upload the scan.
+   */
+  async _saveIdentity() {
+    if (this._busy) return;
+
+    const idType = this.$('#pf-idtype')?.value || '';
+    const file   = this.$('#pf-iddoc')?.files?.[0] || null;
+
+    if (!idType && !file) {
+      showToast('error', 'Choose an ID type, a document, or both.');
+      return;
+    }
+
+    if (file && file.size > 5 * 1024 * 1024) {
+      showToast('error', 'That file is larger than 5MB. Try a smaller photo or scan.');
+      return;
+    }
+
+    this._busy = true;
+    const btn = this.$('#payout-save-id');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+    try {
+      if (idType) {
+        const res = await api.users.updateProfile({ idType });
+        if (res.error) {
+          showToast('error', res.error.message || 'Could not save the ID type.');
+          return;
+        }
+      }
+
+      if (file) {
+        const up = await api.users.uploadIdDocument(file);
+        if (up.error) {
+          showToast('error', up.error.message || 'Could not upload that document.');
+          return;
+        }
+      }
+
+      showToast('success', 'Identification saved.');
+      await this._load();
+    } finally {
+      this._busy = false;
+    }
   }
 
   async _request() {

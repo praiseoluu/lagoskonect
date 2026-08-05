@@ -401,6 +401,26 @@ export default class UsersPage extends AdminLayout {
         '<div class="um-field um-field--full"><label class="um-field__label">Address</label>' + (isView ? '<div class="um-field__value">' + this.esc(u.address  || '—') + '</div>' : '<div id="address-mount"></div>')     + '</div>' +
         '</div>';
 
+    // Identity and payout details are read-only here. They are what a citizen
+    // submitted about themselves, and what an admin checks before sending
+    // money, so the admin panel shows them rather than offering to edit them.
+    const idDoc = u.idDocumentUrl
+        ? '<a class="um-id-link" href="' + this.esc(u.idDocumentUrl) + '" target="_blank" rel="noopener noreferrer">Open document</a>'
+        : '<span class="um-id-missing">Not uploaded</span>';
+
+    const identityFields = !isAdd
+        ? '<div class="um-fields-grid">' +
+          '<div class="um-field"><label class="um-field__label">ID Type</label><div class="um-field__value">' + this.esc(u.idType || '—') + '</div></div>' +
+          '<div class="um-field"><label class="um-field__label">ID Document</label><div class="um-field__value">' + idDoc + '</div></div>' +
+          '<div class="um-field"><label class="um-field__label">Bank</label><div class="um-field__value">' + this.esc(u.bankName || '—') + '</div></div>' +
+          '<div class="um-field"><label class="um-field__label">Account Number</label><div class="um-field__value">' + this.esc(u.bankAccountNumber || '—') + '</div></div>' +
+          '<div class="um-field um-field--full"><label class="um-field__label">Account Name</label><div class="um-field__value">' + this.esc(u.bankAccountName || '—') + '</div></div>' +
+          (u.idDocumentUrl
+            ? '<div class="um-field um-field--full"><img class="um-id-preview" src="' + this.esc(u.idDocumentUrl) + '" alt="Uploaded identification" loading="lazy" onerror="this.remove()" /></div>'
+            : '') +
+          '</div>'
+        : '';
+
     const body =
         '<div class="um-modal-layout">' +
         leftPanel +
@@ -414,6 +434,12 @@ export default class UsersPage extends AdminLayout {
         '<div class="um-section__header"><div class="um-section__icon">' + MAP_ICON + '</div><h4 class="um-section__title">Location Details</h4></div>' +
         locationFields +
         '</div>' +
+        (identityFields
+            ? '<div class="um-section">' +
+              '<div class="um-section__header"><div class="um-section__icon">🪪</div><h4 class="um-section__title">Identity &amp; Payout</h4></div>' +
+              identityFields +
+              '</div>'
+            : '') +
         (isAdd ? '<p class="um-temp-pass-hint">⚠ Share the temporary password with the citizen securely. They will be required to change it on first login.</p>' : '') +
         '<p class="um-error" id="um-error" aria-live="polite"></p>' +
         '</div>' +

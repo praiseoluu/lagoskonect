@@ -257,3 +257,36 @@
 @media (max-width: 768px) {
   .wd-page { padding: var(--space-4, 16px); }
 }
+
+/* Identity on the payout card — checked before money moves. */
+.wd-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.wd-id__type {
+  padding: 1px 8px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-primary-15, rgba(6,137,39,0.12));
+  color: var(--color-primary, #068927);
+  font-size: var(--font-size-xs, 12px);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.wd-id__none {
+  font-size: var(--font-size-xs, 12px);
+  color: #b91c1c;
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.wd-id__link {
+  font-size: var(--font-size-xs, 12px);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-primary, #068927);
+  text-decoration: none;
+}
+
+.wd-id__link:hover { text-decoration: underline; }
