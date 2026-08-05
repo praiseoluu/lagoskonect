@@ -13,12 +13,20 @@
  *   Settings::all()                         → ['key' => 'value', ...]
  */
 class Settings {
-    private static ?PDO $db = null;
     private static array $cache = [];
 
+    /**
+     * Deliberately not cached in a static of its own.
+     *
+     * Database::connect() already pools the handle, so a second reference here
+     * bought nothing but kept the connection alive after
+     * Database::disconnect() had released it. index.php calls Settings::is()
+     * on every request including /events/stream, so that stray reference
+     * pinned one MySQL connection for the whole five-minute life of every SSE
+     * stream, which is exactly what the disconnect was meant to avoid.
+     */
     private static function db(): PDO {
-        if (!self::$db) self::$db = Database::connect();
-        return self::$db;
+        return Database::connect();
     }
 
     public static function get(string $key, string $default = '0'): string {
