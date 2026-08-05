@@ -22,7 +22,7 @@
  * @version 1.0.0
  */
 
-import { WebLayout }                        from '../layout/BaseLayout.js';
+import { WebLayout }                        from '../layout/BaseLayout.js?v=20260805b';
 import { router }                           from '../../core/router.js';
 import { store, setPageLoading }            from '../../core/store.js';
 import { api }                              from '../../api/client.js';

@@ -18,14 +18,17 @@
  */
 
 import { Component }      from '../../core/component.js';
-import { WebSidebar, AdminSidebar } from './Sidebar.js';
-import { WebTopbar, AdminTopbar }   from './Topbar.js';
+// Versioned: the sidebar and topbar are shared by every page, so a browser
+// holding an old copy shows stale navigation no matter what else is deployed.
+// A fresh URL is the only thing a populated cache cannot ignore.
+import { WebSidebar, AdminSidebar } from './Sidebar.js?v=20260805b';
+import { WebTopbar, AdminTopbar }   from './Topbar.js?v=20260805b';
 import { ToastContainer } from '../base/UI.js';
 import { store }          from '../../core/store.js';
 import { api }            from '../../api/client.js';
 import { CreateReelModal }  from '../feature/CreateReel.js';
 import { SelectLGAModal }   from '../feature/SelectLGAModal.js';
-import { sseClient }        from '../../core/sseClient.js';
+import { sseClient }        from '../../core/sseClient.js?v=20260805b';
 
 /* ── Brand helper ───────────────────────────────────────────────────────── */
 const BRAND_MAP = Object.freeze({

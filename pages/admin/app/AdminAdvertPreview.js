@@ -4,7 +4,7 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Button }      from '../../../components/base/Button.js';
 import { showToast, setPageLoading } from '../../../core/store.js';
 import { router }      from '../../../core/router.js';

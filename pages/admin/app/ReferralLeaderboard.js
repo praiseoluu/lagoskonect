@@ -11,7 +11,7 @@
  * @version 1.0.0
  */
 
-import { AdminLayout }                      from '../../../components/layout/BaseLayout.js';
+import { AdminLayout }                      from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Modal }                             from '../../../components/base/Modal.js';
 import { store, setPageLoading, showToast } from '../../../core/store.js';
 import { api }                              from '../../../api/client.js';

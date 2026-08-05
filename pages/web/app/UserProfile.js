@@ -8,7 +8,7 @@
  * Private profiles show a minimal locked view.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Avatar } from '../../../components/base/UI.js';
 import { setPageLoading } from '../../../core/store.js';
 import { router } from '../../../core/router.js';

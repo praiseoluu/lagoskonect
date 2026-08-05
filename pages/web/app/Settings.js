@@ -14,7 +14,7 @@
  * Scrollspy: sidebar highlights the active section as user scrolls.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Avatar } from '../../../components/base/UI.js';
 import { Toggle } from '../../../components/base/UI.js';
 import { Input } from '../../../components/base/Input.js';

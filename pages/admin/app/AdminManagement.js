@@ -7,7 +7,7 @@
  * Section 2 — Admin Team: list, invite, role/status/remove (super_admin only)
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Input }       from '../../../components/base/Input.js';
 import { Button }      from '../../../components/base/Button.js';
 import { Modal }       from '../../../components/base/Modal.js';

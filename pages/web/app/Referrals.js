@@ -4,7 +4,7 @@
  * Guards: requireAuth + requireCitizen
  */
 
-import { WebLayout }           from '../../../components/layout/BaseLayout.js';
+import { WebLayout }           from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { setPageLoading, showToast } from '../../../core/store.js';
 import { api }                 from '../../../api/client.js';
 import { PayoutPanel } from '../../../components/feature/PayoutPanel.js';

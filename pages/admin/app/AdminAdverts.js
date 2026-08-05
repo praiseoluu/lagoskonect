@@ -4,7 +4,7 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Table }       from '../../../components/base/Table.js';
 import { Button }      from '../../../components/base/Button.js';
 import { StatCard }    from '../../../components/base/Card.js';

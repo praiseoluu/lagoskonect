@@ -369,7 +369,7 @@ export class WebSidebar extends Sidebar {
         const [{ clearSession }, { showToast }, { sseClient }] = await Promise.all([
           import('../../utils/storage.js'),
           import('../../core/store.js'),
-          import('../../core/sseClient.js'),
+          import('../../core/sseClient.js?v=20260805b'),
         ]);
         sseClient.disconnect();
         clearSession();

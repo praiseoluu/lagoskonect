@@ -19,7 +19,7 @@
  * Tabs are commented out — can be re-enabled if the client requests them.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Avatar } from '../../../components/base/UI.js';
 import { store, showToast, setPageLoading } from '../../../core/store.js';
 import { router } from '../../../core/router.js';

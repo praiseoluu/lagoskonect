@@ -4,7 +4,7 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout }           from '../../../components/layout/BaseLayout.js';
+import { AdminLayout }           from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Tabs, Toggle }          from '../../../components/base/UI.js';
 import { showToast, setPageLoading } from '../../../core/store.js';
 import { api }                   from '../../../api/client.js';
