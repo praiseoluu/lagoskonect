@@ -42,6 +42,7 @@ class SSEClient {
     this._onMessage      = null;   // optional DOM handler (Chat page only)
     this._audioContext   = null;   // Web Audio API context for notification sound
     this._notificationPermission = 'default';
+    this._consecutiveFailures = 0; // track repeated stream failures to avoid hammering a down server
   }
 
   _ensureAudio() {
@@ -134,7 +135,8 @@ class SSEClient {
     this._es.addEventListener('connected', (e) => {
       const data = JSON.parse(e.data);
       console.debug('[SSE] connected', data);
-      this._retryDelay = 3000; // reset backoff on success
+      this._retryDelay = 3000;       // reset backoff on success
+      this._consecutiveFailures = 0; // clear failure count — server is healthy
     });
 
     this._es.addEventListener('new_message', (e) => {
@@ -152,8 +154,8 @@ class SSEClient {
           showToast('info', msg.senderName ? `${msg.senderName}: ${msg.text}` : 'New message');
           this._playNotificationSound();
           this._showBrowserNotification(
-            msg.senderName || 'New message',
-            msg.text || ''
+              msg.senderName || 'New message',
+              msg.text || ''
           );
         }
       }
@@ -175,8 +177,8 @@ class SSEClient {
       showToast('info', notif.title);
       this._playNotificationSound();
       this._showBrowserNotification(
-        notif.title || 'New notification',
-        notif.body || ''
+          notif.title || 'New notification',
+          notif.body || ''
       );
     });
 
@@ -199,9 +201,19 @@ class SSEClient {
 
     this._es.onerror = () => {
       // EventSource auto-reconnects, but we also do our own backoff
-      // in case the token expired or the server restarted
+      // in case the token expired or the server restarted.
       this._es?.close();
       this._es = null;
+
+      this._consecutiveFailures++;
+
+      // Give up retrying after 8 consecutive failures (~4 min of backoff).
+      // The session heartbeat below will resume connection attempts every 60 s
+      // once the server recovers, without hammering it during an outage.
+      if (this._consecutiveFailures > 8) {
+        console.warn('[SSE] too many consecutive failures — pausing retries; heartbeat will resume');
+        return;
+      }
 
       this._retryTimer = setTimeout(() => {
         this._retryDelay = Math.min(this._retryDelay * 2, 30000); // cap at 30s
@@ -210,17 +222,36 @@ class SSEClient {
     };
 
     // ── Session heartbeat ─────────────────────────────────────────────────
-    // Poll every 60 s to detect account suspension for users who are sitting
-    // idle on a page and not making other API calls.
+    // Poll every 60 s to detect account suspension for users who are idle.
     // Any authenticated _fetch() call already checks for ACCOUNT_SUSPENDED;
     // this heartbeat ensures suspended users are force-logged-out within 60 s
     // even if they make no other requests.
+    //
+    // IMPORTANT — do NOT use getSseToken() here. That endpoint writes to the
+    // database on every call (INSERT sse_token + DELETE expired rows), so
+    // calling it every 60 s per user causes heavy unnecessary DB writes and
+    // PHP process churn that can exhaust the server's resource limit.
+    // getProfile() is a simple SELECT with no side-effects.
     if (this._heartbeatTimer) clearInterval(this._heartbeatTimer);
     this._heartbeatTimer = setInterval(async () => {
       if (!sessionStorage.getItem('adm_auth')) return;
-      // getSseToken() is a lightweight authenticated call that goes through
-      // _fetch.js, which already handles the ACCOUNT_SUSPENDED redirect.
-      await api.auth.getSseToken().catch(() => {});
+
+      // If the SSE stream is open, suspension will arrive via the
+      // session_revoked event — no need to poll at all.
+      if (this._es?.readyState === EventSource.OPEN) return;
+
+      // SSE is down: use a cheap read-only call so _fetch.js can detect
+      // ACCOUNT_SUSPENDED and redirect, without touching the DB.
+      await api.users.getProfile().catch(() => {});
+
+      // Also attempt to reconnect if we previously gave up after too many
+      // failures — server may have recovered.
+      if (this._consecutiveFailures > 8 && !this._es && !this._retryTimer) {
+        console.debug('[SSE] heartbeat triggering reconnect attempt after pause');
+        this._consecutiveFailures = 0;
+        this._retryDelay = 3000;
+        this.connect();
+      }
     }, 60_000);
   }
 
@@ -241,6 +272,8 @@ class SSEClient {
       this._es = null;
     }
     this._onMessage = null;
+    this._consecutiveFailures = 0;
+    this._retryDelay = 3000;
     console.debug('[SSE] disconnected');
   }
 

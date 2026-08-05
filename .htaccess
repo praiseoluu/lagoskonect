@@ -16,6 +16,24 @@
 Options -MultiViews
 RewriteEngine On
 
+# ── Block known bot/scanner IPs and WordPress probe patterns ─────────
+# These IPs have been observed running automated WordPress vulnerability
+# scans against this site. They only receive 308 redirects so they cause
+# no PHP load, but blocking them at the rewrite layer stops Apache
+# processing them entirely and removes noise from access logs.
+# Add/remove IPs as new scanners appear in your access logs.
+RewriteCond %{REMOTE_ADDR} ^(159\.223\.62\.250|45\.32\.119\.175|143\.110\.186\.90|159\.89\.207\.20)$ [NC]
+RewriteRule ^ - [F,L]
+
+# Block WordPress-probe paths — this site has no WordPress installation.
+# Any request for wp-includes/wlwmanifest.xml (or similar WP paths) is
+# a scanner and should be rejected immediately without any redirect cost.
+RewriteCond %{REQUEST_URI} wp-includes [NC,OR]
+RewriteCond %{REQUEST_URI} wp-admin [NC,OR]
+RewriteCond %{REQUEST_URI} wp-login [NC,OR]
+RewriteCond %{REQUEST_URI} xmlrpc\.php [NC]
+RewriteRule ^ - [F,L]
+
 # Redirect HTTP to HTTPS (skip for localhost/127.0.0.1 development)
 # R=308 preserves the HTTP method (POST stays POST — 301/302 convert POST→GET)
 RewriteCond %{HTTPS} off
