@@ -133,7 +133,7 @@ export default class ReelsPage extends WebLayout {
     const author   = this.esc(reel.authorName || '');
     const initial  = author ? author[0].toUpperCase() : '?';
     const timeStr  = reel.publishedAt ? this.esc(timeAgo(reel.publishedAt)) : '';
-    const likes    = fmtCount(reel.likeCount    ?? 0);
+    const likes    = fmtCount(reel.likes ?? 0);
     const comments = fmtCount(reel.commentCount ?? 0);
     const hasVideo = !!reel.videoUrl;
     const thumb    = reel.thumbnailUrl ? this.esc(reel.thumbnailUrl) : '';
@@ -306,7 +306,7 @@ export default class ReelsPage extends WebLayout {
     const svg    = btn?.querySelector('svg');
     const delta  = liked ? -1 : 1;
 
-    reel.likeCount = (reel.likeCount ?? 0) + delta;
+    reel.likes = (reel.likes ?? 0) + delta;
     if (!liked) {
       this._likedSet.add(reelId);
       btn?.classList.add('rf-item__btn--liked');
@@ -320,7 +320,7 @@ export default class ReelsPage extends WebLayout {
       btn?.setAttribute('aria-label', 'Like');
       svg?.setAttribute('fill', 'none');
     }
-    if (cntEl) cntEl.textContent = fmtCount(reel.likeCount);
+    if (cntEl) cntEl.textContent = fmtCount(reel.likes);
 
     api.reels.toggleLike(reelId);
   }

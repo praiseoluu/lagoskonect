@@ -22,9 +22,10 @@ class ReelController {
         if (!Settings::is('reels_enabled')) {
             Response::json([]); return;
         }
-        $auth  = requireRole('citizen');
-        $lgaId = $auth['lgaId'];
-        $p     = Paginator::params($_GET, 10);
+        $auth   = requireRole('citizen');
+        $lgaId  = $auth['lgaId'];
+        $userId = $auth['userId'];
+        $p      = Paginator::params($_GET, 10);
 
         $countStmt = $this->db->prepare('
             SELECT COUNT(*) FROM reels
@@ -40,7 +41,11 @@ class ReelController {
         $stmt = $this->db->prepare('
             SELECT r.*,
                    COALESCE(u.username, r.author_name) AS resolved_author_name,
-                   COALESCE(u.avatar_url, r.author_avatar_url) AS resolved_author_avatar
+                   COALESCE(u.avatar_url, r.author_avatar_url) AS resolved_author_avatar,
+                   EXISTS(
+                     SELECT 1 FROM reel_likes rl
+                     WHERE rl.reel_id = r.reel_id AND rl.user_id = ?
+                   ) AS is_liked
             FROM reels r
             LEFT JOIN users u ON u.id = r.author_id
             WHERE r.status = "published"
@@ -51,7 +56,7 @@ class ReelController {
             ORDER BY r.published_at DESC
             LIMIT ? OFFSET ?
         ');
-        $stmt->execute([$lgaId, $p['limit'], $p['offset']]);
+        $stmt->execute([$userId, $lgaId, $p['limit'], $p['offset']]);
         $items = array_map([$this, 'format'], $stmt->fetchAll());
 
         Response::paginated($items, $p['page'], $p['perPage'], $total);
@@ -60,15 +65,19 @@ class ReelController {
     // ── GET /reels/:reelId ────────────────────────────────────────────────
 
     public function getByReelId(string $reelId): void {
-        requireRole('citizen');
+        $auth = requireRole('citizen');
 
         $stmt = $this->db->prepare('
             SELECT r.*, COALESCE(u.username, r.author_name) AS resolved_author_name,
-                   COALESCE(u.avatar_url, r.author_avatar_url) AS resolved_author_avatar
+                   COALESCE(u.avatar_url, r.author_avatar_url) AS resolved_author_avatar,
+                   EXISTS(
+                     SELECT 1 FROM reel_likes rl
+                     WHERE rl.reel_id = r.reel_id AND rl.user_id = ?
+                   ) AS is_liked
             FROM reels r LEFT JOIN users u ON u.id = r.author_id
             WHERE r.reel_id = ? AND r.status = "published"
         ');
-        $stmt->execute([$reelId]);
+        $stmt->execute([$auth['userId'], $reelId]);
         $reel = $stmt->fetch();
 
         if (!$reel) Response::error('NOT_FOUND', 'Reel not found.', 404);
@@ -553,6 +562,10 @@ class ReelController {
             'duration'        => (int) $r['duration'],
             'views'           => (int) $r['views'],
             'likes'           => (int) $r['likes'],
+            // Whether the requesting user has already liked this reel, so the
+            // heart renders filled on load instead of resetting every refresh.
+            // Queries that do not select is_liked fall back to false.
+            'isLiked'         => (bool) ($r['is_liked'] ?? false),
             'shares'          => (int) $r['shares'],
             'commentCount'    => (int) $r['comment_count'],
             'authorId'        => (int) $r['author_id'],
