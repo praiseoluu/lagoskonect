@@ -16,27 +16,30 @@ class ReelController {
     }
 
     // ── GET /reels ────────────────────────────────────────────────────────
-    // Unified feed: admin reels (targeting this LGA) + citizen reels from same LGA
+    // Every published reel, from every LGA.
+    //
+    // This used to return only reels whose lga_id matched the viewer's, plus
+    // admin reels flagged target_all_lgas. Citizen uploads are written with
+    // target_all_lgas = 0 and the uploader's own lga_id, so in practice a
+    // citizen reel was visible only to people in that same LGA — often just
+    // the person who posted it. Admin reels set the flag, which is why those
+    // were the only ones everybody could see.
+    //
+    // Reels are a state-wide feed: anyone can watch anything. LGA is retained
+    // on the row for attribution and admin filtering, but no longer gates who
+    // sees it.
 
     public function getForLGA(): void {
         if (!Settings::is('reels_enabled')) {
             Response::json([]); return;
         }
         $auth   = requireRole('citizen');
-        $lgaId  = $auth['lgaId'];
         $userId = $auth['userId'];
         $p      = Paginator::params($_GET, 10);
 
-        $countStmt = $this->db->prepare('
-            SELECT COUNT(*) FROM reels
-            WHERE status = "published"
-              AND (
-                target_all_lgas = 1
-                OR lga_id = ?
-              )
-        ');
-        $countStmt->execute([$lgaId]);
-        $total = (int) $countStmt->fetchColumn();
+        $total = (int) $this->db
+            ->query('SELECT COUNT(*) FROM reels WHERE status = "published"')
+            ->fetchColumn();
 
         $stmt = $this->db->prepare('
             SELECT r.*,
@@ -49,14 +52,10 @@ class ReelController {
             FROM reels r
             LEFT JOIN users u ON u.id = r.author_id
             WHERE r.status = "published"
-              AND (
-                r.target_all_lgas = 1
-                OR r.lga_id = ?
-              )
             ORDER BY r.published_at DESC
             LIMIT ? OFFSET ?
         ');
-        $stmt->execute([$userId, $lgaId, $p['limit'], $p['offset']]);
+        $stmt->execute([$userId, $p['limit'], $p['offset']]);
         $items = array_map([$this, 'format'], $stmt->fetchAll());
 
         Response::paginated($items, $p['page'], $p['perPage'], $total);
@@ -183,12 +182,15 @@ class ReelController {
                  author_id, author_name, author_handle, author_avatar_url,
                  status, published_at, created_at, updated_at)
             VALUES
-                (?, ?, ?, 0, 0,
+                (?, ?, ?, 1, 0,
                  ?, ?, ?, ?, ?,
                  ?, 0, 0, 0, 0,
                  ?, ?, ?, ?,
                  "published", NOW(), NOW(), NOW())
         ');
+        // target_all_lgas is 1: a citizen reel is for the whole state. lga_id
+        // is still recorded above so the reel can be attributed to, and
+        // filtered by, the LGA it came from.
 
         $authorHandle = isset($user['username']) ? '@' . $user['username'] : null;
 
