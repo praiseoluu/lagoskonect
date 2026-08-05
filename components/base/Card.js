@@ -27,8 +27,8 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js';
-import { timeAgo }   from '../../utils/date.js';
+import { Component } from '../../core/component.js?v=20260805c';
+import { timeAgo }   from '../../utils/date.js?v=20260805c';
 
 /* ── Shared SVG icon constants ──────────────────────────────────────────── */
 
@@ -111,7 +111,7 @@ function onActivationKey(callback) {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class Card extends Component {
-  static styles = '/components/base/Card.css';
+  static styles = '/components/base/Card.css?v=20260805c';
 
   constructor(props = {}) {
     super({
@@ -171,7 +171,7 @@ export class Card extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class StatCard extends Component {
-  static styles = '/components/base/Card.css';
+  static styles = '/components/base/Card.css?v=20260805c';
 
   constructor(props = {}) {
     super({
@@ -222,7 +222,7 @@ export class StatCard extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class NewsCard extends Component {
-  static styles = '/components/base/Card.css';
+  static styles = '/components/base/Card.css?v=20260805c';
 
   constructor(props = {}) {
     super({
@@ -310,7 +310,7 @@ export class NewsCard extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class ReelCard extends Component {
-  static styles = '/components/base/Card.css';
+  static styles = '/components/base/Card.css?v=20260805c';
 
   constructor(props = {}) {
     super({

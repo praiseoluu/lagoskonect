@@ -4,11 +4,11 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout }           from '../../../components/layout/BaseLayout.js?v=20260805b';
-import { Tabs, Toggle }          from '../../../components/base/UI.js';
-import { showToast, setPageLoading } from '../../../core/store.js';
-import { api }                   from '../../../api/client.js';
-import { savePrefs, loadPrefs }  from '../../../utils/storage.js';
+import { AdminLayout }           from '../../../components/layout/BaseLayout.js?v=20260805c';
+import { Tabs, Toggle }          from '../../../components/base/UI.js?v=20260805c';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260805c';
+import { api }                   from '../../../api/client.js?v=20260805c';
+import { savePrefs, loadPrefs }  from '../../../utils/storage.js?v=20260805c';
 
 const PLATFORM_CONFIGS = [
   {
@@ -86,7 +86,7 @@ const TABS = [
 ];
 
 export default class AdminSettingsPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminSettings.css';
+  static styles = '/pages/admin/app/AdminSettings.css?v=20260805c';
 
   constructor(props) {
     super({

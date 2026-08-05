@@ -17,12 +17,12 @@
  * @version 2.0.0
  */
 
-import { WebLayout }       from '../../../components/layout/BaseLayout.js?v=20260805b';
-import { Avatar }          from '../../../components/base/UI.js';
-import { setPageLoading }  from '../../../core/store.js';
-import { router }          from '../../../core/router.js';
-import { api }             from '../../../api/client.js';
-import { formatDate }      from '../../../utils/date.js';
+import { WebLayout }       from '../../../components/layout/BaseLayout.js?v=20260805c';
+import { Avatar }          from '../../../components/base/UI.js?v=20260805c';
+import { setPageLoading }  from '../../../core/store.js?v=20260805c';
+import { router }          from '../../../core/router.js?v=20260805c';
+import { api }             from '../../../api/client.js?v=20260805c';
+import { formatDate }      from '../../../utils/date.js?v=20260805c';
 
 /* ── Region config ──────────────────────────────────────────────────────── */
 const REGION_BRAND  = 'LagKonnect - West';
@@ -99,7 +99,7 @@ const SKELETON_CARDS = Array.from({ length: 6 }, () =>
    Component
    ══════════════════════════════════════════════════════════════════════════ */
 export default class UserProfilePage extends WebLayout {
-  static styles = '/pages/web/app/Profile.css';
+  static styles = '/pages/web/app/Profile.css?v=20260805c';
 
   constructor(props) {
     super({ title: 'Profile', ...props });

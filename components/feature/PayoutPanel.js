@@ -11,15 +11,15 @@
  * when an admin gets round to it.
  */
 
-import { Component } from '../../core/component.js';
-import { showToast } from '../../core/store.js';
-import { api } from '../../api/client.js';
-import { formatDate } from '../../utils/date.js';
+import { Component } from '../../core/component.js?v=20260805c';
+import { showToast } from '../../core/store.js?v=20260805c';
+import { api } from '../../api/client.js?v=20260805c';
+import { formatDate } from '../../utils/date.js?v=20260805c';
 
 const naira = (n) => '₦' + Number(n || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export class PayoutPanel extends Component {
-  static styles = '/components/feature/PayoutPanel.css';
+  static styles = '/components/feature/PayoutPanel.css?v=20260805c';
 
   constructor(props = {}) {
     super(props);
@@ -324,8 +324,10 @@ export class PayoutPanel extends Component {
       await this._load();   // repaints, so the button is rebuilt from scratch
     } catch (err) {
       // A thrown error (network drop, unreadable response) must not strand
-      // the button either.
-      showToast('error', 'Something went wrong saving your identification.');
+      // the button either. Show what actually broke: a generic apology tells
+      // the person nothing and tells whoever has to fix it even less.
+      const detail = err?.message ? ` (${err.message})` : '';
+      showToast('error', `Could not save your identification${detail}`);
       console.error('[payout] identity save failed', err);
       done();
     }

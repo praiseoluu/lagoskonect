@@ -2,7 +2,7 @@
  * Lagos Konect — Welcome Page (App / no region)
  * Route: /welcome → /home
  */
-import Onboarding from '../../../components/onboarding/Onboarding.js';
+import Onboarding from '../../../components/onboarding/Onboarding.js?v=20260805c';
 
 export default class WelcomePage extends Onboarding {
   constructor(props) {

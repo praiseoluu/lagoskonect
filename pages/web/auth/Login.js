@@ -24,16 +24,16 @@
  * @version 2.0.0
  */
 
-import { Component }                    from '../../../core/component.js';
-import { Input }                        from '../../../components/base/Input.js';
-import { Button }                       from '../../../components/base/Button.js';
-import { AuthLayout }                   from './_AuthLayout.js';
-import { store, showToast }             from '../../../core/store.js';
-import { router }                       from '../../../core/router.js';
-import { api }                          from '../../../api/client.js';
-import { validateForm }                 from '../../../utils/validators.js';
-import { saveSession }                  from '../../../utils/storage.js';
-import { t }                            from '../../../core/i18n.js';
+import { Component }                    from '../../../core/component.js?v=20260805c';
+import { Input }                        from '../../../components/base/Input.js?v=20260805c';
+import { Button }                       from '../../../components/base/Button.js?v=20260805c';
+import { AuthLayout }                   from './_AuthLayout.js?v=20260805c';
+import { store, showToast }             from '../../../core/store.js?v=20260805c';
+import { router }                       from '../../../core/router.js?v=20260805c';
+import { api }                          from '../../../api/client.js?v=20260805c';
+import { validateForm }                 from '../../../utils/validators.js?v=20260805c';
+import { saveSession }                  from '../../../utils/storage.js?v=20260805c';
+import { t }                            from '../../../core/i18n.js?v=20260805c';
 
 /* ── SVG icons ──────────────────────────────────────────────────────────── */
 
@@ -70,7 +70,7 @@ const GOOGLE_LOGO = `
    ══════════════════════════════════════════════════════════════════════════ */
 
 export default class LoginPage extends Component {
-  static styles = '/pages/web/auth/_AuthLayout.css';
+  static styles = '/pages/web/auth/_AuthLayout.css?v=20260805c';
 
   constructor(props) {
     super(props);

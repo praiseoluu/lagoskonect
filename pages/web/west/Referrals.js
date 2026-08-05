@@ -4,14 +4,14 @@
  * Guards: requireAuth + requireCitizen
  */
 
-import { WebLayout }                  from '../../../components/layout/BaseLayout.js?v=20260805b';
-import { setPageLoading, showToast }  from '../../../core/store.js';
-import { api }                        from '../../../api/client.js';
-import { PayoutPanel } from '../../../components/feature/PayoutPanel.js';
-import { timeAgo }                    from '../../../utils/date.js';
+import { WebLayout }                  from '../../../components/layout/BaseLayout.js?v=20260805c';
+import { setPageLoading, showToast }  from '../../../core/store.js?v=20260805c';
+import { api }                        from '../../../api/client.js?v=20260805c';
+import { PayoutPanel } from '../../../components/feature/PayoutPanel.js?v=20260805c';
+import { timeAgo }                    from '../../../utils/date.js?v=20260805c';
 
 export default class ReferralsPage extends WebLayout {
-    static styles = '/pages/web/app/Referrals.css';
+    static styles = '/pages/web/app/Referrals.css?v=20260805c';
 
     constructor(props) {
         super({ title: 'Referral Programme — Lagos West', ...props });

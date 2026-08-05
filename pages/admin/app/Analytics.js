@@ -4,12 +4,12 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
-import { Button } from '../../../components/base/Button.js';
-import { Modal } from '../../../components/base/Modal.js';
-import { store, showToast, setPageLoading } from '../../../core/store.js';
-import { api } from '../../../api/client.js';
-import { BarChart, TopicsChart, HeatmapChart, TrendCard } from '../../../components/charts/Charts.js';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
+import { Button } from '../../../components/base/Button.js?v=20260805c';
+import { Modal } from '../../../components/base/Modal.js?v=20260805c';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260805c';
+import { api } from '../../../api/client.js?v=20260805c';
+import { BarChart, TopicsChart, HeatmapChart, TrendCard } from '../../../components/charts/Charts.js?v=20260805c';
 
 const CAL_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
 const EXPORT_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
@@ -18,7 +18,7 @@ const INFO_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" st
 const REGION_LABELS = { west: 'Lagos West', central: 'Lagos Central', east: 'Lagos East' };
 
 export default class AnalyticsPage extends AdminLayout {
-  static styles = '/pages/admin/app/Analytics.css';
+  static styles = '/pages/admin/app/Analytics.css?v=20260805c';
 
   constructor(props) {
     super({

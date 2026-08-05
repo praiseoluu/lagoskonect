@@ -13,11 +13,11 @@
  * cache; only "Force refresh" spends a call.
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
-import { showToast, setPageLoading } from '../../../core/store.js';
-import { api } from '../../../api/client.js';
-import { BASE_URL } from '../../../api/_fetch.js';
-import { formatDateTime } from '../../../utils/date.js';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260805c';
+import { api } from '../../../api/client.js?v=20260805c';
+import { BASE_URL } from '../../../api/_fetch.js?v=20260805c';
+import { formatDateTime } from '../../../utils/date.js?v=20260805c';
 
 const COUNTRIES = [
   { code: 'ng', label: 'Nigeria' },
@@ -35,7 +35,7 @@ const ICON_X = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stro
 const ICON_LINK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
 
 export default class NewsImportPage extends AdminLayout {
-  static styles = '/pages/admin/app/NewsImport.css';
+  static styles = '/pages/admin/app/NewsImport.css?v=20260805c';
 
   constructor(props) {
     super({ title: 'Import News', ...props });
