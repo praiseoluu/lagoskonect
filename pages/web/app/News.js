@@ -6,7 +6,7 @@
  * Falls back to newest article if no headline is set.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Button } from '../../../components/base/Button.js';
 import { router } from '../../../core/router.js';
 import { setPageLoading } from '../../../core/store.js';

@@ -4,7 +4,7 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Button } from '../../../components/base/Button.js';
 import { Modal } from '../../../components/base/Modal.js';
 import { store, showToast, setPageLoading } from '../../../core/store.js';

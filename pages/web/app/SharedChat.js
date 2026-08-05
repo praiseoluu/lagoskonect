@@ -19,11 +19,11 @@
  *  ✅ Single-emoji text rendered as large sticker
  */
 
-import { WebLayout }                        from '../../../components/layout/BaseLayout.js';
+import { WebLayout }                        from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Avatar }                           from '../../../components/base/UI.js';
 import { store, showToast, setPageLoading } from '../../../core/store.js';
 import { api }                              from '../../../api/client.js';
-import { sseClient }                        from '../../../core/sseClient.js';
+import { sseClient }                        from '../../../core/sseClient.js?v=20260805b';
 import { t }                                from '../../../core/i18n.js';
 
 // ══════════════════════════════════════════════════════════════════════════

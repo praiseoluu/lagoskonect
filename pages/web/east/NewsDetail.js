@@ -11,7 +11,7 @@
  *   5. Source link
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Badge } from '../../../components/base/Badge.js';
 import { setPageLoading } from '../../../core/store.js';
 import { router } from '../../../core/router.js';

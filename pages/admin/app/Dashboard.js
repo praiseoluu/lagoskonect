@@ -29,7 +29,7 @@
  * @version 2.0.0
  */
 
-import { AdminLayout }                        from '../../../components/layout/BaseLayout.js';
+import { AdminLayout }                        from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { store, setPageLoading, showToast }   from '../../../core/store.js';
 import { router }                             from '../../../core/router.js';
 import { api }                                from '../../../api/client.js';

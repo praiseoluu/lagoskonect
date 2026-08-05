@@ -12,7 +12,7 @@
  *      Community Chat  — online count, top contributors, Open Community Chat btn
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { NewsCard } from '../../../components/base/Card.js';
 import { ReelCard } from '../../../components/base/Card.js';
 import { Avatar } from '../../../components/base/UI.js';

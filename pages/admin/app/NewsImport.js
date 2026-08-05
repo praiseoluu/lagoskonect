@@ -13,7 +13,7 @@
  * cache; only "Force refresh" spends a call.
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { showToast, setPageLoading } from '../../../core/store.js';
 import { api } from '../../../api/client.js';
 import { BASE_URL } from '../../../api/_fetch.js';

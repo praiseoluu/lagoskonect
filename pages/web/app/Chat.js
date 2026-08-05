@@ -8,11 +8,11 @@
  * Unread separator + mark-as-read on open.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Avatar } from '../../../components/base/UI.js';
 import { store, showToast, setPageLoading } from '../../../core/store.js';
 import { api } from '../../../api/client.js';
-import { sseClient } from '../../../core/sseClient.js';
+import { sseClient } from '../../../core/sseClient.js?v=20260805b';
 import { t } from '../../../core/i18n.js';
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -2297,6 +2297,7 @@ export default class ChatPage extends WebLayout {
         muteBtn.innerHTML = `${this._chatMuted ? ICON_BELL_MUTED : ICON_BELL} ${this._chatMuted ? 'Unmute notifications' : 'Mute notifications'}`;
       }
       showToast('success', this._chatMuted ? 'Notifications muted.' : 'Notifications unmuted.');
+    }
     else if (action === 'members') this._openMembersModal();
     else if (action === 'clear') {
       const body = this.getContentEl()?.querySelector('#chat-body');

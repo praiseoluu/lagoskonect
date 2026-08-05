@@ -7,7 +7,7 @@
  *           with admin-only context menu actions
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { Button } from '../../../components/base/Button.js';
 import { Input } from '../../../components/base/Input.js';
 import { Avatar, Tabs } from '../../../components/base/UI.js';

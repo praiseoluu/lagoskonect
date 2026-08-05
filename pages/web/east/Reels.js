@@ -9,7 +9,7 @@
  * Guards:  requireAuth + requireCitizen
  */
 
-import { WebLayout }                          from '../../../components/layout/BaseLayout.js';
+import { WebLayout }                          from '../../../components/layout/BaseLayout.js?v=20260805b';
 import { store, showToast, setPageLoading }   from '../../../core/store.js';
 import { router }                             from '../../../core/router.js';
 import { api }                                from '../../../api/client.js';
