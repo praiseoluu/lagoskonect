@@ -38,229 +38,39 @@ class EventsController {
         $this->db = Database::connect();
     }
 
-    public function stream(): void {
-        // ── Process-lifetime guardrails ───────────────────────────────────
-        // Each SSE connection holds one PHP process on the server. Without
-        // these two settings, processes can accumulate until the host's
-        // concurrent-process limit is exhausted, causing 508 errors for ALL
-        // endpoints (including login).
-        //
-        // ignore_user_abort(false): kill this process the moment the browser
-        //   closes the tab / EventSource reconnects. The PHP default is 'off',
-        //   but many shared-hosting php.ini files override it to 'on', which
-        //   would keep orphaned processes running long after clients leave.
-        //
-        // set_time_limit(300): hard-cap each connection at 5 minutes.
-        //   The browser's EventSource will auto-reconnect immediately after
-        //   the server closes the stream, so users won't notice the restart.
-        //   This prevents any single connection from holding a process forever
-        //   even if ignore_user_abort is somehow overridden at the host level.
-        ignore_user_abort(false);
-        set_time_limit(300); // 5-minute hard cap; EventSource auto-reconnects
-
-        // ── SSE headers ───────────────────────────────────────────────────
+    /**
+     * Retired. Superseded by poll().
+     *
+     * This used to hold the connection open for five minutes, polling every
+     * two seconds. Each one occupied a PHP entry process for its whole life,
+     * and this account is allowed 20 in total, shared with every ordinary page
+     * load and API call. cPanel recorded the ceiling being hit 4507 times in a
+     * single day, which took the whole site down, login included.
+     *
+     * It cannot simply be deleted: browsers that cached the old client before
+     * the polling rollout still open this endpoint, and a tab left open never
+     * re-fetches the module at all. So it stays, but answers instantly.
+     *
+     * etry: tells EventSource how long to wait before reconnecting. Five
+     * minutes means a stale tab now costs one millisecond-long request every
+     * five minutes instead of a permanently held process. Those users stop
+     * receiving live updates until they reload, which is a fair trade for
+     * keeping the site up for everyone else.
+     *
+     * Declared static so the route never constructs the controller, and so
+     * this path touches neither the database nor the session.
+     */
+    public static function retiredStream(): void {
         header('Content-Type: text/event-stream');
         header('Cache-Control: no-cache');
-        header('X-Accel-Buffering: no');   // disable Nginx buffering
-        header('Connection: keep-alive');
+        header('X-Accel-Buffering: no');
 
-        // Disable output buffering at every level
         if (ob_get_level()) ob_end_clean();
-        ini_set('output_buffering', 'off');
-        ini_set('zlib.output_compression', 'off');
 
-        // ── Validate short-lived SSE token ────────────────────────────────
-        $token = trim($_GET['token'] ?? '');
-        if (!$token) {
-            $this->emit('error', ['code' => 'UNAUTHENTICATED', 'message' => 'Missing token.']);
-            return;
-        }
-
-        $tokenHash = hash('sha256', $token);
-
-        $sseStmt = $this->db->prepare(
-            "SELECT user_id, expires_at, used FROM sse_tokens WHERE token_hash = ? LIMIT 1"
-        );
-        $sseStmt->execute([$tokenHash]);
-        $sseRow = $sseStmt->fetch();
-
-        if (!$sseRow || $sseRow['used'] || strtotime($sseRow['expires_at']) < time()) {
-            $this->emit('error', ['code' => 'UNAUTHENTICATED', 'message' => 'Invalid or expired SSE token.']);
-            return;
-        }
-
-        // Mark token as used (one-time use)
-        $this->db->prepare("UPDATE sse_tokens SET used = 1 WHERE token_hash = ?")
-                 ->execute([$tokenHash]);
-
-        // Load user for lga_id
-        $userStmt = $this->db->prepare('SELECT id, lga_id FROM users WHERE id = ? LIMIT 1');
-        $userStmt->execute([$sseRow['user_id']]);
-        $sseUser = $userStmt->fetch();
-
-        if (!$sseUser) {
-            $this->emit('error', ['code' => 'UNAUTHENTICATED', 'message' => 'User not found.']);
-            return;
-        }
-
-        $userId = (int) $sseUser['id'];
-        $lgaId  = (int) $sseUser['lga_id'];
-
-        // ── Starting cursors ─────────────────────────────────────────────
-        // We track the newest ID we've seen for each data source so we only
-        // send truly new rows on each poll, never duplicates.
-
-        // Last chat message ID in this LGA
-        $stmt = $this->db->prepare('
-            SELECT COALESCE(MAX(id), 0) FROM lga_chat_messages WHERE lga_id = ?
-        ');
-        $stmt->execute([$lgaId]);
-        $lastMsgId = (int) $stmt->fetchColumn();
-
-        // Last notification ID for this user
-        $stmt = $this->db->prepare('
-            SELECT COALESCE(MAX(id), 0) FROM notifications WHERE user_id = ?
-        ');
-        $stmt->execute([$userId]);
-        $lastNotifId = (int) $stmt->fetchColumn();
-
-        // The handshake statements would otherwise stay in scope for the whole
-        // stream, and each one keeps the connection it was prepared on alive.
-        unset($stmt, $sseStmt, $userStmt);
-
-        // ── Send initial connection event ─────────────────────────────────
-        $this->emit('connected', [
-            'userId'      => $userId,
-            'lgaId'       => $lgaId,
-            'lastMsgId'   => $lastMsgId,
-            'lastNotifId' => $lastNotifId,
-        ]);
-
-        // ── Poll loop ─────────────────────────────────────────────────────
-        // Wall-clock deadline: hrtime(true) returns nanoseconds and is never
-        // affected by sleep() or system-call exclusions, unlike set_time_limit().
-        // We break out of the loop after MAX_LIFETIME seconds so the PHP process
-        // is always recycled; EventSource on the browser auto-reconnects within
-        // a few seconds and the user sees no interruption.
-        //
-        // Client-disconnect detection relies on the periodic flush inside
-        // $this->emit(). PHP only observes an aborted connection when it
-        // attempts to write to the socket — the keepalive ping (every ~26s)
-        // guarantees that detection window. connection_aborted() after each
-        // sleep() is an additional fast-path check but is only reliable on
-        // configurations where ignore_user_abort(false) causes an immediate
-        // SIGPIPE, which is host-dependent.
-        $maxLifetime = 300; // seconds — 5 minutes hard cap
-        $deadline = hrtime(true) + $maxLifetime * 1_000_000_000;
-        $pingCounter = 0;
-
-        while (hrtime(true) < $deadline) {
-            if (connection_aborted()) break;
-
-            // Release the database connection before going idle.
-            //
-            // Guarding the PHP process is not enough on its own. This loop
-            // spends nearly all of its five minutes asleep, and holding a
-            // MySQL connection open across every one of those naps means each
-            // connected browser permanently occupies one. Shared hosting caps
-            // max_user_connections low, so a modest number of simultaneous
-            // users exhausts the pool and every other request in the app dies
-            // with "Database connection failed" until a tab is closed.
-            //
-            // Dropping it here means a connection is only held for the brief
-            // query burst, cutting concurrent usage by roughly an order of
-            // magnitude.
-            //
-            // Every reference has to go, and a PDOStatement counts: it keeps
-            // its parent PDO alive on its own. Leaving the statement handles
-            // from this iteration in scope was enough to hold the connection
-            // open right through the sleep.
-            unset($msgStmt, $notifStmt, $newMessages, $newNotifs);
-            $this->db = null;
-            Database::disconnect();
-
-            sleep(2); // poll every 2 seconds
-
-            // Re-check wall clock and disconnect after sleep so we don't start
-            // a fresh DB round-trip when we're already past the deadline.
-            if (hrtime(true) >= $deadline) break;
-            if (connection_aborted()) break;
-
-            // Idle period over — take a connection again for this round.
-            $this->db = Database::connect();
-
-            // ── New chat messages ──────────────────────────────────────────
-            $msgStmt = $this->db->prepare('
-                SELECT * FROM lga_chat_messages
-                WHERE lga_id = ? AND id > ?
-                ORDER BY id ASC
-                LIMIT 20
-            ');
-            $msgStmt->execute([$lgaId, $lastMsgId]);
-            $newMessages = $msgStmt->fetchAll();
-
-            foreach ($newMessages as $msg) {
-                $reactions = json_decode($msg['reactions'] ?? '{}', true) ?: [];
-                $replyTo   = $msg['reply_to'] ? json_decode($msg['reply_to'], true) : null;
-
-                $this->emit('new_message', [
-                    'id'        => (int) $msg['id'],
-                    'lgaId'     => (int) $msg['lga_id'],
-                    'userId'    => (int) $msg['user_id'],
-                    'userName'  => $msg['user_name'],
-                    'avatarUrl' => $msg['avatar_url'],
-                    'text'      => $msg['text'],
-                    'mediaUrl'  => $msg['media_url'],
-                    'fileUrl'   => $msg['file_url'],
-                    'fileName'  => $msg['file_name'],
-                    'fileSize'  => $msg['file_size'],
-                    'reactions' => empty($reactions) ? (object)[] : $reactions,
-                    'replyTo'   => $replyTo,
-                    'createdAt' => $msg['created_at'],
-                ]);
-
-                $lastMsgId = (int) $msg['id'];
-            }
-
-            // ── New notifications ──────────────────────────────────────────
-            $notifStmt = $this->db->prepare('
-                SELECT * FROM notifications
-                WHERE user_id = ? AND id > ?
-                ORDER BY id ASC
-                LIMIT 10
-            ');
-            $notifStmt->execute([$userId, $lastNotifId]);
-            $newNotifs = $notifStmt->fetchAll();
-
-            foreach ($newNotifs as $notif) {
-                $this->emit('new_notification', [
-                    'id'             => (int) $notif['id'],
-                    'userId'         => (int) $notif['user_id'],
-                    'category'       => $notif['category'],
-                    'priority'       => $notif['priority'],
-                    'title'          => $notif['title'],
-                    'body'           => $notif['body'],
-                    'actorName'      => $notif['actor_name'],
-                    'actorAvatarUrl' => $notif['actor_avatar_url'],
-                    'linkTo'         => $notif['link_to'],
-                    'isRead'         => (bool) $notif['is_read'],
-                    'createdAt'      => $notif['created_at'],
-                ]);
-
-                $lastNotifId = (int) $notif['id'];
-            }
-
-            // ── Keepalive ping every ~26s (13 × 2s ticks) ─────────────────
-            // This flush is also what allows PHP to detect a disconnected
-            // client on the next loop iteration via connection_aborted().
-            $pingCounter++;
-            if ($pingCounter >= 13) {
-                $this->emit('ping', ['ts' => time()]);
-                $pingCounter = 0;
-            }
-        }
+        echo "retry: 300000\n\n";
+        echo "event: deprecated\ndata: {\"use\":\"/events/poll\"}\n\n";
+        flush();
     }
-
     // ── GET /events/poll ──────────────────────────────────────────────────
     //
     // Short-lived replacement for the SSE stream.

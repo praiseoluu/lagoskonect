@@ -336,8 +336,10 @@ try {
         (new EventsController())->poll();
 
     } elseif ($path === '/events/stream' && $method === 'GET') {
-        // SSE: don't set JSON content-type — EventsController sets text/event-stream
-        (new EventsController())->stream();
+        // Retired in favour of /events/poll. Answers instantly so browsers
+        // still running the pre-polling client cannot hold an entry process.
+        // Static call on purpose: no controller, no database, no session.
+        EventsController::retiredStream();
 
     // ── Admin Analytics ──────────────────────────────────────────────────────
     } elseif ($path === '/admin/analytics/metrics' && $method === 'GET') {
