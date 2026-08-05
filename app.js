@@ -565,6 +565,13 @@ router.register('admin', [
     meta:      { title: 'Create News' },
   },
   {
+    // Must stay ahead of /admin/news/:id, otherwise "import" is matched as an id.
+    path:      '/admin/news/import',
+    component: () => import('./pages/admin/app/NewsImport.js'),
+    guards:    [requireAdmin],
+    meta:      { title: 'Import News' },
+  },
+  {
     path:      '/admin/news/:id',
     component: () => import('./pages/admin/app/NewsView.js'),
     guards:    [requireAdmin],

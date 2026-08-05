@@ -1,0 +1,329 @@
+/* Lagos Konect — Import News (admin) */
+
+.ni-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6);
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+
+.ni-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.ni-eyebrow {
+  margin: 0 0 4px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.ni-title {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.ni-sub {
+  margin: 6px 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  max-width: 56ch;
+}
+
+.ni-quota {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+}
+
+.ni-quota__value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.ni-quota__value--low { color: var(--color-error); }
+
+.ni-quota__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ── Controls ───────────────────────────────────────────────────────── */
+
+.ni-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+}
+
+.ni-field { display: flex; flex-direction: column; gap: 4px; }
+.ni-field--inline { flex-direction: row; align-items: center; gap: var(--space-2); }
+
+.ni-field__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.ni-select,
+.ni-input {
+  padding: 9px var(--space-3);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  min-width: 150px;
+}
+
+.ni-select--sm { min-width: 120px; padding: 5px var(--space-2); }
+
+.ni-select:focus,
+.ni-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-15);
+}
+
+.ni-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.ni-toggle--sm { font-size: var(--font-size-xs); }
+
+/* ── Buttons ────────────────────────────────────────────────────────── */
+
+.ni-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast),
+              background var(--transition-fast);
+}
+
+.ni-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.ni-btn:disabled { opacity: 0.6; cursor: default; }
+
+.ni-btn--primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.ni-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+  color: #fff;
+}
+
+.ni-btn--approve {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.ni-btn--approve:hover:not(:disabled) { filter: brightness(1.06); color: #fff; }
+
+.ni-btn--dismiss:hover:not(:disabled) {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+/* ── Meta strip ─────────────────────────────────────────────────────── */
+
+.ni-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ni-badge {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+}
+
+.ni-badge--cached { background: var(--color-surface); color: var(--color-text-secondary); }
+.ni-badge--live   { background: var(--color-primary-15); color: var(--color-primary); }
+
+/* ── Cards ──────────────────────────────────────────────────────────── */
+
+.ni-list { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.ni-card {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: box-shadow var(--transition-base);
+}
+
+.ni-card:hover { box-shadow: var(--shadow-card-hover, 0 8px 28px rgba(0,0,0,0.08)); }
+
+.ni-card--published { border-color: var(--color-primary-40); }
+.ni-card--dismissed { opacity: 0.55; }
+
+/* No image, or one that failed to load: collapse the media track so the text
+   runs the full width instead of sitting beside an empty grey panel. */
+.ni-card--noimg { grid-template-columns: 1fr; }
+.ni-card--noimg .ni-card__media { display: none; }
+.ni-card--noimg .ni-card__body { padding-left: var(--space-4); }
+
+.ni-card__media { background: var(--color-surface); min-height: 150px; }
+
+.ni-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ni-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) var(--space-4) 0;
+  min-width: 0;
+}
+
+.ni-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.ni-source { font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); }
+
+.ni-also {
+  padding: 1px var(--space-2);
+  background: var(--color-surface);
+  border-radius: var(--radius-full);
+}
+
+.ni-card__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.ni-card__summary {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.ni-card__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-1);
+}
+
+.ni-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.ni-link:hover { text-decoration: underline; }
+
+.ni-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.ni-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ni-state--published { color: var(--color-primary); }
+
+/* ── Empty / error ──────────────────────────────────────────────────── */
+
+.ni-empty,
+.ni-error {
+  padding: var(--space-10) var(--space-4);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+}
+
+.ni-error { color: var(--color-error); border-color: var(--color-error); }
+
+/* ── Mobile ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .ni-page { padding: var(--space-4); }
+  .ni-card { grid-template-columns: 1fr; }
+  .ni-card__media { min-height: 170px; }
+  .ni-card__body { padding: var(--space-4); }
+  .ni-controls > .ni-btn { flex: 1; }
+}
