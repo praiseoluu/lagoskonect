@@ -42,7 +42,6 @@ require_once __DIR__ . '/controllers/AdminManagementController.php';
 require_once __DIR__ . '/controllers/PlatformSettingsController.php';
 require_once __DIR__ . '/utils/Settings.php';
 require_once __DIR__ . '/utils/NotificationService.php';
-require_once __DIR__ . '/controllers/AdminAnalyticsController.php';
 require_once __DIR__ . '/controllers/TwoFactorController.php';
 require_once __DIR__ . '/controllers/ReferralController.php';
 require_once __DIR__ . '/controllers/NewsletterController.php';

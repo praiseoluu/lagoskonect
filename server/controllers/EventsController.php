@@ -38,6 +38,25 @@ class EventsController {
     }
 
     public function stream(): void {
+        // ── Process-lifetime guardrails ───────────────────────────────────
+        // Each SSE connection holds one PHP process on the server. Without
+        // these two settings, processes can accumulate until the host's
+        // concurrent-process limit is exhausted, causing 508 errors for ALL
+        // endpoints (including login).
+        //
+        // ignore_user_abort(false): kill this process the moment the browser
+        //   closes the tab / EventSource reconnects. The PHP default is 'off',
+        //   but many shared-hosting php.ini files override it to 'on', which
+        //   would keep orphaned processes running long after clients leave.
+        //
+        // set_time_limit(300): hard-cap each connection at 5 minutes.
+        //   The browser's EventSource will auto-reconnect immediately after
+        //   the server closes the stream, so users won't notice the restart.
+        //   This prevents any single connection from holding a process forever
+        //   even if ignore_user_abort is somehow overridden at the host level.
+        ignore_user_abort(false);
+        set_time_limit(300); // 5-minute hard cap; EventSource auto-reconnects
+
         // ── SSE headers ───────────────────────────────────────────────────
         header('Content-Type: text/event-stream');
         header('Cache-Control: no-cache');
@@ -113,13 +132,32 @@ class EventsController {
         ]);
 
         // ── Poll loop ─────────────────────────────────────────────────────
+        // Wall-clock deadline: hrtime(true) returns nanoseconds and is never
+        // affected by sleep() or system-call exclusions, unlike set_time_limit().
+        // We break out of the loop after MAX_LIFETIME seconds so the PHP process
+        // is always recycled; EventSource on the browser auto-reconnects within
+        // a few seconds and the user sees no interruption.
+        //
+        // Client-disconnect detection relies on the periodic flush inside
+        // $this->emit(). PHP only observes an aborted connection when it
+        // attempts to write to the socket — the keepalive ping (every ~26s)
+        // guarantees that detection window. connection_aborted() after each
+        // sleep() is an additional fast-path check but is only reliable on
+        // configurations where ignore_user_abort(false) causes an immediate
+        // SIGPIPE, which is host-dependent.
+        $maxLifetime = 300; // seconds — 5 minutes hard cap
+        $deadline = hrtime(true) + $maxLifetime * 1_000_000_000;
         $pingCounter = 0;
 
-        while (true) {
-            // Check if client disconnected
+        while (hrtime(true) < $deadline) {
             if (connection_aborted()) break;
 
             sleep(2); // poll every 2 seconds
+
+            // Re-check wall clock and disconnect after sleep so we don't start
+            // a fresh DB round-trip when we're already past the deadline.
+            if (hrtime(true) >= $deadline) break;
+            if (connection_aborted()) break;
 
             // ── New chat messages ──────────────────────────────────────────
             $msgStmt = $this->db->prepare('
@@ -182,7 +220,9 @@ class EventsController {
                 $lastNotifId = (int) $notif['id'];
             }
 
-            // ── Keepalive ping every 25s (13 × 2s ticks) ──────────────────
+            // ── Keepalive ping every ~26s (13 × 2s ticks) ─────────────────
+            // This flush is also what allows PHP to detect a disconnected
+            // client on the next loop iteration via connection_aborted().
             $pingCounter++;
             if ($pingCounter >= 13) {
                 $this->emit('ping', ['ts' => time()]);
