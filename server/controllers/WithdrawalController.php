@@ -218,11 +218,27 @@ class WithdrawalController {
               FROM withdrawal_requests GROUP BY status
         ')->fetchAll();
 
-        $summary = ['pending' => 0, 'paid' => 0, 'rejected' => 0, 'pendingTotal' => 0];
+        // Money out of the door is the figure an admin is actually accountable
+        // for, so it is carried alongside the amount still owed rather than
+        // being left to be worked out from the Paid tab by hand.
+        $summary = [
+            'pending'       => 0, 'paid'      => 0, 'rejected'      => 0,
+            'pendingTotal'  => 0, 'paidTotal' => 0, 'rejectedTotal' => 0,
+        ];
+
         foreach ($counts as $c) {
             $summary[$c['status']] = (int) $c['c'];
-            if ($c['status'] === 'pending') $summary['pendingTotal'] = (float) $c['total'];
+            $summary[$c['status'] . 'Total'] = (float) $c['total'];
         }
+
+        // Paid this calendar month, so the headline total has something to be
+        // read against — "₦450,000 all time" alone says nothing about pace.
+        $summary['paidThisMonth'] = (float) $this->db->query('
+            SELECT COALESCE(SUM(amount), 0)
+              FROM withdrawal_requests
+             WHERE status = "paid"
+               AND processed_at >= DATE_FORMAT(NOW(), "%Y-%m-01")
+        ')->fetchColumn();
 
         Response::json(['requests' => $rows, 'summary' => $summary]);
     }

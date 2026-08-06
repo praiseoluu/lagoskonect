@@ -80,9 +80,21 @@ export default class WithdrawalsPage extends AdminLayout {
             citizen's balance and emails them a confirmation.
           </p>
         </div>
-        <div class="wd-owed">
-          <span class="wd-owed__value">${naira(s.pendingTotal)}</span>
-          <span class="wd-owed__label">Awaiting payment</span>
+        <div class="wd-stats">
+          <div class="wd-stat wd-stat--owed">
+            <span class="wd-stat__value">${naira(s.pendingTotal)}</span>
+            <span class="wd-stat__label">Awaiting payment</span>
+            <span class="wd-stat__sub">${s.pending ?? 0} request${s.pending === 1 ? '' : 's'}</span>
+          </div>
+
+          <div class="wd-stat wd-stat--paid">
+            <span class="wd-stat__value">${naira(s.paidTotal)}</span>
+            <span class="wd-stat__label">Total paid out</span>
+            <span class="wd-stat__sub">
+              ${s.paid ?? 0} payout${s.paid === 1 ? '' : 's'}
+              ${s.paidThisMonth ? ` · ${naira(s.paidThisMonth)} this month` : ''}
+            </span>
+          </div>
         </div>
       </header>
 
