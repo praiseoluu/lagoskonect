@@ -12,19 +12,19 @@
  *      Community Chat  — online count, top contributors, Open Community Chat btn
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806b';
-import { NewsCard } from '../../../components/base/Card.js?v=20260806b';
-import { ReelCard } from '../../../components/base/Card.js?v=20260806b';
-import { Avatar } from '../../../components/base/UI.js?v=20260806b';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806b';
-import { router } from '../../../core/router.js?v=20260806b';
-import { api } from '../../../api/client.js?v=20260806b';
-import { timeAgo } from '../../../utils/date.js?v=20260806b';
-import { t, getLanguage } from '../../../core/i18n.js?v=20260806b';
-import { translateArticle, needsTranslation } from '../../../utils/translator.js?v=20260806b';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806c';
+import { NewsCard } from '../../../components/base/Card.js?v=20260806c';
+import { ReelCard } from '../../../components/base/Card.js?v=20260806c';
+import { Avatar } from '../../../components/base/UI.js?v=20260806c';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806c';
+import { router } from '../../../core/router.js?v=20260806c';
+import { api } from '../../../api/client.js?v=20260806c';
+import { timeAgo } from '../../../utils/date.js?v=20260806c';
+import { t, getLanguage } from '../../../core/i18n.js?v=20260806c';
+import { translateArticle, needsTranslation } from '../../../utils/translator.js?v=20260806c';
 
 export default class HomePage extends WebLayout {
-  static styles = '/pages/web/app/Home.css?v=20260806b';
+  static styles = '/pages/web/app/Home.css?v=20260806c';
 
   constructor(props) {
     super({ title: t('home.title'), ...props });

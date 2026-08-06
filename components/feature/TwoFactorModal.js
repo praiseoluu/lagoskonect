@@ -9,12 +9,12 @@
  * never touching the outer overlay element.
  */
 
-import { Component } from '../../../core/component.js?v=20260806b';
-import { store, showToast } from '../../../core/store.js?v=20260806b';
-import { api } from '../../../api/client.js?v=20260806b';
+import { Component } from '../../../core/component.js?v=20260806c';
+import { store, showToast } from '../../../core/store.js?v=20260806c';
+import { api } from '../../../api/client.js?v=20260806c';
 
 export class TwoFactorModal extends Component {
-  static styles = '/components/feature/TwoFactorModal.css?v=20260806b';
+  static styles = '/components/feature/TwoFactorModal.css?v=20260806c';
 
   constructor(props = {}) {
     super(props);

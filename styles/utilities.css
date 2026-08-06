@@ -232,3 +232,66 @@
     transform: translateY(0);
   }
 }
+/* ══════════════════════════════════════════════════════
+   AVATAR LIGHTBOX
+   Tap a profile picture to see it full size.
+   Behaviour lives in utils/avatarLightbox.js.
+   ══════════════════════════════════════════════════════ */
+
+.avatar-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6, 24px);
+  background: rgba(0, 0, 0, 0.88);
+  animation: avatar-lightbox-in 0.18s ease;
+  cursor: zoom-out;
+}
+
+@keyframes avatar-lightbox-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.avatar-lightbox__img {
+  max-width: min(560px, 92vw);
+  /* Leaves room for the close button and any device notch. */
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  cursor: default;
+}
+
+.avatar-lightbox__close {
+  position: absolute;
+  top: max(var(--space-4, 16px), env(safe-area-inset-top, 0px));
+  right: var(--space-4, 16px);
+  width: 44px;          /* a comfortable touch target, not a 24px hit box */
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  line-height: 1;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.avatar-lightbox__close:hover { background: rgba(255, 255, 255, 0.26); }
+
+/* Signals the picture can be opened, but only when there is a real one —
+   an initials avatar has nothing larger behind it. */
+.profile-hero__avatar-wrap:has(img) { cursor: zoom-in; }
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-lightbox { animation: none; }
+}

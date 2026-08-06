@@ -10,18 +10,18 @@
  * Uses PublicLayout (nav + footer).
  */
 
-import { Component } from '../../../core/component.js?v=20260806b';
-import { Button } from '../../../components/base/Button.js?v=20260806b';
-import { PublicLayout } from './_PublicLayout.js?v=20260806b';
-import { router } from '../../../core/router.js?v=20260806b';
-import { api } from '../../../api/client.js?v=20260806b';
-import { showToast } from '../../../core/store.js?v=20260806b';
+import { Component } from '../../../core/component.js?v=20260806c';
+import { Button } from '../../../components/base/Button.js?v=20260806c';
+import { PublicLayout } from './_PublicLayout.js?v=20260806c';
+import { router } from '../../../core/router.js?v=20260806c';
+import { api } from '../../../api/client.js?v=20260806c';
+import { showToast } from '../../../core/store.js?v=20260806c';
 
 // OTP expires after this many seconds (display only in mock)
 const OTP_EXPIRY_SECONDS = 114; // 1:54 as shown in design
 
 export default class VerifyIdentityPage extends Component {
-  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806b';
+  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806c';
   static dependencies = ['/pages/web/auth/PublicForm.css', '/components/base/Button.css'];
 
   constructor(props) {

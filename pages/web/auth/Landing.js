@@ -8,14 +8,14 @@
  * This file owns the ad billboard and hero section.
  */
 
-import { Component } from '../../../core/component.js?v=20260806b';
-import { PublicLayout } from './_PublicLayout.js?v=20260806b';
-import { api } from '../../../api/client.js?v=20260806b';
-import { t } from '../../../core/i18n.js?v=20260806b';
-import { showToast } from '../../../core/store.js?v=20260806b';
+import { Component } from '../../../core/component.js?v=20260806c';
+import { PublicLayout } from './_PublicLayout.js?v=20260806c';
+import { api } from '../../../api/client.js?v=20260806c';
+import { t } from '../../../core/i18n.js?v=20260806c';
+import { showToast } from '../../../core/store.js?v=20260806c';
 
 export default class LandingPage extends Component {
-  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806b';
+  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806c';
   static dependencies = ['/pages/web/auth/Landing.css', '/components/base/Button.css'];
 
   render() {

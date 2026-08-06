@@ -2808,3 +2808,57 @@
   transform: translateX(3px);
 }
 
+
+/* ══════════════════════════════════════════════════════
+   SWIPE TO REPLY  (touch only)
+   Behaviour in SharedChat.js → _bindSwipeToReply.
+   ══════════════════════════════════════════════════════ */
+
+/* The arrow sits behind the message, revealed as the bubble slides off it.
+   Drawn on .chat-msg itself rather than as an extra element so nothing has to
+   be added to the markup of every message. */
+.chat-msg::before {
+  content: '';
+  position: absolute;
+  left: -34px;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  margin-top: -13px;
+  border-radius: 50%;
+  background: var(--color-primary-15, #e6f4ea) center / 14px 14px no-repeat;
+  /* Reply arrow, inlined as a data URI: the CSP blocks remote images, and a
+     background cannot carry an onerror fallback the way an <img> can. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23068927' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 17 4 12 9 7'/%3E%3Cpath d='M20 18v-2a4 4 0 0 0-4-4H4'/%3E%3C/svg%3E");
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  pointer-events: none;
+}
+
+.chat-msg--swiping::before { opacity: 0.55; transform: scale(0.85); }
+
+/* Past the commit point: the arrow goes solid so the threshold is visible
+   as well as felt. */
+.chat-msg--swipe-ready::before {
+  opacity: 1;
+  transform: scale(1);
+  background-color: var(--color-primary, #068927);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 17 4 12 9 7'/%3E%3Cpath d='M20 18v-2a4 4 0 0 0-4-4H4'/%3E%3C/svg%3E");
+}
+
+/* While dragging the bubble tracks the finger with no transition, or it would
+   lag behind. The transition is added back only for the release. */
+.chat-msg--swiping      { transition: none; will-change: transform; }
+.chat-msg--swipe-return { transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* A mouse has the hover action bar and right-click menu, so the swipe
+   affordance is touch-only and never shows on desktop. */
+@media (hover: hover) and (pointer: fine) {
+  .chat-msg::before { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-msg::before,
+  .chat-msg--swipe-return { transition: none; }
+}

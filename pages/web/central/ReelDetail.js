@@ -16,13 +16,13 @@
  * @version 2.0.0
  */
 
-import { WebLayout }                      from '../../../components/layout/BaseLayout.js?v=20260806b';
-import { Avatar }                         from '../../../components/base/UI.js?v=20260806b';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806b';
-import { router }                         from '../../../core/router.js?v=20260806b';
-import { api }                            from '../../../api/client.js?v=20260806b';
-import { timeAgo }                        from '../../../utils/date.js?v=20260806b';
-import { t }                              from '../../../core/i18n.js?v=20260806b';
+import { WebLayout }                      from '../../../components/layout/BaseLayout.js?v=20260806c';
+import { Avatar }                         from '../../../components/base/UI.js?v=20260806c';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806c';
+import { router }                         from '../../../core/router.js?v=20260806c';
+import { api }                            from '../../../api/client.js?v=20260806c';
+import { timeAgo }                        from '../../../utils/date.js?v=20260806c';
+import { t }                              from '../../../core/i18n.js?v=20260806c';
 
 /* ── Region config ──────────────────────────────────────────────────────── */
 const REGION_BRAND  = 'LagKonnect - Central';
@@ -84,7 +84,7 @@ const SKELETON_COMMENTS = Array.from({ length: 4 }, () => `
    Component
    ══════════════════════════════════════════════════════════════════════════ */
 export default class ReelDetailPage extends WebLayout {
-  static styles = '/pages/web/app/ReelDetail.css?v=20260806b';
+  static styles = '/pages/web/app/ReelDetail.css?v=20260806c';
 
   constructor(props) {
     super({ title: t('reelDetail.title'), ...props });
