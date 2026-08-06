@@ -43,7 +43,7 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806a';
+import { Component } from '../../core/component.js?v=20260806b';
 
 /* ── Shared SVG icon constants ──────────────────────────────────────────── */
 
@@ -107,7 +107,7 @@ const SKELETON_ROWS = 5;
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class Table extends Component {
-  static styles = '/components/base/Table.css?v=20260806a';
+  static styles = '/components/base/Table.css?v=20260806b';
 
   constructor(props = {}) {
     super({

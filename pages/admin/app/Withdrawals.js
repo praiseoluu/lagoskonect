@@ -10,10 +10,10 @@
  * "I have paid this" rather than "Pay".
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806a';
-import { api } from '../../../api/client.js?v=20260806a';
-import { formatDateTime } from '../../../utils/date.js?v=20260806a';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806b';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806b';
+import { api } from '../../../api/client.js?v=20260806b';
+import { formatDateTime } from '../../../utils/date.js?v=20260806b';
 
 const naira = (n) => '₦' + Number(n || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -24,7 +24,7 @@ const TABS = [
 ];
 
 export default class WithdrawalsPage extends AdminLayout {
-  static styles = '/pages/admin/app/Withdrawals.css?v=20260806a';
+  static styles = '/pages/admin/app/Withdrawals.css?v=20260806b';
 
   constructor(props) {
     super({ title: 'Referral Payouts', ...props });

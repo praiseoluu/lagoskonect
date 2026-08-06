@@ -10,11 +10,11 @@
  * @version 2.0.0
  */
 
-import { Component }        from '../../core/component.js?v=20260806a';
-import { Avatar }           from '../base/UI.js?v=20260806a';
-import { store }            from '../../core/store.js?v=20260806a';
-import { t }                from '../../core/i18n.js?v=20260806a';
-import { LanguageSwitcher } from '../feature/LanguageSwitcher.js?v=20260806a';
+import { Component }        from '../../core/component.js?v=20260806b';
+import { Avatar }           from '../base/UI.js?v=20260806b';
+import { store }            from '../../core/store.js?v=20260806b';
+import { t }                from '../../core/i18n.js?v=20260806b';
+import { LanguageSwitcher } from '../feature/LanguageSwitcher.js?v=20260806b';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
 const ICON = Object.freeze({
@@ -51,7 +51,7 @@ function mountTopbarLangSwitcher(component) {
  * Use WebTopbar or AdminTopbar.
  */
 export class Topbar extends Component {
-  static styles = '/components/layout/Topbar.css?v=20260806a';
+  static styles = '/components/layout/Topbar.css?v=20260806b';
 
   constructor(props = {}) {
     super({ title: '', onMenuClick: null, ...props });
@@ -66,7 +66,7 @@ export class Topbar extends Component {
    Web App Topbar
    ══════════════════════════════════════════════════════════════════════════ */
 export class WebTopbar extends Component {
-  static styles = '/components/layout/Topbar.css?v=20260806a';
+  static styles = '/components/layout/Topbar.css?v=20260806b';
 
   constructor(props = {}) {
     super({ title: '', onMenuClick: null, ...props });
@@ -182,7 +182,7 @@ export class WebTopbar extends Component {
    Admin Topbar
    ══════════════════════════════════════════════════════════════════════════ */
 export class AdminTopbar extends Component {
-  static styles = '/components/layout/Topbar.css?v=20260806a';
+  static styles = '/components/layout/Topbar.css?v=20260806b';
 
   constructor(props = {}) {
     super({

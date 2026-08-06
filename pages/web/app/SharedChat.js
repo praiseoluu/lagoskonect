@@ -19,12 +19,12 @@
  *  ✅ Single-emoji text rendered as large sticker
  */
 
-import { WebLayout }                        from '../../../components/layout/BaseLayout.js?v=20260806a';
-import { Avatar }                           from '../../../components/base/UI.js?v=20260806a';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806a';
-import { api }                              from '../../../api/client.js?v=20260806a';
-import { sseClient }                        from '../../../core/sseClient.js?v=20260806a';
-import { t }                                from '../../../core/i18n.js?v=20260806a';
+import { WebLayout }                        from '../../../components/layout/BaseLayout.js?v=20260806b';
+import { Avatar }                           from '../../../components/base/UI.js?v=20260806b';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806b';
+import { api }                              from '../../../api/client.js?v=20260806b';
+import { sseClient }                        from '../../../core/sseClient.js?v=20260806b';
+import { t }                                from '../../../core/i18n.js?v=20260806b';
 
 // ══════════════════════════════════════════════════════════════════════════
 // Constants
@@ -159,7 +159,7 @@ function fileExtBadge(name = '') {
 // ══════════════════════════════════════════════════════════════════════════
 
 export default class SharedChatPage extends WebLayout {
-    static styles = '/pages/web/app/Chat.css?v=20260806a';
+    static styles = '/pages/web/app/Chat.css?v=20260806b';
 
     /** Override in subclasses: return the profile URL for a given username. */
     _profileUrl(username) { return `/u/${encodeURIComponent(username)}`; }

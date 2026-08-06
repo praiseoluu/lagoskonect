@@ -6,7 +6,7 @@
  *  • Admin:   leaderboard, region stats, per-user drill-down
  */
 
-import { _fetch } from './_fetch.js?v=20260806a';
+import { _fetch } from './_fetch.js?v=20260806b';
 
 export const referrals = {
 

@@ -7,14 +7,14 @@
  * Guards: requireAuth + requireCitizen
  */
 
-import { Component } from '../../../core/component.js?v=20260806a';
-import { Button } from '../../../components/base/Button.js?v=20260806a';
-import { store, showToast } from '../../../core/store.js?v=20260806a';
-import { router } from '../../../core/router.js?v=20260806a';
-import { api } from '../../../api/client.js?v=20260806a';
+import { Component } from '../../../core/component.js?v=20260806b';
+import { Button } from '../../../components/base/Button.js?v=20260806b';
+import { store, showToast } from '../../../core/store.js?v=20260806b';
+import { router } from '../../../core/router.js?v=20260806b';
+import { api } from '../../../api/client.js?v=20260806b';
 
 export default class SelectLGAPage extends Component {
-  static styles = '/pages/web/auth/SelectLGA.css?v=20260806a';
+  static styles = '/pages/web/auth/SelectLGA.css?v=20260806b';
   constructor(props) {
     super(props);
     this.state = {

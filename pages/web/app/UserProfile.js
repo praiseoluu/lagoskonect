@@ -8,12 +8,12 @@
  * Private profiles show a minimal locked view.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
-import { Avatar } from '../../../components/base/UI.js?v=20260806a';
-import { setPageLoading } from '../../../core/store.js?v=20260806a';
-import { router } from '../../../core/router.js?v=20260806a';
-import { api } from '../../../api/client.js?v=20260806a';
-import { formatDate } from '../../../utils/date.js?v=20260806a';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806b';
+import { Avatar } from '../../../components/base/UI.js?v=20260806b';
+import { setPageLoading } from '../../../core/store.js?v=20260806b';
+import { router } from '../../../core/router.js?v=20260806b';
+import { api } from '../../../api/client.js?v=20260806b';
+import { formatDate } from '../../../utils/date.js?v=20260806b';
 
 const MAP_ICON  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
 const CAL_ICON  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
@@ -36,7 +36,7 @@ function memberSince(createdAt) {
 }
 
 export default class UserProfilePage extends WebLayout {
-  static styles = '/pages/web/app/Profile.css?v=20260806a';
+  static styles = '/pages/web/app/Profile.css?v=20260806b';
 
   constructor(props) {
     super({ title: 'Profile', ...props });
