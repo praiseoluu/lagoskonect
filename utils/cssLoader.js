@@ -5,7 +5,7 @@
  * Prevents duplicate injection — safe to call multiple times.
  *
  * Usage:
- *   import { loadCSS } from '../utils/cssLoader.js?v=20260805c';
+ *   import { loadCSS } from '../utils/cssLoader.js?v=20260806a';
  *
  *   // Load a single file
  *   loadCSS('/components/base/Button.css');

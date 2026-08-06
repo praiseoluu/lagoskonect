@@ -4,12 +4,12 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
-import { Button }      from '../../../components/base/Button.js?v=20260805c';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260805c';
-import { router }      from '../../../core/router.js?v=20260805c';
-import { api }         from '../../../api/client.js?v=20260805c';
-import { formatDate }  from '../../../utils/date.js?v=20260805c';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
+import { Button }      from '../../../components/base/Button.js?v=20260806a';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806a';
+import { router }      from '../../../core/router.js?v=20260806a';
+import { api }         from '../../../api/client.js?v=20260806a';
+import { formatDate }  from '../../../utils/date.js?v=20260806a';
 
 const EDIT_SVG   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
 const SEND_SVG   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
@@ -18,7 +18,7 @@ const INFO_SVG   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" 
 const TARGET_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
 
 export default class AdminAdvertPreviewPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminAdvertPreview.css?v=20260805c';
+  static styles = '/pages/admin/app/AdminAdvertPreview.css?v=20260806a';
 
   constructor(props) {
     super({

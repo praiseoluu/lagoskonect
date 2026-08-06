@@ -5,7 +5,7 @@
  * Admin methods    → real PHP backend
  */
 
-import { _fetch, BASE_URL } from './_fetch.js?v=20260805c';
+import { _fetch, BASE_URL } from './_fetch.js?v=20260806a';
 
 export const news = {
 

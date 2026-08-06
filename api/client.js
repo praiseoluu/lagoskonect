@@ -10,23 +10,23 @@
  *   Every method is async, always returns { data } or { error }.
  *   Never throws. Auth token read from sessionStorage on every call.
  */
-import { _fetch } from './_fetch.js?v=20260805c';
-import { store } from '../core/store.js?v=20260805c';
-import { auth } from './auth.js?v=20260805c';
-import { news } from './news.js?v=20260805c';
-import { reels } from './reels.js?v=20260805c';
-import { moderation } from './moderation.js?v=20260805c';
-import { adverts } from './adverts.js?v=20260805c';
-import { lgasAdmin } from './lgasAdmin.js?v=20260805c';
-import { adminTeam } from './adminTeam.js?v=20260805c';
-import { analytics } from './analytics.js?v=20260805c';
-import { chat } from './chat.js?v=20260805c';
-import { notifications } from './notifications.js?v=20260805c';
-import { users } from './users.js?v=20260805c';
-import { referrals } from './referrals.js?v=20260805c';
-import { newsletter } from './newsletter.js?v=20260805c';
-import { newsImport } from './newsImport.js?v=20260805c';
-import { withdrawals } from './withdrawals.js?v=20260805c';
+import { _fetch } from './_fetch.js?v=20260806a';
+import { store } from '../core/store.js?v=20260806a';
+import { auth } from './auth.js?v=20260806a';
+import { news } from './news.js?v=20260806a';
+import { reels } from './reels.js?v=20260806a';
+import { moderation } from './moderation.js?v=20260806a';
+import { adverts } from './adverts.js?v=20260806a';
+import { lgasAdmin } from './lgasAdmin.js?v=20260806a';
+import { adminTeam } from './adminTeam.js?v=20260806a';
+import { analytics } from './analytics.js?v=20260806a';
+import { chat } from './chat.js?v=20260806a';
+import { notifications } from './notifications.js?v=20260806a';
+import { users } from './users.js?v=20260806a';
+import { referrals } from './referrals.js?v=20260806a';
+import { newsletter } from './newsletter.js?v=20260806a';
+import { newsImport } from './newsImport.js?v=20260806a';
+import { withdrawals } from './withdrawals.js?v=20260806a';
 import {
   MOCK,
   MOCK_SLOW_MS,
@@ -35,7 +35,7 @@ import {
   _err,
   _requireRole,
   _paginate,
-} from './_mockData.js?v=20260805c';
+} from './_mockData.js?v=20260806a';
 
 // ─── LGAs ─────────────────────────────────────────────────────────────────
 

@@ -3,10 +3,19 @@
 /**
  * NewsImportController — review queue for externally sourced articles.
  *
- * Flow: an admin picks a country and a date, the feed is fetched (or served
- * from cache), and nothing is visible to citizens until that admin approves an
- * individual article. Approving creates an ordinary `news` row exactly as the
- * manual editor would; dismissing hides the article from future fetches.
+ * Two sources feed the same queue:
+ *
+ *   worldnews  World News API. Metered — a free-tier key with a small daily
+ *              allowance, so results are cached hard and a budget is enforced.
+ *   punch      Scraped straight off a punchng.com topic archive. Free, so no
+ *              budget, but still cached to avoid hammering their servers.
+ *
+ * Either way nothing is visible to citizens until an admin approves an
+ * individual article, which creates an ordinary `news` row exactly as the
+ * manual editor would. Dismissing hides the article from future fetches.
+ *
+ * Published articles keep source_name and source_url pointing at the original
+ * publisher, so every imported story is attributed and links back.
  *
  * Every route here is admin-only, and the upstream API key never leaves the
  * server.
@@ -15,16 +24,28 @@ class NewsImportController {
 
     private PDO $db;
     private WorldNewsService $service;
+    private PunchScraper $punch;
 
     public function __construct() {
         $this->db      = Database::connect();
         $this->service = new WorldNewsService($this->db);
+        $this->punch   = new PunchScraper($this->db);
     }
 
     // ── GET /admin/news/import/feed ───────────────────────────────────────
 
     public function feed(): void {
         $this->requireAdmin();
+
+        $source = strtolower(trim($_GET['source'] ?? 'worldnews'));
+
+        if ($source === 'punch') {
+            $this->punchFeed();
+            return;
+        }
+        if ($source !== 'worldnews') {
+            Response::error('VALIDATION_ERROR', 'Unknown source.', 422);
+        }
 
         if (!WorldNewsService::isConfigured()) {
             Response::error(
@@ -58,12 +79,70 @@ class NewsImportController {
 
         Response::json([
             'articles'  => $articles,
+            'source'    => 'worldnews',
             'cached'    => $result['cached'],
             'fetchedAt' => $result['fetchedAt'],
             'quota'     => $result['quota'],
             'country'   => $country,
             'date'      => $date,
         ]);
+    }
+
+    /**
+     * Punch topic archive.
+     *
+     * Only the listing is fetched here — one request, however many stories come
+     * back. Full article text is pulled per-article by story() or at approval,
+     * so opening the review screen never turns into twenty sequential fetches
+     * inside a single PHP process.
+     */
+    private function punchFeed(): void {
+        $topic   = trim($_GET['topic'] ?? PunchScraper::TOPICS[0]['url']);
+        $refresh = ($_GET['refresh'] ?? '') === '1';
+        $pages   = (int) ($_GET['pages'] ?? 1);
+
+        if (!PunchScraper::isPunchUrl($topic)) {
+            Response::error('VALIDATION_ERROR', 'topic must be a punchng.com address.', 422);
+        }
+
+        try {
+            $result = $this->punch->listing($topic, $refresh, $pages);
+        } catch (RuntimeException $e) {
+            Response::error('IMPORT_FAILED', $e->getMessage(), 502);
+        }
+
+        Response::json([
+            'articles'  => $this->annotate($result['articles']),
+            'source'    => 'punch',
+            'cached'    => $result['cached'],
+            'fetchedAt' => $result['fetchedAt'],
+            'quota'     => null,        // scraping costs nothing
+            'topic'     => $topic,
+            'pages'     => $result['pages'],
+        ]);
+    }
+
+    // ── GET /admin/news/import/story?url=… ────────────────────────────────
+    //
+    // Full text of one Punch article, so an admin can read what would be
+    // published before publishing it. Cached for a month: a published story
+    // does not change.
+
+    public function story(): void {
+        $this->requireAdmin();
+
+        $url = trim($_GET['url'] ?? '');
+        if (!PunchScraper::isPunchUrl($url)) {
+            Response::error('VALIDATION_ERROR', 'url must be a punchng.com address.', 422);
+        }
+
+        try {
+            $story = $this->punch->story($url, ($_GET['refresh'] ?? '') === '1');
+        } catch (RuntimeException $e) {
+            Response::error('IMPORT_FAILED', $e->getMessage(), 502);
+        }
+
+        Response::json($story);
     }
 
     // ── GET /admin/news/import/quota ──────────────────────────────────────
@@ -73,6 +152,7 @@ class NewsImportController {
         Response::json([
             'configured' => WorldNewsService::isConfigured(),
             'quota'      => $this->service->quota(),
+            'topics'     => PunchScraper::TOPICS,
         ]);
     }
 
@@ -101,13 +181,40 @@ class NewsImportController {
         $summary    = trim((string) ($body['summary'] ?? ''));
         $articleTxt = trim((string) ($body['body'] ?? ''));
         $category   = trim((string) ($body['category'] ?? '')) ?: 'General';
-        // Copy the picture into our own storage rather than hotlinking the
-        // publisher. Citizens would otherwise be blocked by the CSP, and the
-        // remote file could vanish at any time.
-        $imageUrl   = $this->mirrorImage(trim((string) ($body['imageUrl'] ?? '')));
+        $rawImage   = trim((string) ($body['imageUrl'] ?? ''));
         $sourceUrl  = trim((string) ($body['sourceUrl'] ?? '')) ?: null;
         $sourceName = trim((string) ($body['sourceName'] ?? '')) ?: null;
         $breaking   = !empty($body['breaking']);
+
+        $source = strtolower(trim((string) ($body['source'] ?? 'worldnews')));
+        $source = $source === 'punch' ? 'punch' : 'worldnews';
+
+        // A scraped listing card carries only a one-line excerpt: the story
+        // itself is on the article page. Fetch it now rather than at browse
+        // time, so the cost is paid once, for the articles actually published.
+        // The listing thumbnail is 299px wide and unusable as a news image, so
+        // the article's own og:image is preferred when there is one.
+        if ($source === 'punch' && $sourceUrl && PunchScraper::isPunchUrl($sourceUrl)) {
+            try {
+                $story = $this->punch->story($sourceUrl);
+
+                if ($articleTxt === '' && $story['body'] !== '') {
+                    $articleTxt = $story['body'];
+                }
+                if (!empty($story['image'])) {
+                    $rawImage = $story['image'];
+                }
+            } catch (RuntimeException) {
+                // Publishing the excerpt with a link back is still useful;
+                // failing the whole approval because the body could not be
+                // fetched would not be.
+            }
+        }
+
+        // Copy the picture into our own storage rather than hotlinking the
+        // publisher. Citizens would otherwise be blocked by the CSP, and the
+        // remote file could vanish at any time.
+        $imageUrl = $this->mirrorImage($rawImage);
 
         // Default to every LGA; a single LGA can be targeted instead.
         $targetAll = !isset($body['lgaId']) || $body['lgaId'] === null || $body['lgaId'] === '';
@@ -147,7 +254,7 @@ class NewsImportController {
             $sourceName,
             $sourceUrl,
             $externalId,
-            'worldnewsapi',
+            $source === 'punch' ? 'punchng' : 'worldnewsapi',
             $auth['adminId'],
         ]);
 
@@ -307,13 +414,19 @@ class NewsImportController {
             $decoded = json_decode($payload, true);
             if (!is_array($decoded)) continue;
 
+            // World News API keeps its own nesting; the scraper stores a flat
+            // list, and a single story row for its own picture.
             foreach (($decoded['top_news'] ?? []) as $cluster) {
                 foreach (($cluster['news'] ?? []) as $item) {
-                    if (!empty($item['image']) && $item['image'] === $url) {
-                        return true;
-                    }
+                    if (!empty($item['image']) && $item['image'] === $url) return true;
                 }
             }
+
+            foreach (($decoded['articles'] ?? []) as $item) {
+                if (!empty($item['image']) && $item['image'] === $url) return true;
+            }
+
+            if (!empty($decoded['image']) && $decoded['image'] === $url) return true;
         }
 
         return false;

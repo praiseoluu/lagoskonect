@@ -2,22 +2,30 @@
  * Lagos Konect — Import News (admin)
  * Route: /admin/news/import
  * ============================================================
- * Review queue for articles pulled from World News API.
+ * Review queue for articles pulled in from outside.
+ *
+ * Two sources feed the same queue:
+ *
+ *   Punch      scraped from a punchng.com topic archive. Free, so it is the
+ *              default and there is no allowance to watch.
+ *   World News API   metered against a small free-tier daily allowance, so
+ *              results are cached per country and date and only "Force
+ *              refresh" spends a call.
  *
  * Nothing here is public. Fetched articles are shown for review only, and an
  * article becomes visible to citizens exactly when an admin presses Publish on
  * it. Dismiss hides an article from later fetches.
  *
- * The provider is on a free tier with a small daily allowance, so results are
- * cached server-side per country and date. Changing the filters reads from
- * cache; only "Force refresh" spends a call.
+ * A scraped card carries only the headline and Punch's own excerpt. The full
+ * story is fetched separately — by Preview, or automatically at publish — so
+ * loading the queue is one request rather than one per article.
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260805c';
-import { api } from '../../../api/client.js?v=20260805c';
-import { BASE_URL } from '../../../api/_fetch.js?v=20260805c';
-import { formatDateTime } from '../../../utils/date.js?v=20260805c';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806a';
+import { api } from '../../../api/client.js?v=20260806a';
+import { BASE_URL } from '../../../api/_fetch.js?v=20260806a';
+import { formatDateTime } from '../../../utils/date.js?v=20260806a';
 
 const COUNTRIES = [
   { code: 'ng', label: 'Nigeria' },
@@ -33,18 +41,31 @@ const CATEGORIES = ['General', 'Politics', 'Business', 'Sports', 'Technology', '
 const ICON_CHECK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 const ICON_X = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 const ICON_LINK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+const ICON_EYE = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+// Mirrors PunchScraper::TOPICS. Replaced by the server's own list as soon as
+// the quota call returns, so the two cannot drift apart for long.
+const FALLBACK_TOPICS = [
+  { label: 'BBNaija S11', url: 'https://punchng.com/topics/entertainment/bbnaija-11/' },
+];
 
 export default class NewsImportPage extends AdminLayout {
-  static styles = '/pages/admin/app/NewsImport.css?v=20260805c';
+  static styles = '/pages/admin/app/NewsImport.css?v=20260806a';
 
   constructor(props) {
     super({ title: 'Import News', ...props });
     this._articles = [];
     this._quota    = null;
     this._meta     = null;
+    // Punch by default: it costs nothing, where every World News fetch eats
+    // into a daily allowance of twenty.
+    this._source   = 'punch';
+    this._topics   = FALLBACK_TOPICS;
+    this._topic    = FALLBACK_TOPICS[0].url;
     this._country  = 'ng';
     this._date     = new Date().toISOString().slice(0, 10);
     this._showHandled = false;
+    this._stories  = {};   // externalId -> fetched full story
   }
 
   getContent() {
@@ -52,15 +73,49 @@ export default class NewsImportPage extends AdminLayout {
   }
 
   async onContentReady() {
+    this._bindActions();
     this._renderShell();
+
+    // Costs nothing upstream — it only reads the local budget row and the
+    // topic list. Done before the first fetch so the topic dropdown is
+    // already correct.
+    const meta = await api.newsImport.quota();
+    if (!meta.error && meta.data?.topics?.length) {
+      this._topics = meta.data.topics;
+      if (!this._topics.some(t => t.url === this._topic)) {
+        this._topic = this._topics[0].url;
+      }
+      this._renderShell();
+    }
+
     await this._load(false);
   }
 
   /* ── Shell ──────────────────────────────────────────────────────────── */
 
+  /**
+   * Card actions, bound once for the life of the page.
+   *
+   * Deliberately not inside _renderShell: that now runs again whenever the
+   * topic list arrives or the source changes, and delegate() adds a fresh
+   * listener every time it is called. Re-binding there would mean one click on
+   * Publish firing two or three approvals.
+   *
+   * Safe to bind before the shell exists, because these are delegated from
+   * this.el and the controls live inside it.
+   */
+  _bindActions() {
+    this.delegate('[data-approve]', 'click', (e, btn) => this._approve(btn.dataset.approve, btn));
+    this.delegate('[data-dismiss]', 'click', (e, btn) => this._dismiss(btn.dataset.dismiss));
+    this.delegate('[data-restore]', 'click', (e, btn) => this._restore(btn.dataset.restore));
+    this.delegate('[data-preview]', 'click', (e, btn) => this._preview(btn.dataset.preview, btn));
+  }
+
   _renderShell() {
     const root = this.getContentEl()?.querySelector('#ni-root');
     if (!root) return;
+
+    const isPunch = this._source === 'punch';
 
     root.innerHTML = `
       <header class="ni-header">
@@ -68,7 +123,9 @@ export default class NewsImportPage extends AdminLayout {
           <p class="ni-eyebrow">News Desk</p>
           <h1 class="ni-title">Import News</h1>
           <p class="ni-sub">
-            Review stories from World News API. Nothing reaches citizens until you publish it.
+            ${isPunch
+              ? 'Pull the latest stories from a Punch topic. Nothing reaches citizens until you publish it.'
+              : 'Review stories from World News API. Nothing reaches citizens until you publish it.'}
           </p>
         </div>
         <div class="ni-quota" id="ni-quota"></div>
@@ -76,23 +133,46 @@ export default class NewsImportPage extends AdminLayout {
 
       <div class="ni-controls">
         <label class="ni-field">
-          <span class="ni-field__label">Country</span>
-          <select class="ni-select" id="ni-country">
-            ${COUNTRIES.map(c => `
-              <option value="${c.code}" ${c.code === this._country ? 'selected' : ''}>${c.label}</option>
-            `).join('')}
+          <span class="ni-field__label">Source</span>
+          <select class="ni-select" id="ni-source">
+            <option value="punch" ${isPunch ? 'selected' : ''}>Punch (free)</option>
+            <option value="worldnews" ${isPunch ? '' : 'selected'}>World News API</option>
           </select>
         </label>
 
-        <label class="ni-field">
-          <span class="ni-field__label">Date</span>
-          <input type="date" class="ni-input" id="ni-date"
-                 value="${this._date}" max="${new Date().toISOString().slice(0, 10)}" />
-        </label>
+        ${isPunch ? `
+          <label class="ni-field ni-field--wide">
+            <span class="ni-field__label">Topic</span>
+            <select class="ni-select" id="ni-topic">
+              ${this._topics.map(t => `
+                <option value="${this.esc(t.url)}" ${t.url === this._topic ? 'selected' : ''}>${this.esc(t.label)}</option>
+              `).join('')}
+            </select>
+          </label>
+        ` : `
+          <label class="ni-field">
+            <span class="ni-field__label">Country</span>
+            <select class="ni-select" id="ni-country">
+              ${COUNTRIES.map(c => `
+                <option value="${c.code}" ${c.code === this._country ? 'selected' : ''}>${c.label}</option>
+              `).join('')}
+            </select>
+          </label>
 
-        <button class="ni-btn ni-btn--primary" id="ni-fetch" type="button">Load stories</button>
+          <label class="ni-field">
+            <span class="ni-field__label">Date</span>
+            <input type="date" class="ni-input" id="ni-date"
+                   value="${this._date}" max="${new Date().toISOString().slice(0, 10)}" />
+          </label>
+        `}
+
+        <button class="ni-btn ni-btn--primary" id="ni-fetch" type="button">
+          ${isPunch ? 'Get latest news' : 'Load stories'}
+        </button>
         <button class="ni-btn" id="ni-refresh" type="button"
-                title="Ignores the cache and spends one API call">Force refresh</button>
+                title="${isPunch
+                  ? 'Ignores the cache and re-reads the topic page'
+                  : 'Ignores the cache and spends one API call'}">Force refresh</button>
 
         <label class="ni-toggle">
           <input type="checkbox" id="ni-show-handled" ${this._showHandled ? 'checked' : ''} />
@@ -104,6 +184,19 @@ export default class NewsImportPage extends AdminLayout {
       <div class="ni-list" id="ni-list"></div>
     `;
 
+    // Switching source changes which filters exist, so the shell is rebuilt
+    // and the old results cleared — they belong to the other source.
+    root.querySelector('#ni-source')?.addEventListener('change', (e) => {
+      this._source   = e.target.value;
+      this._articles = [];
+      this._meta     = null;
+      this._renderShell();
+      this._load(false);
+    });
+
+    root.querySelector('#ni-topic')?.addEventListener('change', (e) => {
+      this._topic = e.target.value;
+    });
     root.querySelector('#ni-country')?.addEventListener('change', (e) => {
       this._country = e.target.value;
     });
@@ -116,10 +209,6 @@ export default class NewsImportPage extends AdminLayout {
       this._showHandled = e.target.checked;
       this._renderList();
     });
-
-    this.delegate('[data-approve]', 'click', (e, btn) => this._approve(btn.dataset.approve, btn));
-    this.delegate('[data-dismiss]', 'click', (e, btn) => this._dismiss(btn.dataset.dismiss));
-    this.delegate('[data-restore]', 'click', (e, btn) => this._restore(btn.dataset.restore));
   }
 
   /* ── Data ───────────────────────────────────────────────────────────── */
@@ -130,6 +219,8 @@ export default class NewsImportPage extends AdminLayout {
     if (listEl) listEl.innerHTML = `<div class="ni-empty">Loading stories…</div>`;
 
     const res = await api.newsImport.feed({
+      source:  this._source,
+      topic:   this._topic,
       country: this._country,
       date:    this._date,
       refresh,
@@ -156,7 +247,10 @@ export default class NewsImportPage extends AdminLayout {
 
   _renderQuota() {
     const el = this.getContentEl()?.querySelector('#ni-quota');
-    if (!el || !this._quota) return;
+    if (!el) return;
+
+    // Scraping is not metered, so there is no figure to show.
+    if (!this._quota) { el.innerHTML = ''; return; }
 
     const { remaining, dailyLimit } = this._quota;
     const low = remaining <= 3;
@@ -171,11 +265,15 @@ export default class NewsImportPage extends AdminLayout {
     const el = this.getContentEl()?.querySelector('#ni-meta');
     if (!el || !this._meta) return;
 
+    const cost = this._source === 'punch'
+      ? 'Scraped from Punch — free, no allowance used.'
+      : 'One API call was used.';
+
     el.innerHTML = this._meta.cached
       ? `<span class="ni-badge ni-badge--cached">From cache</span>
-         <span>Fetched ${this.esc(formatDateTime(this._meta.fetchedAt))}. No API call was used.</span>`
+         <span>Fetched ${this.esc(formatDateTime(this._meta.fetchedAt))}. Nothing was re-fetched.</span>`
       : `<span class="ni-badge ni-badge--live">Fresh</span>
-         <span>Fetched just now. One API call was used.</span>`;
+         <span>Fetched just now. ${cost}</span>`;
   }
 
   _visible() {
@@ -214,16 +312,36 @@ export default class NewsImportPage extends AdminLayout {
   _card(a) {
     const state = a.isImported ? 'published' : a.isDismissed ? 'dismissed' : 'pending';
 
+    // A scraped card holds only Punch's excerpt; the story is fetched on
+    // demand. Offering a read before publishing matters more here than for the
+    // API source, where the full text already arrives with the feed.
+    const preview = a.needsBody && !this._stories[a.externalId]
+      ? `<button class="ni-btn ni-btn--ghost" data-preview="${this.esc(a.externalId)}">
+           ${ICON_EYE} Preview full story
+         </button>`
+      : '';
+
     const actions = state === 'pending'
       ? `<button class="ni-btn ni-btn--approve" data-approve="${this.esc(a.externalId)}">
            ${ICON_CHECK} Publish
          </button>
+         ${preview}
          <button class="ni-btn ni-btn--dismiss" data-dismiss="${this.esc(a.externalId)}">
            ${ICON_X} Dismiss
          </button>`
       : state === 'dismissed'
         ? `<button class="ni-btn" data-restore="${this.esc(a.externalId)}">Restore</button>`
         : `<span class="ni-state ni-state--published">${ICON_CHECK} Published</span>`;
+
+    const story = this._stories[a.externalId];
+    const storyHtml = story
+      ? `<div class="ni-card__story">
+           <p class="ni-card__story-meta">
+             ${story.wordCount} words${story.author ? ` &middot; ${this.esc(story.author)}` : ''}
+           </p>
+           ${story.body.split('\n\n').map(p => `<p>${this.esc(p)}</p>`).join('')}
+         </div>`
+      : '';
 
     // Article images come from arbitrary news domains, which the site's CSP
     // (img-src 'self' plus a short allowlist) blocks outright. Routing them
@@ -251,6 +369,7 @@ export default class NewsImportPage extends AdminLayout {
 
           <h2 class="ni-card__title">${this.esc(a.title)}</h2>
           <p class="ni-card__summary">${this.esc((a.summary || a.text || '').slice(0, 320))}</p>
+          ${storyHtml}
 
           <div class="ni-card__row">
             <label class="ni-field ni-field--inline">
@@ -290,11 +409,18 @@ export default class NewsImportPage extends AdminLayout {
 
     if (btn) { btn.disabled = true; btn.textContent = 'Publishing…'; }
 
+    // Leave `body` empty for a scraped card that has not been previewed: the
+    // server then fetches the article itself rather than publishing a
+    // one-line excerpt as though it were the whole story.
+    const fetched = this._stories[externalId];
+    const body = fetched?.body || a.text || (a.needsBody ? '' : a.summary || '');
+
     const res = await api.newsImport.approve({
       externalId,
+      source:     this._source,
       title:      a.title,
       summary:    a.summary || '',
-      body:       a.text || a.summary || '',
+      body,
       imageUrl:   a.image || '',
       sourceUrl:  a.url || '',
       sourceName: a.sourceName || '',
@@ -311,6 +437,39 @@ export default class NewsImportPage extends AdminLayout {
     a.isImported = true;
     a.newsId     = res.data.newsId;
     showToast('success', 'Published. Citizens can see it now.');
+    this._renderList();
+  }
+
+  /**
+   * Fetches one scraped article's full text so it can be read before it is
+   * published. Cached server-side for a month, so a second look is free.
+   */
+  async _preview(externalId, btn) {
+    const a = this._articles.find(x => x.externalId === externalId);
+    if (!a?.url) return;
+
+    if (btn) { btn.disabled = true; btn.textContent = 'Fetching…'; }
+
+    const res = await api.newsImport.story(a.url);
+
+    if (res.error) {
+      showToast('error', res.error.message || 'Could not fetch that story.');
+      if (btn) { btn.disabled = false; btn.innerHTML = `${ICON_EYE} Preview full story`; }
+      return;
+    }
+
+    if (!res.data.body) {
+      showToast('info', 'That page had no readable article text.');
+      if (btn) { btn.disabled = false; btn.innerHTML = `${ICON_EYE} Preview full story`; }
+      return;
+    }
+
+    this._stories[externalId] = res.data;
+
+    // The full-size picture from the article beats the listing thumbnail,
+    // which Punch serves at 299px.
+    if (res.data.image) a.image = res.data.image;
+
     this._renderList();
   }
 
