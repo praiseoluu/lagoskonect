@@ -35,6 +35,17 @@ const DEMO_USER_PREFIX = 'zzdemo_';
 const DEMO_EMAIL_HOST  = 'demo.invalid';
 const DEMO_TAG         = '[DEMO]';
 
+/**
+ * The prefix as a LIKE pattern, with the underscore escaped.
+ *
+ * In LIKE, `_` matches any single character, so a bare 'zzdemo_%' would also
+ * match a real account called zzdemoX-anything. That matters in both
+ * directions: it would widen what remove() deletes, and it would wrongly
+ * exclude a real user from the "nothing real was touched" counts that are the
+ * whole safety argument for this script.
+ */
+const DEMO_LIKE = 'zzdemo\\_%';
+
 $db  = Database::connect();
 $cmd = $argv[1] ?? 'status';
 
@@ -45,7 +56,7 @@ function realCounts(PDO $db): array {
 
     return [
         'users'    => (int) $db->query(
-            "SELECT COUNT(*) FROM users WHERE username NOT LIKE '" . DEMO_USER_PREFIX . "%'"
+            "SELECT COUNT(*) FROM users WHERE username NOT LIKE '" . DEMO_LIKE . "'"
         )->fetchColumn(),
         'requests' => (int) $db->query("SELECT COUNT(*) FROM withdrawal_requests WHERE {$not}")->fetchColumn(),
         'paidSum'  => (float) $db->query(
@@ -56,7 +67,7 @@ function realCounts(PDO $db): array {
 
 function demoUserIds(PDO $db): array {
     return array_map('intval', $db->query(
-        "SELECT id FROM users WHERE username LIKE '" . DEMO_USER_PREFIX . "%'"
+        "SELECT id FROM users WHERE username LIKE '" . DEMO_LIKE . "'"
     )->fetchAll(PDO::FETCH_COLUMN));
 }
 
