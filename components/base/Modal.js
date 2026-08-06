@@ -39,7 +39,7 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806b';
+import { Component } from '../../core/component.js?v=20260806c';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
 
@@ -74,7 +74,7 @@ const VALID_SIZES = Object.freeze(['sm', 'md', 'lg', 'xl', 'full']);
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class Modal extends Component {
-  static styles = '/components/base/Modal.css?v=20260806b';
+  static styles = '/components/base/Modal.css?v=20260806c';
 
   constructor(props = {}) {
     super({

@@ -90,15 +90,7 @@ class AuthController {
         $this->db->prepare('UPDATE users SET last_seen_at = NOW() WHERE id = ?')
                  ->execute([$user['id']]);
 
-        // New sign-in notification (respects user preference)
-        NotificationService::send($this->db, $user['id'], [
-            'category'    => 'Security Alert',
-            'priority'    => 'high',
-            'title'       => 'New sign-in to your account',
-            'body'        => 'Your Lagos Konect account was just signed in. If this wasn\'t you, change your password immediately.',
-            'linkTo'      => '/settings',
-            'templateKey' => 'notifTemplates.newSignIn',
-        ], 'notif_new_login');
+        $this->noteSignIn((int) $user['id']);
 
         // Check if admin-created account requiring password change
         $mustChange = (bool) ($user['must_change_password'] ?? false);
@@ -586,6 +578,110 @@ class AuthController {
             "DELETE FROM auth_attempts WHERE identifier = ? AND attempt_type = ?"
         );
         $stmt->execute([$identifier, $type]);
+    }
+
+    /**
+     * Records a sign-in, and alerts the citizen only when it came from a
+     * device this account has not been seen on before.
+     *
+     * This used to fire on every login, so the notification list filled with
+     * identical "New sign-in to your account" security warnings for the
+     * ordinary act of logging in. An alert that fires when nothing is wrong
+     * trains people to ignore it, which costs you the one time it matters.
+     *
+     * The device is matched on the user agent alone, hashed and salted per
+     * user. The IP address is recorded for display but deliberately not
+     * matched on: mobile networks reassign addresses constantly, so including
+     * it would mark almost every login as new and recreate the problem.
+     *
+     * The first device ever seen is recorded silently. That is the one they
+     * are holding while they sign up, and warning someone about themselves at
+     * the moment they join is noise, not security.
+     */
+    private function noteSignIn(int $userId): void {
+        $agent = substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 400);
+        $ip    = $_SERVER['REMOTE_ADDR'] ?? null;
+        $hash  = hash('sha256', $userId . '|' . $agent);
+
+        try {
+            // Both reads happen before the insert below: afterwards the new
+            // row would itself count as prior history and no first-time device
+            // would ever be silent.
+            $seen = $this->db->prepare('
+                SELECT
+                    COUNT(*)                                        AS devices,
+                    SUM(CASE WHEN device_hash = ? THEN 1 ELSE 0 END) AS this_one
+                  FROM user_devices
+                 WHERE user_id = ?
+            ');
+            $seen->execute([$hash, $userId]);
+            $row = $seen->fetch() ?: ['devices' => 0, 'this_one' => 0];
+
+            $isKnownDevice = ((int) $row['this_one']) > 0;
+            $hasHistory    = ((int) $row['devices'])  > 0;
+
+            $this->db->prepare('
+                INSERT INTO user_devices (user_id, device_hash, user_agent, label, last_ip)
+                VALUES (?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE last_seen_at = NOW(), last_ip = VALUES(last_ip)
+            ')->execute([$userId, $hash, $agent, $this->describeDevice($agent), $ip]);
+
+            if ($isKnownDevice || !$hasHistory) return;
+
+        } catch (Throwable) {
+            // The table may not exist yet on an un-migrated deployment. Losing
+            // the alert is far better than blocking a login over it.
+            return;
+        }
+
+        NotificationService::send($this->db, $userId, [
+            'category'    => 'Security Alert',
+            'priority'    => 'high',
+            'title'       => 'New sign-in from a new device',
+            'body'        => 'Your Lagos Konect account was just signed in on '
+                           . $this->describeDevice($agent)
+                           . '. If this wasn\'t you, change your password immediately.',
+            'linkTo'      => '/settings',
+            'templateKey' => 'notifTemplates.newSignIn',
+        ], 'notif_new_login');
+    }
+
+    /**
+     * A short human label for a user agent, e.g. "Chrome on Android".
+     *
+     * Only for showing someone where a sign-in came from — never for matching,
+     * since two different devices can easily produce the same label.
+     */
+    private function describeDevice(string $agent): string {
+        if ($agent === '') return 'an unrecognised device';
+
+        $browser = 'a browser';
+        // Order matters: Edge and Opera both carry "Chrome" in their agent
+        // string, and Chrome carries "Safari", so the specific names first.
+        foreach ([
+            'Edg'     => 'Edge',
+            'OPR'     => 'Opera',
+            'SamsungBrowser' => 'Samsung Internet',
+            'Firefox' => 'Firefox',
+            'Chrome'  => 'Chrome',
+            'Safari'  => 'Safari',
+        ] as $needle => $name) {
+            if (str_contains($agent, $needle)) { $browser = $name; break; }
+        }
+
+        $os = '';
+        foreach ([
+            'Android'   => 'Android',
+            'iPhone'    => 'iPhone',
+            'iPad'      => 'iPad',
+            'Windows'   => 'Windows',
+            'Mac OS X'  => 'Mac',
+            'Linux'     => 'Linux',
+        ] as $needle => $name) {
+            if (str_contains($agent, $needle)) { $os = $name; break; }
+        }
+
+        return $os === '' ? $browser : "{$browser} on {$os}";
     }
 
     private function resolveAvatarUrl(?string $storedUrl): ?string {

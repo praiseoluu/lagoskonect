@@ -2,7 +2,7 @@
  * Lagos Konect — Welcome Page (East)
  * Route: /east/welcome → /east/home
  */
-import Onboarding from '../../../components/onboarding/Onboarding.js?v=20260806b';
+import Onboarding from '../../../components/onboarding/Onboarding.js?v=20260806c';
 
 export default class WelcomePage extends Onboarding {
   constructor(props) {

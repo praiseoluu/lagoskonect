@@ -4,12 +4,12 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806b';
-import { Input }       from '../../../components/base/Input.js?v=20260806b';
-import { Button }      from '../../../components/base/Button.js?v=20260806b';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806b';
-import { router }      from '../../../core/router.js?v=20260806b';
-import { api }         from '../../../api/client.js?v=20260806b';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806c';
+import { Input }       from '../../../components/base/Input.js?v=20260806c';
+import { Button }      from '../../../components/base/Button.js?v=20260806c';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806c';
+import { router }      from '../../../core/router.js?v=20260806c';
+import { api }         from '../../../api/client.js?v=20260806c';
 
 const UPLOAD_SVG = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>';
 const LOCK_SVG   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
@@ -17,7 +17,7 @@ const TRASH_SVG  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" 
 const INFO_SVG   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
 
 export default class AdminAdvertFormPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminAdvertForm.css?v=20260806b';
+  static styles = '/pages/admin/app/AdminAdvertForm.css?v=20260806c';
 
   constructor(props) {
     const isEdit = !!props.params?.id;

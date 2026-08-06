@@ -19,12 +19,12 @@
  *  ✅ Single-emoji text rendered as large sticker
  */
 
-import { WebLayout }                        from '../../../components/layout/BaseLayout.js?v=20260806b';
-import { Avatar }                           from '../../../components/base/UI.js?v=20260806b';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806b';
-import { api }                              from '../../../api/client.js?v=20260806b';
-import { sseClient }                        from '../../../core/sseClient.js?v=20260806b';
-import { t }                                from '../../../core/i18n.js?v=20260806b';
+import { WebLayout }                        from '../../../components/layout/BaseLayout.js?v=20260806c';
+import { Avatar }                           from '../../../components/base/UI.js?v=20260806c';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806c';
+import { api }                              from '../../../api/client.js?v=20260806c';
+import { sseClient }                        from '../../../core/sseClient.js?v=20260806c';
+import { t }                                from '../../../core/i18n.js?v=20260806c';
 
 // ══════════════════════════════════════════════════════════════════════════
 // Constants
@@ -159,7 +159,7 @@ function fileExtBadge(name = '') {
 // ══════════════════════════════════════════════════════════════════════════
 
 export default class SharedChatPage extends WebLayout {
-    static styles = '/pages/web/app/Chat.css?v=20260806b';
+    static styles = '/pages/web/app/Chat.css?v=20260806c';
 
     /** Override in subclasses: return the profile URL for a given username. */
     _profileUrl(username) { return `/u/${encodeURIComponent(username)}`; }
@@ -1130,6 +1130,8 @@ export default class SharedChatPage extends WebLayout {
             this._openContextMenu(msgEl.dataset.msgId, e.clientX, e.clientY);
         });
 
+        if (chatBody) this._bindSwipeToReply(chatBody);
+
         // Hover action bar "more" button → context menu
         this.delegate('[data-ctx-msg-id]', 'click', (e, btn) => {
             e.stopPropagation();
@@ -1752,6 +1754,104 @@ export default class SharedChatPage extends WebLayout {
         if (grid)    { grid.setAttribute('inert', ''); grid.classList.remove('chat-context-menu__emoji-grid--open'); }
         if (ctxMore) ctxMore.setAttribute('aria-expanded', 'false');
         this._contextTarget = null;
+    }
+
+    /**
+     * Swipe a message to the right to reply to it.
+     *
+     * On a phone the only way to reply was a long press to open the context
+     * menu and then a tap — two deliberate steps for the single most common
+     * action in a group chat. Swiping is what people already try, because it
+     * is what every other messaging app does.
+     *
+     * Bound once to the scroll container rather than to each message: the list
+     * repaints on every incoming message, and per-message listeners would be
+     * re-attached constantly and leak.
+     *
+     * The hard part is not stealing vertical scrolling. A gesture only becomes
+     * a swipe once it has travelled further horizontally than vertically and
+     * cleared a small deadzone; until then the browser keeps the touch and
+     * scrolling behaves normally. Once claimed, it stays claimed for that
+     * gesture, so a slightly diagonal drag does not flip back and forth.
+     */
+    _bindSwipeToReply(chatBody) {
+        const DEADZONE  = 12;    // px before a gesture is judged at all
+        const THRESHOLD = 64;    // px of travel that commits to a reply
+        const MAX_PULL  = 88;    // px the bubble can move, for resistance
+
+        let msgEl = null, startX = 0, startY = 0, dx = 0;
+        let claimed = false, rejected = false;
+
+        const reset = (animate) => {
+            if (msgEl) {
+                if (animate) msgEl.classList.add('chat-msg--swipe-return');
+                msgEl.style.removeProperty('transform');
+                msgEl.classList.remove('chat-msg--swiping', 'chat-msg--swipe-ready');
+                const el = msgEl;
+                if (animate) setTimeout(() => el.classList.remove('chat-msg--swipe-return'), 200);
+            }
+            msgEl = null; claimed = false; rejected = false; dx = 0;
+        };
+
+        this.on(chatBody, 'touchstart', (e) => {
+            if (e.touches.length !== 1) return;
+            reset(false);
+
+            const target = e.target.closest('.chat-msg');
+            // Not on a message, or on something the touch belongs to already.
+            if (!target || e.target.closest('a, button, input, textarea, video, audio')) return;
+
+            msgEl  = target;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+
+        this.on(chatBody, 'touchmove', (e) => {
+            if (!msgEl || rejected || e.touches.length !== 1) return;
+
+            dx = e.touches[0].clientX - startX;
+            const dy = e.touches[0].clientY - startY;
+
+            if (!claimed) {
+                if (Math.abs(dx) < DEADZONE && Math.abs(dy) < DEADZONE) return;
+
+                // Mostly vertical, or a leftward drag: this is a scroll, not a
+                // reply. Bow out for the rest of the gesture.
+                if (Math.abs(dy) >= Math.abs(dx) || dx <= 0) { rejected = true; return; }
+
+                claimed = true;
+                msgEl.classList.add('chat-msg--swiping');
+            }
+
+            // Resistance past the commit point, so the bubble cannot be
+            // dragged across the screen and the threshold is felt.
+            const pull = dx > THRESHOLD
+                ? THRESHOLD + Math.min((dx - THRESHOLD) * 0.35, MAX_PULL - THRESHOLD)
+                : dx;
+
+            msgEl.style.transform = `translateX(${pull}px)`;
+            msgEl.classList.toggle('chat-msg--swipe-ready', dx >= THRESHOLD);
+
+            // Only now stop the page scrolling — never before the gesture is
+            // known to be horizontal.
+            if (e.cancelable) e.preventDefault();
+        }, { passive: false });
+
+        const finish = () => {
+            if (msgEl && claimed && dx >= THRESHOLD) {
+                const msg = this._messages.find(m => String(m.id) === String(msgEl.dataset.msgId));
+                if (msg) {
+                    this._setReply(msg);
+                    // A short tick confirms the gesture landed without the
+                    // person having to look away from where their thumb is.
+                    navigator.vibrate?.(12);
+                }
+            }
+            reset(true);
+        };
+
+        this.on(chatBody, 'touchend',    finish, { passive: true });
+        this.on(chatBody, 'touchcancel', () => reset(true), { passive: true });
     }
 
     _handleContextAction(action) {

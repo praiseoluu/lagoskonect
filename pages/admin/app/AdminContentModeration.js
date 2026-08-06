@@ -7,12 +7,12 @@
  * Admin can dismiss (keep live) or take down (pause) each reel.
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806b';
-import { Button }      from '../../../components/base/Button.js?v=20260806b';
-import { Modal }       from '../../../components/base/Modal.js?v=20260806b';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806b';
-import { api }         from '../../../api/client.js?v=20260806b';
-import { timeAgo }     from '../../../utils/date.js?v=20260806b';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806c';
+import { Button }      from '../../../components/base/Button.js?v=20260806c';
+import { Modal }       from '../../../components/base/Modal.js?v=20260806c';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806c';
+import { api }         from '../../../api/client.js?v=20260806c';
+import { timeAgo }     from '../../../utils/date.js?v=20260806c';
 
 const FLAG_SVG  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>';
 const CHECK_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -39,7 +39,7 @@ const TAKEDOWN_REASONS = [
 ];
 
 export default class AdminContentModerationPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminContentModeration.css?v=20260806b';
+  static styles = '/pages/admin/app/AdminContentModeration.css?v=20260806c';
 
   constructor(props) {
     super({
