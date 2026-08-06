@@ -4,15 +4,15 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
-import { Table } from '../../../components/base/Table.js?v=20260805c';
-import { Button } from '../../../components/base/Button.js?v=20260805c';
-import { StatCard } from '../../../components/base/Card.js?v=20260805c';
-import { Modal } from '../../../components/base/Modal.js?v=20260805c';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260805c';
-import { router } from '../../../core/router.js?v=20260805c';
-import { api } from '../../../api/client.js?v=20260805c';
-import { formatDate } from '../../../utils/date.js?v=20260805c';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
+import { Table } from '../../../components/base/Table.js?v=20260806a';
+import { Button } from '../../../components/base/Button.js?v=20260806a';
+import { StatCard } from '../../../components/base/Card.js?v=20260806a';
+import { Modal } from '../../../components/base/Modal.js?v=20260806a';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806a';
+import { router } from '../../../core/router.js?v=20260806a';
+import { api } from '../../../api/client.js?v=20260806a';
+import { formatDate } from '../../../utils/date.js?v=20260806a';
 
 const PLUS_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>';
 const EYE_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -26,7 +26,7 @@ const EYE20_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
 const HEALTH_ICON = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.15"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
 
 export default class AdminReelsPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminReels.css?v=20260805c';
+  static styles = '/pages/admin/app/AdminReels.css?v=20260806a';
 
   constructor(props) {
     super({

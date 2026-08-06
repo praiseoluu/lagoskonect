@@ -82,6 +82,10 @@
 .ni-field { display: flex; flex-direction: column; gap: 4px; }
 .ni-field--inline { flex-direction: row; align-items: center; gap: var(--space-2); }
 
+/* Topic names run long ("Metro Plus", "Entertainment"), so this one is given
+   room to breathe instead of truncating. */
+.ni-field--wide { min-width: 220px; }
+
 .ni-field__label {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
@@ -169,6 +173,19 @@
 .ni-btn--dismiss:hover:not(:disabled) {
   border-color: var(--color-error);
   color: var(--color-error);
+}
+
+/* Reading a story before publishing is a secondary act next to Publish and
+   Dismiss, so it is drawn quieter than either. */
+.ni-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-secondary);
+}
+
+.ni-btn--ghost:hover:not(:disabled) {
+  border-color: var(--color-border-light);
+  color: var(--color-text);
 }
 
 /* ── Meta strip ─────────────────────────────────────────────────────── */
@@ -264,6 +281,36 @@
   font-size: var(--font-size-sm);
   line-height: 1.6;
   color: var(--color-text-secondary);
+}
+
+/* The fetched article, shown in place so the admin reads exactly what
+   publishing would put on the site. Capped and scrollable: a long story would
+   otherwise push every other card off the screen. */
+.ni-card__story {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-light);
+  border-left: 3px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle, rgba(0, 0, 0, 0.02));
+}
+
+.ni-card__story p {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-sm);
+  line-height: 1.65;
+  color: var(--color-text);
+}
+
+.ni-card__story p:last-child { margin-bottom: 0; }
+
+.ni-card__story-meta {
+  font-size: var(--font-size-xs) !important;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .ni-card__row {

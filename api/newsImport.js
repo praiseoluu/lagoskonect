@@ -7,20 +7,38 @@
  * in server/.env and every request here goes through our own backend.
  */
 
-import { _fetch } from './_fetch.js?v=20260805c';
+import { _fetch } from './_fetch.js?v=20260806a';
 
 export const newsImport = {
   /**
-   * Top stories for a country and date, annotated with what has already been
-   * approved or dismissed.
+   * Stories for review, annotated with what has already been approved or
+   * dismissed.
    *
-   * @param {{country?: string, date?: string, refresh?: boolean}} opts
+   * Two sources share this endpoint. `worldnews` is filtered by country and
+   * date and costs a metered API call; `punch` scrapes a topic archive and
+   * costs nothing.
+   *
+   * @param {{source?: 'worldnews'|'punch', country?: string, date?: string,
+   *          topic?: string, pages?: number, refresh?: boolean}} opts
    */
-  async feed({ country = 'ng', date, refresh = false } = {}) {
-    const qs = new URLSearchParams({ country });
-    if (date) qs.set('date', date);
+  async feed({ source = 'worldnews', country = 'ng', date, topic, pages, refresh = false } = {}) {
+    const qs = new URLSearchParams({ source });
+
+    if (source === 'punch') {
+      if (topic) qs.set('topic', topic);
+      if (pages) qs.set('pages', String(pages));
+    } else {
+      qs.set('country', country);
+      if (date) qs.set('date', date);
+    }
+
     if (refresh) qs.set('refresh', '1');
     return await _fetch('GET', '/admin/news/import/feed?' + qs.toString());
+  },
+
+  /** Full text of one scraped article, for preview before publishing. */
+  async story(url) {
+    return await _fetch('GET', '/admin/news/import/story?url=' + encodeURIComponent(url));
   },
 
   /** Remaining daily call budget, without spending one. */

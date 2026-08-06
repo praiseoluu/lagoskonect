@@ -5,7 +5,7 @@
  * Admin:   work the payout queue and confirm transfers.
  */
 
-import { _fetch } from './_fetch.js?v=20260805c';
+import { _fetch } from './_fetch.js?v=20260806a';
 
 export const withdrawals = {
   /** Balance, saved account and any request still awaiting approval. */

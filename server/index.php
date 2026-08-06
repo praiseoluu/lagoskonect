@@ -36,6 +36,7 @@ require_once __DIR__ . '/controllers/AdminAnalyticsController.php';
 require_once __DIR__ . '/controllers/AdminUserController.php';
 require_once __DIR__ . '/controllers/AdminNewsController.php';
 require_once __DIR__ . '/utils/WorldNewsService.php';
+require_once __DIR__ . '/utils/PunchScraper.php';
 require_once __DIR__ . '/controllers/NewsImportController.php';
 require_once __DIR__ . '/controllers/AdminReelController.php';
 require_once __DIR__ . '/controllers/ModerationController.php';
@@ -430,6 +431,11 @@ try {
 
     } elseif ($path === '/admin/news/import/quota' && $method === 'GET') {
         (new NewsImportController())->quota();
+
+    // Full text of one scraped article, fetched on demand so browsing the
+    // review queue stays a single upstream request.
+    } elseif ($path === '/admin/news/import/story' && $method === 'GET') {
+        (new NewsImportController())->story();
 
     // Image proxy. Unauthenticated by necessity (an <img> cannot send a
     // Bearer header); it only serves URLs already present in the feed cache.

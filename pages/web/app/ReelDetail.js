@@ -4,13 +4,13 @@
  * Guards: requireAuth + requireCitizen
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
-import { Avatar } from '../../../components/base/UI.js?v=20260805c';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260805c';
-import { router } from '../../../core/router.js?v=20260805c';
-import { api } from '../../../api/client.js?v=20260805c';
-import { timeAgo } from '../../../utils/date.js?v=20260805c';
-import { t } from '../../../core/i18n.js?v=20260805c';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
+import { Avatar } from '../../../components/base/UI.js?v=20260806a';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806a';
+import { router } from '../../../core/router.js?v=20260806a';
+import { api } from '../../../api/client.js?v=20260806a';
+import { timeAgo } from '../../../utils/date.js?v=20260806a';
+import { t } from '../../../core/i18n.js?v=20260806a';
 
 function formatCount(n) {
   if (!n) return '0';
@@ -33,7 +33,7 @@ const REPORT_REASONS = [
 ];
 
 export default class ReelDetailPage extends WebLayout {
-  static styles = '/pages/web/app/ReelDetail.css?v=20260805c';
+  static styles = '/pages/web/app/ReelDetail.css?v=20260806a';
 
   constructor(props) {
     super({ title: t('reelDetail.title'), ...props });

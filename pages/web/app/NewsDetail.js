@@ -11,17 +11,17 @@
  *   5. Source link
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
-import { Badge } from '../../../components/base/Badge.js?v=20260805c';
-import { setPageLoading } from '../../../core/store.js?v=20260805c';
-import { router } from '../../../core/router.js?v=20260805c';
-import { api } from '../../../api/client.js?v=20260805c';
-import { formatDate } from '../../../utils/date.js?v=20260805c';
-import { t, getLanguage } from '../../../core/i18n.js?v=20260805c';
-import { translateArticleFull, needsTranslation, LANG_LABEL, FULL_SUPPORT } from '../../../utils/translator.js?v=20260805c';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
+import { Badge } from '../../../components/base/Badge.js?v=20260806a';
+import { setPageLoading } from '../../../core/store.js?v=20260806a';
+import { router } from '../../../core/router.js?v=20260806a';
+import { api } from '../../../api/client.js?v=20260806a';
+import { formatDate } from '../../../utils/date.js?v=20260806a';
+import { t, getLanguage } from '../../../core/i18n.js?v=20260806a';
+import { translateArticleFull, needsTranslation, LANG_LABEL, FULL_SUPPORT } from '../../../utils/translator.js?v=20260806a';
 
 export default class NewsDetailPage extends WebLayout {
-  static styles = '/pages/web/app/NewsDetail.css?v=20260805c';
+  static styles = '/pages/web/app/NewsDetail.css?v=20260806a';
   static dependencies = ['/components/base/Badge.css']
 
   constructor(props) {

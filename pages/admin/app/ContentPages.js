@@ -4,17 +4,17 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
-import { Table } from '../../../components/base/Table.js?v=20260805c';
-import { Modal } from '../../../components/base/Modal.js?v=20260805c';
-import { Input } from '../../../components/base/Input.js?v=20260805c';
-import { Button } from '../../../components/base/Button.js?v=20260805c';
-import { Badge } from '../../../components/base/Badge.js?v=20260805c';
-import { Dropdown } from '../../../components/base/Forms.js?v=20260805c';
-import { FileUpload } from '../../../components/base/Forms.js?v=20260805c';
-import { store, showToast } from '../../../core/store.js?v=20260805c';
-import { api } from '../../../api/client.js?v=20260805c';
-import { formatDate } from '../../../utils/date.js?v=20260805c';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
+import { Table } from '../../../components/base/Table.js?v=20260806a';
+import { Modal } from '../../../components/base/Modal.js?v=20260806a';
+import { Input } from '../../../components/base/Input.js?v=20260806a';
+import { Button } from '../../../components/base/Button.js?v=20260806a';
+import { Badge } from '../../../components/base/Badge.js?v=20260806a';
+import { Dropdown } from '../../../components/base/Forms.js?v=20260806a';
+import { FileUpload } from '../../../components/base/Forms.js?v=20260806a';
+import { store, showToast } from '../../../core/store.js?v=20260806a';
+import { api } from '../../../api/client.js?v=20260806a';
+import { formatDate } from '../../../utils/date.js?v=20260806a';
 
 const EYE_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 const TRASH_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;

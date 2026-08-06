@@ -14,15 +14,15 @@
  * Scrollspy: sidebar highlights the active section as user scrolls.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260805c';
-import { Avatar } from '../../../components/base/UI.js?v=20260805c';
-import { Toggle } from '../../../components/base/UI.js?v=20260805c';
-import { Input } from '../../../components/base/Input.js?v=20260805c';
-import { Button } from '../../../components/base/Button.js?v=20260805c';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260805c';
-import { api } from '../../../api/client.js?v=20260805c';
-import { loadPrefs, saveSession } from '../../../utils/storage.js?v=20260805c';
-import { t, setLanguage, getLanguage, LANGUAGES } from '../../../core/i18n.js?v=20260805c';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
+import { Avatar } from '../../../components/base/UI.js?v=20260806a';
+import { Toggle } from '../../../components/base/UI.js?v=20260806a';
+import { Input } from '../../../components/base/Input.js?v=20260806a';
+import { Button } from '../../../components/base/Button.js?v=20260806a';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806a';
+import { api } from '../../../api/client.js?v=20260806a';
+import { loadPrefs, saveSession } from '../../../utils/storage.js?v=20260806a';
+import { t, setLanguage, getLanguage, LANGUAGES } from '../../../core/i18n.js?v=20260806a';
 
 const LANGS = [
   { code: 'en', label: 'English', native: 'English' },
@@ -39,7 +39,7 @@ const SECTIONS = [
 ];
 
 export default class SettingsPage extends WebLayout {
-  static styles = '/pages/web/app/Settings.css?v=20260805c';
+  static styles = '/pages/web/app/Settings.css?v=20260806a';
 
   constructor(props) {
     super({ title: t('settings.title'), ...props });
@@ -676,7 +676,7 @@ export default class SettingsPage extends WebLayout {
       }
       if (res.data?.avatarUrl) {
         store.currentUser = { ...store.currentUser, avatarUrl: res.data.avatarUrl };
-        const { saveSession } = await import('../../../utils/storage.js?v=20260805c');
+        const { saveSession } = await import('../../../utils/storage.js?v=20260806a');
         const auth = JSON.parse(sessionStorage.getItem('adm_auth') || '{}');
         saveSession({ token: auth.token, role: store.role, user: store.currentUser });
       }
@@ -795,7 +795,7 @@ export default class SettingsPage extends WebLayout {
     const enabled = user?.twoFaEnabled || false;
 
     if (!window._twoFaModal) {
-      const { TwoFactorModal } = await import('../../../components/feature/TwoFactorModal.js?v=20260805c');
+      const { TwoFactorModal } = await import('../../../components/feature/TwoFactorModal.js?v=20260806a');
       window._twoFaModal = new TwoFactorModal();
       await window._twoFaModal.mount(document.body, { append: true });
     }

@@ -9,13 +9,13 @@
  * URLs and server access logs.
  *
  * Usage:
- *   import { startSse, stopSse } from '../utils/sse.js?v=20260805c';
+ *   import { startSse, stopSse } from '../utils/sse.js?v=20260806a';
  *   startSse({ onNotification: (count) => { ... } });
  *   stopSse();
  */
 
-import { BASE_URL } from '../api/_fetch.js?v=20260805c';
-import { api } from '../api/client.js?v=20260805c';
+import { BASE_URL } from '../api/_fetch.js?v=20260806a';
+import { api } from '../api/client.js?v=20260806a';
 
 let _source = null;
 let _retryTimeout = null;
