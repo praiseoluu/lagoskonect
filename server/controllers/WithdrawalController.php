@@ -110,6 +110,17 @@ class WithdrawalController {
             Response::error('NO_PAYOUT_ACCOUNT', 'Add your bank account details before requesting a withdrawal.', 422);
         }
 
+        // Identification is required, not merely encouraged. Enforced here
+        // rather than only in the panel: the UI can be bypassed by calling the
+        // endpoint directly, and this is the gate that money passes through.
+        if (empty($u['id_document_url'])) {
+            Response::error(
+                'NO_IDENTIFICATION',
+                'Upload a means of identification before requesting a withdrawal.',
+                422
+            );
+        }
+
         $openStmt = $this->db->prepare(
             'SELECT id FROM withdrawal_requests WHERE user_id = ? AND status = "pending" LIMIT 1'
         );

@@ -338,3 +338,10 @@
   border-color: var(--color-primary, #068927);
   box-shadow: 0 0 0 3px var(--color-primary-15, rgba(6,137,39,0.15));
 }
+/* Withdrawal blocked pending identification — a requirement, not a hint. */
+.payout__notice--blocked {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  font-weight: var(--font-weight-medium, 500);
+}
