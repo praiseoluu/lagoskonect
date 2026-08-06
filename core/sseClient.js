@@ -26,8 +26,8 @@
  *   sseClient.disconnect();    // logout
  */
 
-import { store, showToast } from '../core/store.js?v=20260806a';
-import { _fetch } from '../api/_fetch.js?v=20260806a';
+import { store, showToast } from '../core/store.js?v=20260806b';
+import { _fetch } from '../api/_fetch.js?v=20260806b';
 
 /** How often to check for new activity while the tab is visible. */
 const POLL_INTERVAL_MS = 12_000;

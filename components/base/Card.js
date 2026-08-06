@@ -27,8 +27,8 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806a';
-import { timeAgo }   from '../../utils/date.js?v=20260806a';
+import { Component } from '../../core/component.js?v=20260806b';
+import { timeAgo }   from '../../utils/date.js?v=20260806b';
 
 /* ── Shared SVG icon constants ──────────────────────────────────────────── */
 
@@ -106,12 +106,42 @@ function onActivationKey(callback) {
   };
 }
 
+/* ── Image failure ──────────────────────────────────────────────────────── */
+
+/**
+ * Replaces an <img> with the card's own placeholder markup if it fails to load.
+ *
+ * Without this the browser draws its broken-image glyph and the alt text, which
+ * looks like a defect rather than a missing picture — and on a card whose alt
+ * is the headline, it renders the title twice.
+ *
+ * Bound as a listener rather than an inline onerror attribute: the site's CSP
+ * sets script-src without 'unsafe-inline', so inline handlers never run.
+ *
+ * @param {object} cmp           the component instance (for this.$ and this.on)
+ * @param {string} imgSelector   selector for the image inside the card
+ * @param {string} placeholder   HTML to put in its place
+ */
+function swapInPlaceholderOnError(cmp, imgSelector, placeholder) {
+  const img = cmp.$(imgSelector);
+  if (!img) return;
+
+  const fail = () => img.outerHTML = placeholder;
+
+  // A broken image may already have failed before this runs — the load starts
+  // as soon as the markup is parsed, and afterMount comes later. `complete`
+  // with a zero natural width is how that state reads back.
+  if (img.complete && img.naturalWidth === 0) { fail(); return; }
+
+  cmp.on(img, 'error', fail);
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    Card — base surface container
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class Card extends Component {
-  static styles = '/components/base/Card.css?v=20260806a';
+  static styles = '/components/base/Card.css?v=20260806b';
 
   constructor(props = {}) {
     super({
@@ -171,7 +201,7 @@ export class Card extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class StatCard extends Component {
-  static styles = '/components/base/Card.css?v=20260806a';
+  static styles = '/components/base/Card.css?v=20260806b';
 
   constructor(props = {}) {
     super({
@@ -222,7 +252,7 @@ export class StatCard extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class NewsCard extends Component {
-  static styles = '/components/base/Card.css?v=20260806a';
+  static styles = '/components/base/Card.css?v=20260806b';
 
   constructor(props = {}) {
     super({
@@ -302,6 +332,12 @@ export class NewsCard extends Component {
     const handler = () => this.props.onClick?.(this.props);
     this.on(this.el, 'click',   handler);
     this.on(this.el, 'keydown', onActivationKey(handler));
+
+    swapInPlaceholderOnError(
+      this,
+      '.adm-news-card__img',
+      `<div class="adm-news-card__img-placeholder" aria-hidden="true">${ICON.imagePlaceholder}</div>`
+    );
   }
 }
 
@@ -310,7 +346,7 @@ export class NewsCard extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class ReelCard extends Component {
-  static styles = '/components/base/Card.css?v=20260806a';
+  static styles = '/components/base/Card.css?v=20260806b';
 
   constructor(props = {}) {
     super({
@@ -395,5 +431,11 @@ export class ReelCard extends Component {
     const handler = () => this.props.onClick?.(this.props);
     this.on(this.el, 'click',   handler);
     this.on(this.el, 'keydown', onActivationKey(handler));
+
+    swapInPlaceholderOnError(
+      this,
+      '.adm-reel-card__thumb',
+      '<div class="adm-reel-card__thumb-placeholder" aria-hidden="true"></div>'
+    );
   }
 }

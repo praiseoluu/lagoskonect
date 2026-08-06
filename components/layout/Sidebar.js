@@ -15,11 +15,11 @@
  * @version 2.0.0
  */
 
-import { Component }  from '../../core/component.js?v=20260806a';
-import { Avatar }     from '../base/UI.js?v=20260806a';
-import { store }      from '../../core/store.js?v=20260806a';
-import { router }     from '../../core/router.js?v=20260806a';
-import { t }          from '../../core/i18n.js?v=20260806a';
+import { Component }  from '../../core/component.js?v=20260806b';
+import { Avatar }     from '../base/UI.js?v=20260806b';
+import { store }      from '../../core/store.js?v=20260806b';
+import { router }     from '../../core/router.js?v=20260806b';
+import { t }          from '../../core/i18n.js?v=20260806b';
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 const VALID_REGIONS  = Object.freeze(['west', 'central', 'east']);
@@ -80,7 +80,7 @@ function getBrandName() {
    Base Sidebar
    ══════════════════════════════════════════════════════════════════════════ */
 export class Sidebar extends Component {
-  static styles = '/components/layout/Sidebar.css?v=20260806a';
+  static styles = '/components/layout/Sidebar.css?v=20260806b';
 
   constructor(props = {}) {
     super(props);
@@ -367,9 +367,9 @@ export class WebSidebar extends Sidebar {
     this.delegate('[data-logout]', 'click', async () => {
       try {
         const [{ clearSession }, { showToast }, { sseClient }] = await Promise.all([
-          import('../../utils/storage.js?v=20260806a'),
-          import('../../core/store.js?v=20260806a'),
-          import('../../core/sseClient.js?v=20260806a'),
+          import('../../utils/storage.js?v=20260806b'),
+          import('../../core/store.js?v=20260806b'),
+          import('../../core/sseClient.js?v=20260806b'),
         ]);
         sseClient.disconnect();
         clearSession();
@@ -533,8 +533,8 @@ export class AdminSidebar extends Sidebar {
     this.delegate('[data-logout]', 'click', async () => {
       try {
         const [{ clearSession }, { api }] = await Promise.all([
-          import('../../utils/storage.js?v=20260806a'),
-          import('../../api/client.js?v=20260806a'),
+          import('../../utils/storage.js?v=20260806b'),
+          import('../../api/client.js?v=20260806b'),
         ]);
         await api.auth.adminLogout();
         clearSession();

@@ -670,28 +670,14 @@
 }
 
 @media (max-width: 600px) {
-  .home-page {
-    padding: var(--space-4) var(--space-4) var(--space-10);
-    gap: var(--space-6);
-  }
-
-  .home-carousel__title {
-    font-size: var(--font-size-base);
-  }
-
   .home-ads__track {
     flex-direction: column;
   }
-
-  .home-reel-wrap {
-    width: 160px;
-  }
-
-  .home-carousel__btn {
-    width: 28px;
-    height: 28px;
-  }
 }
+/* Page padding, carousel type, reel width and the carousel buttons used to be
+   set here too. They are handled in the MOBILE section at the end of this
+   file, which supersedes them — kept in one place rather than split across
+   two competing breakpoints. */
 /* ── Full-width carousel when no ads ─────────────────────────────────── */
 .home-top-row--no-ads {
   grid-template-columns: 1fr;
@@ -927,16 +913,156 @@
 }
 .home-interstitial__cta:hover { opacity: 0.88; }
 
-/* ── Mobile-specific upgrades ──────────────────────────────── */
+/* ══════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════
+   The desktop layout is built from side-by-side pairs — title beside hint,
+   caption beside arrows, thumbnail beside text. Below roughly 700px none of
+   those pairs has room, and squeezing them produces the two-word-per-line
+   wrapping and overlapping controls this section exists to remove.
+
+   The rule throughout: at phone widths a pair either stacks or the less
+   important half is dropped. Nothing is merely scaled down.
+   ══════════════════════════════════════════════════════ */
+
 @media (max-width: 768px) {
-  .home-page { padding: var(--space-4) var(--space-4) var(--space-10); gap: var(--space-6); }
+  .home-page {
+    padding: var(--space-4) var(--space-4) var(--space-10);
+    gap: var(--space-6);
+  }
+
   .home-section__title::before { height: 14px; }
   .home-carousel { border-radius: var(--radius-xl); }
-  .home-ad-card { border-radius: var(--radius-lg); }
+  .home-ad-card  { border-radius: var(--radius-lg); }
 }
+
+@media (max-width: 700px) {
+
+  /* ── Section headers ──────────────────────────────────────────────────
+     Title and its trailing link/hint were flexed apart with
+     justify-content: space-between. At this width the title lost so much
+     room that "Quick actions" broke across two lines while the hint sat
+     beside it. The title now gets the full width and the hint moves under
+     it, where it reads as a subtitle instead of a competing column. */
+
+  .home-section__header {
+    flex-wrap: wrap;
+    gap: 2px var(--space-3);
+  }
+
+  .home-section__title {
+    font-size: var(--font-size-lg);
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .home-quick-actions__hint {
+    flex: 1 0 100%;
+    order: 3;
+    /* Line up with the title text, clearing the accent bar and its gap. */
+    padding-left: calc(4px + var(--space-2));
+  }
+
+  /* The "See all" link keeps its place on the title's row. */
+  .home-section__link { flex: 0 0 auto; }
+
+  /* ── Carousel ─────────────────────────────────────────────────────────
+     A 16:9 box at phone width is only ~170px tall, and a three-line
+     headline filled it completely and ran under the prev/next buttons.
+     Taller box, headline capped at two lines, and the arrows dropped —
+     the strip is swipeable and the dots already show position, so they
+     were redundant controls competing for the same space as the text. */
+
+  .home-carousel {
+    padding-top: 72%;
+  }
+
+  .home-carousel__btn { display: none; }
+
+  .home-carousel__caption {
+    padding: var(--space-4);
+    /* Clear the dots and the progress bar along the bottom edge. */
+    padding-bottom: var(--space-6);
+    gap: 2px;
+  }
+
+  .home-carousel__title {
+    font-size: var(--font-size-base);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .home-carousel__meta { font-size: 11px; }
+
+  /* ── Reels ────────────────────────────────────────────────────────────
+     9:16 tiles at 160px are 284px tall, which ate most of the screen for
+     two cards. Sized so a third is part-visible instead, which is what
+     tells someone the row scrolls — the arrows do not, and are a
+     mouse-first control on a touch screen, so they go. */
+
+  .home-reels__arrow { display: none; }
+
+  .home-reels-scroll {
+    /* Bleed to the screen edges so the row reads as scrollable, while the
+       first card stays aligned with the text above it. */
+    margin: 0 calc(-1 * var(--space-4));
+    padding: 0 var(--space-4);
+  }
+
+  .home-reel-wrap { width: 132px; }
+
+  /* ── Recent news ──────────────────────────────────────────────────────
+     The horizontal card gave 140px to the thumbnail, leaving under half
+     the screen for a headline — every title truncated after three words.
+     A shorter, fixed-ratio thumbnail restores the text column. */
+
+  .adm-news-card--horizontal .adm-news-card__media {
+    width: 104px;
+    align-self: stretch;
+  }
+
+  .adm-news-card--horizontal .adm-news-card__content {
+    padding: var(--space-3);
+    gap: 4px;
+  }
+
+  .adm-news-card__title {
+    font-size: var(--font-size-sm);
+    line-height: 1.35;
+  }
+
+  .adm-news-card__summary { display: none; }
+
+  .adm-news-card__meta {
+    gap: var(--space-2);
+    font-size: 11px;
+  }
+}
+
 @media (max-width: 480px) {
-  .home-carousel__title { font-size: var(--font-size-lg); }
+  .home-page { padding: var(--space-3) var(--space-3) var(--space-10); }
+
   .home-community-card { border-radius: var(--radius-xl); }
+
+  .home-reels-scroll {
+    margin: 0 calc(-1 * var(--space-3));
+    padding: 0 var(--space-3);
+  }
+
+  /* Two full tiles plus a sliver of the third, at any phone width. */
+  .home-reel-wrap { width: min(132px, 38vw); }
+
+  .adm-news-card--horizontal .adm-news-card__media { width: 92px; }
+}
+
+/* Coarse pointers have no hover, so the scroll arrows can never be revealed
+   in a useful way — drop them regardless of width (small tablets included). */
+@media (hover: none) and (pointer: coarse) {
+  .home-reels__arrow { display: none; }
 }
 
 /* ══════════════════════════════════════════════════════

@@ -5,7 +5,7 @@
  *  • Voice note recording (MediaRecorder)
  *  • West-region profile URL prefix (/west/u/)
  */
-import SharedChatPage from '../app/SharedChat.js?v=20260806a';
+import SharedChatPage from '../app/SharedChat.js?v=20260806b';
 
 export default class WestChatPage extends SharedChatPage {
   get _hasVoiceNotes() { return true; }

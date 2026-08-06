@@ -12,19 +12,19 @@
  *      Community Chat  — online count, top contributors, Open Community Chat btn
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
-import { NewsCard } from '../../../components/base/Card.js?v=20260806a';
-import { ReelCard } from '../../../components/base/Card.js?v=20260806a';
-import { Avatar } from '../../../components/base/UI.js?v=20260806a';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806a';
-import { router } from '../../../core/router.js?v=20260806a';
-import { api } from '../../../api/client.js?v=20260806a';
-import { timeAgo } from '../../../utils/date.js?v=20260806a';
-import { t, getLanguage } from '../../../core/i18n.js?v=20260806a';
-import { translateArticle, needsTranslation } from '../../../utils/translator.js?v=20260806a';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806b';
+import { NewsCard } from '../../../components/base/Card.js?v=20260806b';
+import { ReelCard } from '../../../components/base/Card.js?v=20260806b';
+import { Avatar } from '../../../components/base/UI.js?v=20260806b';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806b';
+import { router } from '../../../core/router.js?v=20260806b';
+import { api } from '../../../api/client.js?v=20260806b';
+import { timeAgo } from '../../../utils/date.js?v=20260806b';
+import { t, getLanguage } from '../../../core/i18n.js?v=20260806b';
+import { translateArticle, needsTranslation } from '../../../utils/translator.js?v=20260806b';
 
 export default class HomePage extends WebLayout {
-  static styles = '/pages/web/app/Home.css?v=20260806a';
+  static styles = '/pages/web/app/Home.css?v=20260806b';
 
   constructor(props) {
     super({ title: t('home.title'), ...props });
@@ -324,6 +324,7 @@ export default class HomePage extends WebLayout {
 
     this._mountReelCards();
     this._mountNewsCards(recentNews);
+    this._swapBrokenCarouselImages();
     this._bindCarousel(carouselNews.length);
     this._bindReelsScroll();
     this._bindChatBtn();
@@ -332,6 +333,25 @@ export default class HomePage extends WebLayout {
   }
 
   // ── Carousel ──────────────────────────────────────────────────────────
+
+  /**
+   * Falls back to the gradient placeholder when a slide's picture fails.
+   *
+   * The caption sits on a dark gradient over the image. With a broken image the
+   * browser draws its own glyph plus the alt text, so the headline appeared
+   * twice — once as alt text and once as the caption. The placeholder keeps the
+   * slide looking deliberate.
+   */
+  _swapBrokenCarouselImages() {
+    this.getContentEl()?.querySelectorAll('.home-carousel__img').forEach((img) => {
+      const fail = () => {
+        img.outerHTML = '<div class="home-carousel__img-placeholder" aria-hidden="true"></div>';
+      };
+      // May already have failed: loading starts at parse time, this runs later.
+      if (img.complete && img.naturalWidth === 0) fail();
+      else this.on(img, 'error', fail);
+    });
+  }
 
   _bindCarousel(total) {
     if (total < 2) return;

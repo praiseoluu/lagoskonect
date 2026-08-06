@@ -30,17 +30,17 @@
  * @version 2.0.0
  */
 
-import { Component }                    from '../../../core/component.js?v=20260806a';
-import { Input }                        from '../../../components/base/Input.js?v=20260806a';
-import { Button }                       from '../../../components/base/Button.js?v=20260806a';
-import { Dropdown }                     from '../../../components/base/Forms.js?v=20260806a';
-import { AuthLayout }                   from './_AuthLayout.js?v=20260806a';
-import { store, showToast }             from '../../../core/store.js?v=20260806a';
-import { router }                       from '../../../core/router.js?v=20260806a';
-import { api }                          from '../../../api/client.js?v=20260806a';
-import { validateForm, validators }     from '../../../utils/validators.js?v=20260806a';
-import { saveSession }                  from '../../../utils/storage.js?v=20260806a';
-import { t }                            from '../../../core/i18n.js?v=20260806a';
+import { Component }                    from '../../../core/component.js?v=20260806b';
+import { Input }                        from '../../../components/base/Input.js?v=20260806b';
+import { Button }                       from '../../../components/base/Button.js?v=20260806b';
+import { Dropdown }                     from '../../../components/base/Forms.js?v=20260806b';
+import { AuthLayout }                   from './_AuthLayout.js?v=20260806b';
+import { store, showToast }             from '../../../core/store.js?v=20260806b';
+import { router }                       from '../../../core/router.js?v=20260806b';
+import { api }                          from '../../../api/client.js?v=20260806b';
+import { validateForm, validators }     from '../../../utils/validators.js?v=20260806b';
+import { saveSession }                  from '../../../utils/storage.js?v=20260806b';
+import { t }                            from '../../../core/i18n.js?v=20260806b';
 
 /* ── SVG constants ──────────────────────────────────────────────────────── */
 
@@ -95,7 +95,7 @@ const OTP_LENGTH = 6;
    ══════════════════════════════════════════════════════════════════════════ */
 
 export default class SignupPage extends Component {
-  static styles       = '/pages/web/auth/_AuthLayout.css?v=20260806a';
+  static styles       = '/pages/web/auth/_AuthLayout.css?v=20260806b';
   static dependencies = ['/pages/web/auth/Signup.css'];
 
   constructor(props) {

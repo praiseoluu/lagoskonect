@@ -4,12 +4,12 @@
  * Guards: none (public, token-authenticated)
  */
 
-import { Component }   from '../../../core/component.js?v=20260806a';
-import { PublicLayout } from './_PublicLayout.js?v=20260806a';
-import { api }          from '../../../api/client.js?v=20260806a';
+import { Component }   from '../../../core/component.js?v=20260806b';
+import { PublicLayout } from './_PublicLayout.js?v=20260806b';
+import { api }          from '../../../api/client.js?v=20260806b';
 
 export default class NewsletterUnsubscribePage extends Component {
-    static styles       = '/pages/web/auth/_PublicLayout.css?v=20260806a';
+    static styles       = '/pages/web/auth/_PublicLayout.css?v=20260806b';
     static dependencies = ['/pages/web/auth/Landing.css'];
 
     constructor(props) {

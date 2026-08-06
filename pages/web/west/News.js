@@ -6,12 +6,12 @@
  * Falls back to newest article if no headline is set.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806a';
-import { Button } from '../../../components/base/Button.js?v=20260806a';
-import { router } from '../../../core/router.js?v=20260806a';
-import { setPageLoading } from '../../../core/store.js?v=20260806a';
-import { api } from '../../../api/client.js?v=20260806a';
-import { t } from '../../../core/i18n.js?v=20260806a';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806b';
+import { Button } from '../../../components/base/Button.js?v=20260806b';
+import { router } from '../../../core/router.js?v=20260806b';
+import { setPageLoading } from '../../../core/store.js?v=20260806b';
+import { api } from '../../../api/client.js?v=20260806b';
+import { t } from '../../../core/i18n.js?v=20260806b';
 
 function formatDate(iso) {
   if (!iso) return '';
@@ -45,7 +45,7 @@ function stripMarkdown(str) {
 }
 
 export default class NewsPage extends WebLayout {
-  static styles = '/pages/web/app/News.css?v=20260806a';
+  static styles = '/pages/web/app/News.css?v=20260806b';
 
   constructor(props) {
     super({ title: t('news.title'), ...props });

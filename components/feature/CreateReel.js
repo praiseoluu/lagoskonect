@@ -26,11 +26,11 @@
  * @version 2.0.0
  */
 
-import { Component }              from '../../core/component.js?v=20260806a';
-import { Avatar }                 from '../base/UI.js?v=20260806a';
-import { store, showToast }       from '../../core/store.js?v=20260806a';
-import { api }                    from '../../api/client.js?v=20260806a';
-import { extractVideoThumbnail }  from '../../utils/thumbnail.js?v=20260806a';
+import { Component }              from '../../core/component.js?v=20260806b';
+import { Avatar }                 from '../base/UI.js?v=20260806b';
+import { store, showToast }       from '../../core/store.js?v=20260806b';
+import { api }                    from '../../api/client.js?v=20260806b';
+import { extractVideoThumbnail }  from '../../utils/thumbnail.js?v=20260806b';
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 const MAX_CAPTION   = 2200;
@@ -55,7 +55,7 @@ const ICON_SMILE = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" 
    Component
    ══════════════════════════════════════════════════════════════════════════ */
 export class CreateReelModal extends Component {
-  static styles = '/components/feature/CreatePost.css?v=20260806a';
+  static styles = '/components/feature/CreatePost.css?v=20260806b';
 
   constructor(props = {}) {
     super(props);
