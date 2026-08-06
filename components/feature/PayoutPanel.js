@@ -117,7 +117,7 @@ export class PayoutPanel extends Component {
         <div class="payout__id-state ${has ? 'payout__id-state--ok' : 'payout__id-state--missing'}">
           ${has
             ? `<span>${this.esc(id.idType || 'Document')} on file</span> ${preview}`
-            : `<span>No identification uploaded. Payouts may be held until you add one.</span>`}
+            : `<span><strong>Required.</strong> You cannot request a withdrawal until you upload a means of identification.</span>`}
         </div>
 
         <div class="payout__fields">
@@ -197,6 +197,14 @@ export class PayoutPanel extends Component {
 
     if (!d.payoutAccount) {
       return `<div class="payout__notice">Save your bank details above to request a withdrawal.</div>`;
+    }
+
+    // Identification is mandatory. The server rejects a request without it, so
+    // the button is withheld rather than offered and then refused.
+    if (!d.identity?.idDocumentUrl) {
+      return `<div class="payout__notice payout__notice--blocked">
+        Upload a means of identification above before you can request a withdrawal.
+      </div>`;
     }
 
     if (d.availableAmount < d.minWithdrawal) {
