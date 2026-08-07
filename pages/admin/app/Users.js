@@ -4,18 +4,18 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806g';
-import { Table }    from '../../../components/base/Table.js?v=20260806g';
-import { Modal }    from '../../../components/base/Modal.js?v=20260806g';
-import { Input }    from '../../../components/base/Input.js?v=20260806g';
-import { Button }   from '../../../components/base/Button.js?v=20260806g';
-import { Badge }    from '../../../components/base/Badge.js?v=20260806g';
-import { StatCard } from '../../../components/base/Card.js?v=20260806g';
-import { Dropdown } from '../../../components/base/Forms.js?v=20260806g';
-import { Avatar }   from '../../../components/base/UI.js?v=20260806g';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806g';
-import { api }      from '../../../api/client.js?v=20260806g';
-import { formatDate } from '../../../utils/date.js?v=20260806g';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806h';
+import { Table }    from '../../../components/base/Table.js?v=20260806h';
+import { Modal }    from '../../../components/base/Modal.js?v=20260806h';
+import { Input }    from '../../../components/base/Input.js?v=20260806h';
+import { Button }   from '../../../components/base/Button.js?v=20260806h';
+import { Badge }    from '../../../components/base/Badge.js?v=20260806h';
+import { StatCard } from '../../../components/base/Card.js?v=20260806h';
+import { Dropdown } from '../../../components/base/Forms.js?v=20260806h';
+import { Avatar }   from '../../../components/base/UI.js?v=20260806h';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806h';
+import { api }      from '../../../api/client.js?v=20260806h';
+import { formatDate } from '../../../utils/date.js?v=20260806h';
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 const EYE_ICON     = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -29,7 +29,7 @@ const MAP_ICON     = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none
 const CAL_ICON     = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
 
 export default class UsersPage extends AdminLayout {
-  static styles       = '/pages/admin/app/Users.css?v=20260806g';
+  static styles       = '/pages/admin/app/Users.css?v=20260806h';
   static dependencies = ['/components/base/Badge.css'];
 
   constructor(props) {

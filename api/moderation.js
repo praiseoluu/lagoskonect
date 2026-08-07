@@ -2,7 +2,7 @@
  * LagKonnect — Moderation API
  */
 
-import { _fetch } from './_fetch.js?v=20260806g';
+import { _fetch } from './_fetch.js?v=20260806h';
 
 export const moderation = {
 

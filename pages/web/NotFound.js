@@ -2,8 +2,8 @@
  * KTG Connect — 404 Not Found (Web App)
  * Route: /404
  */
-import { Component } from '../../core/component.js?v=20260806g';
-import { store } from '../../core/store.js?v=20260806g';
+import { Component } from '../../core/component.js?v=20260806h';
+import { store } from '../../core/store.js?v=20260806h';
 
 export default class NotFoundPage extends Component {
   render() {

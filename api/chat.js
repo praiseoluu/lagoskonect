@@ -2,7 +2,8 @@
  * LagKonnect — Chat API
  */
 
-import { _fetch, BASE_URL } from './_fetch.js?v=20260806g';
+import { _fetch, BASE_URL } from './_fetch.js?v=20260806h';
+import { compressImage } from '../utils/media.js?v=20260806h';
 
 export const chat = {
 
@@ -74,6 +75,7 @@ export const chat = {
 
   async uploadFile(file) {
     try {
+      file = await compressImage(file);   // images shrink; videos pass through
       const form = new FormData();
       form.append('file', file);
       const token = JSON.parse(sessionStorage.getItem('adm_auth') || 'null')?.token;

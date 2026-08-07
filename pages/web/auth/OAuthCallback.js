@@ -16,12 +16,12 @@
  * seeing any content.
  */
 
-import { Component } from '../../../core/component.js?v=20260806g';
-import { t } from '../../../core/i18n.js?v=20260806g';
-import { store, showToast } from '../../../core/store.js?v=20260806g';
-import { router } from '../../../core/router.js?v=20260806g';
-import { saveSession } from '../../../utils/storage.js?v=20260806g';
-import { api } from '../../../api/client.js?v=20260806g';
+import { Component } from '../../../core/component.js?v=20260806h';
+import { t } from '../../../core/i18n.js?v=20260806h';
+import { store, showToast } from '../../../core/store.js?v=20260806h';
+import { router } from '../../../core/router.js?v=20260806h';
+import { saveSession } from '../../../utils/storage.js?v=20260806h';
+import { api } from '../../../api/client.js?v=20260806h';
 
 export default class OAuthCallbackPage extends Component {
   render() {

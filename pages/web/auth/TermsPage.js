@@ -5,13 +5,13 @@
  * Static public page. No auth required.
  */
 
-import { Component }    from '../../../core/component.js?v=20260806g';
-import { PublicLayout }  from './_PublicLayout.js?v=20260806g';
-import { api }           from '../../../api/client.js?v=20260806g';
-import { showToast }     from '../../../core/store.js?v=20260806g';
+import { Component }    from '../../../core/component.js?v=20260806h';
+import { PublicLayout }  from './_PublicLayout.js?v=20260806h';
+import { api }           from '../../../api/client.js?v=20260806h';
+import { showToast }     from '../../../core/store.js?v=20260806h';
 
 export default class TermsPage extends Component {
-  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806g';
+  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806h';
   static dependencies = ['/pages/web/auth/Landing.css', '/components/base/Button.css'];
 
   render() {

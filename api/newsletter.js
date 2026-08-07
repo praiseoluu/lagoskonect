@@ -4,7 +4,7 @@
  * Public endpoint — no auth required.
  */
 
-import { _fetch } from './_fetch.js?v=20260806g';
+import { _fetch } from './_fetch.js?v=20260806h';
 
 export const newsletter = {
   /**

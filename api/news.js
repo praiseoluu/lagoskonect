@@ -5,7 +5,8 @@
  * Admin methods    → real PHP backend
  */
 
-import { _fetch, BASE_URL } from './_fetch.js?v=20260806g';
+import { _fetch, BASE_URL } from './_fetch.js?v=20260806h';
+import { compressImage } from '../utils/media.js?v=20260806h';
 
 export const news = {
 
@@ -65,6 +66,7 @@ export const news = {
     try {
       const auth = JSON.parse(sessionStorage.getItem('adm_auth') || 'null');
       const token = auth?.token || '';
+      file = await compressImage(file);   // shrink before it leaves the browser
       const formData = new FormData();
       formData.append('image', file);
       const res = await fetch(`${BASE_URL}/admin/news/upload-image`, {
