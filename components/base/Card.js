@@ -27,8 +27,8 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806c';
-import { timeAgo }   from '../../utils/date.js?v=20260806c';
+import { Component } from '../../core/component.js?v=20260806d';
+import { timeAgo }   from '../../utils/date.js?v=20260806d';
 
 /* ── Shared SVG icon constants ──────────────────────────────────────────── */
 
@@ -141,7 +141,7 @@ function swapInPlaceholderOnError(cmp, imgSelector, placeholder) {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class Card extends Component {
-  static styles = '/components/base/Card.css?v=20260806c';
+  static styles = '/components/base/Card.css?v=20260806d';
 
   constructor(props = {}) {
     super({
@@ -201,7 +201,7 @@ export class Card extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class StatCard extends Component {
-  static styles = '/components/base/Card.css?v=20260806c';
+  static styles = '/components/base/Card.css?v=20260806d';
 
   constructor(props = {}) {
     super({
@@ -252,7 +252,7 @@ export class StatCard extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class NewsCard extends Component {
-  static styles = '/components/base/Card.css?v=20260806c';
+  static styles = '/components/base/Card.css?v=20260806d';
 
   constructor(props = {}) {
     super({
@@ -346,7 +346,7 @@ export class NewsCard extends Component {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class ReelCard extends Component {
-  static styles = '/components/base/Card.css?v=20260806c';
+  static styles = '/components/base/Card.css?v=20260806d';
 
   constructor(props = {}) {
     super({

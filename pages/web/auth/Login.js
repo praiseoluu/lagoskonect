@@ -24,16 +24,16 @@
  * @version 2.0.0
  */
 
-import { Component }                    from '../../../core/component.js?v=20260806c';
-import { Input }                        from '../../../components/base/Input.js?v=20260806c';
-import { Button }                       from '../../../components/base/Button.js?v=20260806c';
-import { AuthLayout }                   from './_AuthLayout.js?v=20260806c';
-import { store, showToast }             from '../../../core/store.js?v=20260806c';
-import { router }                       from '../../../core/router.js?v=20260806c';
-import { api }                          from '../../../api/client.js?v=20260806c';
-import { validateForm }                 from '../../../utils/validators.js?v=20260806c';
-import { saveSession }                  from '../../../utils/storage.js?v=20260806c';
-import { t }                            from '../../../core/i18n.js?v=20260806c';
+import { Component }                    from '../../../core/component.js?v=20260806d';
+import { Input }                        from '../../../components/base/Input.js?v=20260806d';
+import { Button }                       from '../../../components/base/Button.js?v=20260806d';
+import { AuthLayout }                   from './_AuthLayout.js?v=20260806d';
+import { store, showToast }             from '../../../core/store.js?v=20260806d';
+import { router }                       from '../../../core/router.js?v=20260806d';
+import { api }                          from '../../../api/client.js?v=20260806d';
+import { validateForm }                 from '../../../utils/validators.js?v=20260806d';
+import { saveSession }                  from '../../../utils/storage.js?v=20260806d';
+import { t }                            from '../../../core/i18n.js?v=20260806d';
 
 /* ── SVG icons ──────────────────────────────────────────────────────────── */
 
@@ -70,7 +70,7 @@ const GOOGLE_LOGO = `
    ══════════════════════════════════════════════════════════════════════════ */
 
 export default class LoginPage extends Component {
-  static styles = '/pages/web/auth/_AuthLayout.css?v=20260806c';
+  static styles = '/pages/web/auth/_AuthLayout.css?v=20260806d';
 
   constructor(props) {
     super(props);

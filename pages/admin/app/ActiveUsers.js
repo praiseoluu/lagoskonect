@@ -12,9 +12,9 @@
  * @version 1.0.0
  */
 
-import { AdminLayout }                      from '../../../components/layout/BaseLayout.js?v=20260806c';
-import { store, setPageLoading, showToast } from '../../../core/store.js?v=20260806c';
-import { api }                              from '../../../api/client.js?v=20260806c';
+import { AdminLayout }                      from '../../../components/layout/BaseLayout.js?v=20260806d';
+import { store, setPageLoading, showToast } from '../../../core/store.js?v=20260806d';
+import { api }                              from '../../../api/client.js?v=20260806d';
 
 const ICON_ACTIVITY = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
 const ICON_STAR     = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
@@ -45,7 +45,7 @@ function initials(name = '') {
 }
 
 export default class ActiveUsersPage extends AdminLayout {
-  static styles = '/pages/admin/app/ActiveUsers.css?v=20260806c';
+  static styles = '/pages/admin/app/ActiveUsers.css?v=20260806d';
 
   constructor(props) {
     super({

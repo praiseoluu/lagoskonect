@@ -4,14 +4,14 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806c';
-import { Input } from '../../../components/base/Input.js?v=20260806c';
-import { Button } from '../../../components/base/Button.js?v=20260806c';
-import { Dropdown } from '../../../components/base/Forms.js?v=20260806c';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806c';
-import { router } from '../../../core/router.js?v=20260806c';
-import { api } from '../../../api/client.js?v=20260806c';
-import { parseServerDate } from '../../../utils/date.js?v=20260806c';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806d';
+import { Input } from '../../../components/base/Input.js?v=20260806d';
+import { Button } from '../../../components/base/Button.js?v=20260806d';
+import { Dropdown } from '../../../components/base/Forms.js?v=20260806d';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806d';
+import { router } from '../../../core/router.js?v=20260806d';
+import { api } from '../../../api/client.js?v=20260806d';
+import { parseServerDate } from '../../../utils/date.js?v=20260806d';
 
 const _pad = (n) => String(n).padStart(2, '0');
 
@@ -24,7 +24,7 @@ const CATEGORIES = [
 const UPLOAD_ICON = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>`;
 
 export default class AdminNewsFormPage extends AdminLayout {
-  static styles = '/pages/admin/app/NewsForm.css?v=20260806c';
+  static styles = '/pages/admin/app/NewsForm.css?v=20260806d';
 
   constructor(props) {
     const isEdit = !!props.params?.id;

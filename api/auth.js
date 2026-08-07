@@ -10,8 +10,8 @@
  *   or twoFaBackup() to complete login and get the real token.
  */
 
-import { MOCK, _delay, _ok, _err } from './_mockData.js?v=20260806c';
-import { _fetch } from './_fetch.js?v=20260806c';
+import { MOCK, _delay, _ok, _err } from './_mockData.js?v=20260806d';
+import { _fetch } from './_fetch.js?v=20260806d';
 
 // ─── Mock admin helper ────────────────────────────────────────────────────
 
