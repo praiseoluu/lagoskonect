@@ -12,11 +12,11 @@
  * content can be differentiated later per region.
  */
 
-import { Component } from '../../../core/component.js?v=20260806f';
-import { PublicLayout } from './_PublicLayout.js?v=20260806f';
-import { api } from '../../../api/client.js?v=20260806f';
-import { t } from '../../../core/i18n.js?v=20260806f';
-import { showToast } from '../../../core/store.js?v=20260806f';
+import { Component } from '../../../core/component.js?v=20260806g';
+import { PublicLayout } from './_PublicLayout.js?v=20260806g';
+import { api } from '../../../api/client.js?v=20260806g';
+import { t } from '../../../core/i18n.js?v=20260806g';
+import { showToast } from '../../../core/store.js?v=20260806g';
 
 /* ── Region config map ──────────────────────────────────────────────────── */
 const REGION_CONFIG = {
@@ -46,7 +46,7 @@ function getRegionFromPath() {
 /* ══════════════════════════════════════════════════════════════════════════ */
 
 export default class RegionLandingPage extends Component {
-    static styles       = '/pages/web/auth/_PublicLayout.css?v=20260806f';
+    static styles       = '/pages/web/auth/_PublicLayout.css?v=20260806g';
     static dependencies = ['/pages/web/auth/Landing.css', '/components/base/Button.css'];
 
     constructor(props) {

@@ -16,7 +16,7 @@
  *   _paginate()     — slices an array into a page
  */
 
-import { store } from '../core/store.js?v=20260806f';
+import { store } from '../core/store.js?v=20260806g';
 
 // ─── Config ───────────────────────────────────────────────────────────────
 

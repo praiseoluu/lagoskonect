@@ -24,7 +24,7 @@
  *   rules on every API call. Both layers must pass for data to flow.
  *
  * Usage:
- *   import { router } from './router.js?v=20260806f';
+ *   import { router } from './router.js?v=20260806g';
  *
  *   // Register routes
  *   router.register('web', webRoutes);
@@ -39,7 +39,7 @@
  *   router.start('#app');
  */
 
-import { store } from './store.js?v=20260806f';
+import { store } from './store.js?v=20260806g';
 
 // ─── Route Definition Types ───────────────────────────────────────────────
 //
@@ -143,7 +143,7 @@ function createRouter() {
 
   /**
    * The currently active page component instance.
-   * @type {import('./component.js?v=20260806f').Component|null}
+   * @type {import('./component.js?v=20260806g').Component|null}
    */
   let _currentPage = null;
 

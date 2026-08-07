@@ -4,15 +4,15 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806f';
-import { Table }  from '../../../components/base/Table.js?v=20260806f';
-import { Button } from '../../../components/base/Button.js?v=20260806f';
-import { Modal }  from '../../../components/base/Modal.js?v=20260806f';
-import { Input }  from '../../../components/base/Input.js?v=20260806f';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806f';
-import { api }    from '../../../api/client.js?v=20260806f';
-import { BASE_URL } from '../../../api/_fetch.js?v=20260806f';
-import { formatDate } from '../../../utils/date.js?v=20260806f';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806g';
+import { Table }  from '../../../components/base/Table.js?v=20260806g';
+import { Button } from '../../../components/base/Button.js?v=20260806g';
+import { Modal }  from '../../../components/base/Modal.js?v=20260806g';
+import { Input }  from '../../../components/base/Input.js?v=20260806g';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806g';
+import { api }    from '../../../api/client.js?v=20260806g';
+import { BASE_URL } from '../../../api/_fetch.js?v=20260806g';
+import { formatDate } from '../../../utils/date.js?v=20260806g';
 
 const PLUS_ICON   = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>';
 const EXPORT_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
@@ -21,7 +21,7 @@ const EDIT_ICON   = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
 const MERGE_ICON  = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><polyline points="8 18 6 18 6 16"/><line x1="6" y1="6" x2="18" y2="6"/><polyline points="16 4 18 4 18 6"/></svg>';
 
 export default class AdminLGAPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminLGA.css?v=20260806f';
+  static styles = '/pages/admin/app/AdminLGA.css?v=20260806g';
 
   constructor(props) {
     super({
