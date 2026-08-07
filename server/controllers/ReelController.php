@@ -306,9 +306,16 @@ class ReelController {
         $countStmt->execute([$reelId]);
         $total = (int) $countStmt->fetchColumn();
 
+        // Join the user so the comment shows their CURRENT name and picture,
+        // not the snapshot taken when they commented. The stored user_name /
+        // avatar_url are a fallback for a since-deleted account; on their own
+        // they were often null, which is why comments showed only an initial.
         $stmt = $this->db->prepare('
-            SELECT * FROM reel_comments WHERE reel_id = ?
-            ORDER BY created_at DESC LIMIT ? OFFSET ?
+            SELECT c.*, u.username AS u_username, u.name AS u_name, u.avatar_url AS u_avatar
+              FROM reel_comments c
+              LEFT JOIN users u ON u.id = c.user_id
+             WHERE c.reel_id = ?
+             ORDER BY c.created_at DESC LIMIT ? OFFSET ?
         ');
         $stmt->execute([$reelId, $p['limit'], $p['offset']]);
 
@@ -316,8 +323,8 @@ class ReelController {
             'id'        => (int) $c['id'],
             'reelId'    => $c['reel_id'],
             'userId'    => (int) $c['user_id'],
-            'userName'  => $c['user_name'],
-            'avatarUrl' => $c['avatar_url'],
+            'userName'  => $c['u_username'] ?: $c['u_name'] ?: $c['user_name'],
+            'avatarUrl' => $c['u_avatar'] ?: $c['avatar_url'],
             'text'      => $c['text'],
             'createdAt' => $c['created_at'],
         ], $stmt->fetchAll());

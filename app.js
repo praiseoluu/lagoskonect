@@ -24,7 +24,7 @@
  * @version 2.0.0
  */
 
-import { store }          from './core/store.js?v=20260806e';
+import { store }          from './core/store.js?v=20260806f';
 import {
   router,
   requireAuth,
@@ -32,10 +32,10 @@ import {
   requireCitizen,
   redirectIfAuthenticated,
   mustChangePassword,
-}                         from './core/router.js?v=20260806e';
-import { loadSession }    from './utils/storage.js?v=20260806e';
-import { ToastContainer } from './components/base/UI.js?v=20260806e';
-import { initAvatarLightbox } from './utils/avatarLightbox.js?v=20260806e';
+}                         from './core/router.js?v=20260806f';
+import { loadSession }    from './utils/storage.js?v=20260806f';
+import { ToastContainer } from './components/base/UI.js?v=20260806f';
+import { initAvatarLightbox } from './utils/avatarLightbox.js?v=20260806f';
 
 /* ══════════════════════════════════════════════════════════════════════════
    1. RESTORE SESSION
@@ -98,14 +98,14 @@ router.register('web', [
     // Region drives all personalised content: news, reels, home feed.
     // No guard — authenticated users can re-select their region freely.
     path:      '/',
-    component: () => import('./pages/web/auth/SelectRegion.js?v=20260806e'),
+    component: () => import('./pages/web/auth/SelectRegion.js?v=20260806f'),
     guards:    [],
     meta:      { title: 'Select Your Region' },
   },
   {
     // Alias — users who bookmark /select-region land here too.
     path:      '/select-region',
-    component: () => import('./pages/web/auth/SelectRegion.js?v=20260806e'),
+    component: () => import('./pages/web/auth/SelectRegion.js?v=20260806f'),
     guards:    [],
     meta:      { title: 'Select Your Region' },
   },
@@ -114,19 +114,19 @@ router.register('web', [
 
   {
     path:      '/west',
-    component: () => import('./pages/web/auth/WestLanding.js?v=20260806e'),
+    component: () => import('./pages/web/auth/WestLanding.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Lagos West Connect' },
   },
   {
     path:      '/central',
-    component: () => import('./pages/web/auth/CentralLanding.js?v=20260806e'),
+    component: () => import('./pages/web/auth/CentralLanding.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Lagos Central Connect' },
   },
   {
     path:      '/east',
-    component: () => import('./pages/web/auth/EastLanding.js?v=20260806e'),
+    component: () => import('./pages/web/auth/EastLanding.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Lagos East Connect' },
   },
@@ -135,14 +135,14 @@ router.register('web', [
 
   {
     path:      '/terms',
-    component: () => import('./pages/web/auth/TermsPage.js?v=20260806e'),
+    component: () => import('./pages/web/auth/TermsPage.js?v=20260806f'),
     guards:    [],
     meta:      { title: 'Terms & Conditions' },
   },
 
   {
     path:      '/newsletter/unsubscribe',
-    component: () => import('./pages/web/auth/NewsletterUnsubscribe.js?v=20260806e'),
+    component: () => import('./pages/web/auth/NewsletterUnsubscribe.js?v=20260806f'),
     guards:    [],
     meta:      { title: 'Unsubscribe — Lagos Konect' },
   },
@@ -151,49 +151,49 @@ router.register('web', [
 
   {
     path:      '/login',
-    component: () => import('./pages/web/auth/Login.js?v=20260806e'),
+    component: () => import('./pages/web/auth/Login.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Log In' },
   },
   {
     path:      '/signup',
-    component: () => import('./pages/web/auth/Signup.js?v=20260806e'),
+    component: () => import('./pages/web/auth/Signup.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Create Account' },
   },
   {
     path:      '/2fa',
-    component: () => import('./pages/web/auth/TwoFactorLogin.js?v=20260806e'),
+    component: () => import('./pages/web/auth/TwoFactorLogin.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Two-Factor Authentication' },
   },
   {
     path:      '/oauth/callback',
-    component: () => import('./pages/web/auth/OAuthCallback.js?v=20260806e'),
+    component: () => import('./pages/web/auth/OAuthCallback.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'OAuth Callback' },
   },
   {
     path:      '/verify-phone',
-    component: () => import('./pages/web/auth/VerifyPhone.js?v=20260806e'),
+    component: () => import('./pages/web/auth/VerifyPhone.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Verify Phone' },
   },
   {
     path:      '/forgot-password',
-    component: () => import('./pages/web/auth/ForgotPassword.js?v=20260806e'),
+    component: () => import('./pages/web/auth/ForgotPassword.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Forgot Password' },
   },
   {
     path:      '/verify-identity',
-    component: () => import('./pages/web/auth/VerifyIdentity.js?v=20260806e'),
+    component: () => import('./pages/web/auth/VerifyIdentity.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Verify Identity' },
   },
   {
     path:      '/reset-credentials',
-    component: () => import('./pages/web/auth/ResetCredentials.js?v=20260806e'),
+    component: () => import('./pages/web/auth/ResetCredentials.js?v=20260806f'),
     guards:    [redirectIfAuthenticated],
     meta:      { title: 'Reset Password' },
   },
@@ -202,14 +202,14 @@ router.register('web', [
 
   {
     path:      '/change-password',
-    component: () => import('./pages/web/auth/ForceChangePassword.js?v=20260806e'),
+    component: () => import('./pages/web/auth/ForceChangePassword.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Change Password' },
   },
   {
     // Redirect /welcome → /{region}/welcome using the stored region preference
     path:      '/welcome',
-    component: () => import('./pages/web/app/Welcome.js?v=20260806e'),
+    component: () => import('./pages/web/app/Welcome.js?v=20260806f'),
     guards:    [({ next }) => next(`/${getRegion()}/welcome`)],
     meta:      { title: 'Welcome' },
   },
@@ -219,67 +219,67 @@ router.register('web', [
   {
     // Redirect /home → /{region}/home
     path:      '/home',
-    component: () => import('./pages/web/app/Home.js?v=20260806e'),
+    component: () => import('./pages/web/app/Home.js?v=20260806f'),
     guards:    [({ next }) => next(`/${getRegion()}/home`)],
     meta:      { title: 'Home' },
   },
   {
     path:      '/news',
-    component: () => import('./pages/web/app/News.js?v=20260806e'),
+    component: () => import('./pages/web/app/News.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'News' },
   },
   {
     path:      '/news/:slug',
-    component: () => import('./pages/web/app/NewsDetail.js?v=20260806e'),
+    component: () => import('./pages/web/app/NewsDetail.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Article' },
   },
   {
     path:      '/reels',
-    component: () => import('./pages/web/app/Reels.js?v=20260806e'),
+    component: () => import('./pages/web/app/Reels.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reels' },
   },
   {
     path:      '/reels/:reelId',
-    component: () => import('./pages/web/app/ReelDetail.js?v=20260806e'),
+    component: () => import('./pages/web/app/ReelDetail.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reel' },
   },
   {
     path:      '/referrals',
-    component: () => import('./pages/web/app/Referrals.js?v=20260806e'),
+    component: () => import('./pages/web/app/Referrals.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Referral Programme' },
   },
   {
     path:      '/chat',
-    component: () => import('./pages/web/app/Chat.js?v=20260806e'),
+    component: () => import('./pages/web/app/Chat.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Community Chat' },
   },
   {
     path:      '/notifications',
-    component: () => import('./pages/web/app/Notifications.js?v=20260806e'),
+    component: () => import('./pages/web/app/Notifications.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Notifications' },
   },
   {
     path:      '/settings',
-    component: () => import('./pages/web/app/Settings.js?v=20260806e'),
+    component: () => import('./pages/web/app/Settings.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Settings' },
   },
   {
     path:      '/profile',
-    component: () => import('./pages/web/app/Profile.js?v=20260806e'),
+    component: () => import('./pages/web/app/Profile.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'My Profile' },
   },
   {
     path:      '/u/:username',
-    component: () => import('./pages/web/app/UserProfile.js?v=20260806e'),
+    component: () => import('./pages/web/app/UserProfile.js?v=20260806f'),
     meta:      { title: 'Profile' },
   },
 
@@ -287,73 +287,73 @@ router.register('web', [
 
   {
     path:      '/west/welcome',
-    component: () => import('./pages/web/west/Welcome.js?v=20260806e'),
+    component: () => import('./pages/web/west/Welcome.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Welcome — Lagos West' },
   },
   {
     path:      '/west/home',
-    component: () => import('./pages/web/west/Home.js?v=20260806e'),
+    component: () => import('./pages/web/west/Home.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Home — Lagos West' },
   },
   {
     path:      '/west/news',
-    component: () => import('./pages/web/west/News.js?v=20260806e'),
+    component: () => import('./pages/web/west/News.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'News — Lagos West' },
   },
   {
     path:      '/west/news/:slug',
-    component: () => import('./pages/web/west/NewsDetail.js?v=20260806e'),
+    component: () => import('./pages/web/west/NewsDetail.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Article — Lagos West' },
   },
   {
     path:      '/west/reels',
-    component: () => import('./pages/web/west/Reels.js?v=20260806e'),
+    component: () => import('./pages/web/west/Reels.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reels — Lagos West' },
   },
   {
     path:      '/west/reels/:reelId',
-    component: () => import('./pages/web/west/ReelDetail.js?v=20260806e'),
+    component: () => import('./pages/web/west/ReelDetail.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reel — Lagos West' },
   },
   {
     path:      '/west/referrals',
-    component: () => import('./pages/web/west/Referrals.js?v=20260806e'),
+    component: () => import('./pages/web/west/Referrals.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Referral Programme — Lagos West' },
   },
   {
     path:      '/west/chat',
-    component: () => import('./pages/web/west/Chat.js?v=20260806e'),
+    component: () => import('./pages/web/west/Chat.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Community Chat — Lagos West' },
   },
   {
     path:      '/west/notifications',
-    component: () => import('./pages/web/west/Notifications.js?v=20260806e'),
+    component: () => import('./pages/web/west/Notifications.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Notifications — Lagos West' },
   },
   {
     path:      '/west/settings',
-    component: () => import('./pages/web/west/Settings.js?v=20260806e'),
+    component: () => import('./pages/web/west/Settings.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Settings — Lagos West' },
   },
   {
     path:      '/west/profile',
-    component: () => import('./pages/web/west/Profile.js?v=20260806e'),
+    component: () => import('./pages/web/west/Profile.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'My Profile — Lagos West' },
   },
   {
     path:      '/west/u/:username',
-    component: () => import('./pages/web/west/UserProfile.js?v=20260806e'),
+    component: () => import('./pages/web/west/UserProfile.js?v=20260806f'),
     meta:      { title: 'Profile — Lagos West' },
   },
 
@@ -361,73 +361,73 @@ router.register('web', [
 
   {
     path:      '/central/welcome',
-    component: () => import('./pages/web/central/Welcome.js?v=20260806e'),
+    component: () => import('./pages/web/central/Welcome.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Welcome — Lagos Central' },
   },
   {
     path:      '/central/home',
-    component: () => import('./pages/web/central/Home.js?v=20260806e'),
+    component: () => import('./pages/web/central/Home.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Home — Lagos Central' },
   },
   {
     path:      '/central/news',
-    component: () => import('./pages/web/central/News.js?v=20260806e'),
+    component: () => import('./pages/web/central/News.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'News — Lagos Central' },
   },
   {
     path:      '/central/news/:slug',
-    component: () => import('./pages/web/central/NewsDetail.js?v=20260806e'),
+    component: () => import('./pages/web/central/NewsDetail.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Article — Lagos Central' },
   },
   {
     path:      '/central/reels',
-    component: () => import('./pages/web/central/Reels.js?v=20260806e'),
+    component: () => import('./pages/web/central/Reels.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reels — Lagos Central' },
   },
   {
     path:      '/central/reels/:reelId',
-    component: () => import('./pages/web/central/ReelDetail.js?v=20260806e'),
+    component: () => import('./pages/web/central/ReelDetail.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reel — Lagos Central' },
   },
   {
     path:      '/central/referrals',
-    component: () => import('./pages/web/central/Referrals.js?v=20260806e'),
+    component: () => import('./pages/web/central/Referrals.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Referral Programme — Lagos Central' },
   },
   {
     path:      '/central/chat',
-    component: () => import('./pages/web/central/Chat.js?v=20260806e'),
+    component: () => import('./pages/web/central/Chat.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Community Chat — Lagos Central' },
   },
   {
     path:      '/central/notifications',
-    component: () => import('./pages/web/central/Notifications.js?v=20260806e'),
+    component: () => import('./pages/web/central/Notifications.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Notifications — Lagos Central' },
   },
   {
     path:      '/central/settings',
-    component: () => import('./pages/web/central/Settings.js?v=20260806e'),
+    component: () => import('./pages/web/central/Settings.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Settings — Lagos Central' },
   },
   {
     path:      '/central/profile',
-    component: () => import('./pages/web/central/Profile.js?v=20260806e'),
+    component: () => import('./pages/web/central/Profile.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'My Profile — Lagos Central' },
   },
   {
     path:      '/central/u/:username',
-    component: () => import('./pages/web/central/UserProfile.js?v=20260806e'),
+    component: () => import('./pages/web/central/UserProfile.js?v=20260806f'),
     meta:      { title: 'Profile — Lagos Central' },
   },
 
@@ -435,73 +435,73 @@ router.register('web', [
 
   {
     path:      '/east/welcome',
-    component: () => import('./pages/web/east/Welcome.js?v=20260806e'),
+    component: () => import('./pages/web/east/Welcome.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Welcome — Lagos East' },
   },
   {
     path:      '/east/home',
-    component: () => import('./pages/web/east/Home.js?v=20260806e'),
+    component: () => import('./pages/web/east/Home.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Home — Lagos East' },
   },
   {
     path:      '/east/news',
-    component: () => import('./pages/web/east/News.js?v=20260806e'),
+    component: () => import('./pages/web/east/News.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'News — Lagos East' },
   },
   {
     path:      '/east/news/:slug',
-    component: () => import('./pages/web/east/NewsDetail.js?v=20260806e'),
+    component: () => import('./pages/web/east/NewsDetail.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Article — Lagos East' },
   },
   {
     path:      '/east/reels',
-    component: () => import('./pages/web/east/Reels.js?v=20260806e'),
+    component: () => import('./pages/web/east/Reels.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reels — Lagos East' },
   },
   {
     path:      '/east/reels/:reelId',
-    component: () => import('./pages/web/east/ReelDetail.js?v=20260806e'),
+    component: () => import('./pages/web/east/ReelDetail.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Reel — Lagos East' },
   },
   {
     path:      '/east/referrals',
-    component: () => import('./pages/web/east/Referrals.js?v=20260806e'),
+    component: () => import('./pages/web/east/Referrals.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Referral Programme — Lagos East' },
   },
   {
     path:      '/east/chat',
-    component: () => import('./pages/web/east/Chat.js?v=20260806e'),
+    component: () => import('./pages/web/east/Chat.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Community Chat — Lagos East' },
   },
   {
     path:      '/east/notifications',
-    component: () => import('./pages/web/east/Notifications.js?v=20260806e'),
+    component: () => import('./pages/web/east/Notifications.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Notifications — Lagos East' },
   },
   {
     path:      '/east/settings',
-    component: () => import('./pages/web/east/Settings.js?v=20260806e'),
+    component: () => import('./pages/web/east/Settings.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'Settings — Lagos East' },
   },
   {
     path:      '/east/profile',
-    component: () => import('./pages/web/east/Profile.js?v=20260806e'),
+    component: () => import('./pages/web/east/Profile.js?v=20260806f'),
     guards:    [requireAuth, requireCitizen],
     meta:      { title: 'My Profile — Lagos East' },
   },
   {
     path:      '/east/u/:username',
-    component: () => import('./pages/web/east/UserProfile.js?v=20260806e'),
+    component: () => import('./pages/web/east/UserProfile.js?v=20260806f'),
     meta:      { title: 'Profile — Lagos East' },
   },
 
@@ -509,12 +509,12 @@ router.register('web', [
 
   {
     path:      '/404',
-    component: () => import('./pages/web/NotFound.js?v=20260806e'),
+    component: () => import('./pages/web/NotFound.js?v=20260806f'),
     meta:      { title: 'Page Not Found' },
   },
   {
     path:      '*',
-    component: () => import('./pages/web/NotFound.js?v=20260806e'),
+    component: () => import('./pages/web/NotFound.js?v=20260806f'),
     meta:      { title: 'Page Not Found' },
   },
 ]);
@@ -532,7 +532,7 @@ router.register('admin', [
     // handled by requireAdmin on the app routes, not by this public route.
     // This prevents citizens from ever landing on the admin login page.
     path:      '/admin/login',
-    component: () => import('./pages/admin/auth/AdminLogin.js?v=20260806e'),
+    component: () => import('./pages/admin/auth/AdminLogin.js?v=20260806f'),
     guards:    [],
     meta:      { title: 'Admin Login' },
   },
@@ -541,13 +541,13 @@ router.register('admin', [
 
   {
     path:      '/admin',
-    component: () => import('./pages/admin/app/Dashboard.js?v=20260806e'),
+    component: () => import('./pages/admin/app/Dashboard.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Dashboard' },
   },
   {
     path:      '/admin/users',
-    component: () => import('./pages/admin/app/Users.js?v=20260806e'),
+    component: () => import('./pages/admin/app/Users.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'User Management' },
   },
@@ -555,44 +555,44 @@ router.register('admin', [
   /* News */
   {
     path:      '/admin/news',
-    component: () => import('./pages/admin/app/News.js?v=20260806e'),
+    component: () => import('./pages/admin/app/News.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'News Management' },
   },
   {
     path:      '/admin/news/new',
-    component: () => import('./pages/admin/app/NewsForm.js?v=20260806e'),
+    component: () => import('./pages/admin/app/NewsForm.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Create News' },
   },
   {
     // Must stay ahead of /admin/news/:id, otherwise "import" is matched as an id.
     path:      '/admin/news/import',
-    component: () => import('./pages/admin/app/NewsImport.js?v=20260806e'),
+    component: () => import('./pages/admin/app/NewsImport.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Import News' },
   },
   {
     path:      '/admin/withdrawals',
-    component: () => import('./pages/admin/app/Withdrawals.js?v=20260806e'),
+    component: () => import('./pages/admin/app/Withdrawals.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Referral Payouts' },
   },
   {
     path:      '/admin/news/:id',
-    component: () => import('./pages/admin/app/NewsView.js?v=20260806e'),
+    component: () => import('./pages/admin/app/NewsView.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'View News' },
   },
   {
     path:      '/admin/news/:id/edit',
-    component: () => import('./pages/admin/app/NewsForm.js?v=20260806e'),
+    component: () => import('./pages/admin/app/NewsForm.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Edit News' },
   },
   {
     path:      '/admin/news/:id/preview',
-    component: () => import('./pages/admin/app/NewsPreview.js?v=20260806e'),
+    component: () => import('./pages/admin/app/NewsPreview.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Preview News' },
   },
@@ -600,25 +600,25 @@ router.register('admin', [
   /* Reels */
   {
     path:      '/admin/reels',
-    component: () => import('./pages/admin/app/AdminReels.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminReels.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Reels Management' },
   },
   {
     path:      '/admin/reels/new',
-    component: () => import('./pages/admin/app/AdminReelForm.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminReelForm.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Create Reel' },
   },
   {
     path:      '/admin/reels/:id/edit',
-    component: () => import('./pages/admin/app/AdminReelForm.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminReelForm.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Edit Reel' },
   },
   {
     path:      '/admin/reels/:id/preview',
-    component: () => import('./pages/admin/app/AdminReelPreview.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminReelPreview.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Preview Reel' },
   },
@@ -626,25 +626,25 @@ router.register('admin', [
   /* Content & chat */
   {
     path:      '/admin/content-moderation',
-    component: () => import('./pages/admin/app/AdminContentModeration.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminContentModeration.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Content Moderation' },
   },
   {
     path:      '/admin/chat',
-    component: () => import('./pages/admin/app/ChatManagement.js?v=20260806e'),
+    component: () => import('./pages/admin/app/ChatManagement.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Chat Management' },
   },
   {
     path:      '/admin/chat/:lgaId',
-    component: () => import('./pages/admin/app/ChatManagement.js?v=20260806e'),
+    component: () => import('./pages/admin/app/ChatManagement.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Chat Management' },
   },
   {
     path:      '/admin/referrals',
-    component: () => import('./pages/admin/app/ReferralLeaderboard.js?v=20260806e'),
+    component: () => import('./pages/admin/app/ReferralLeaderboard.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Referral Contest' },
   },
@@ -652,25 +652,25 @@ router.register('admin', [
   /* Adverts */
   {
     path:      '/admin/adverts',
-    component: () => import('./pages/admin/app/AdminAdverts.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminAdverts.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Advert Management' },
   },
   {
     path:      '/admin/adverts/new',
-    component: () => import('./pages/admin/app/AdminAdvertForm.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminAdvertForm.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Create Advert' },
   },
   {
     path:      '/admin/adverts/:id/edit',
-    component: () => import('./pages/admin/app/AdminAdvertForm.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminAdvertForm.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Edit Advert' },
   },
   {
     path:      '/admin/adverts/:id/preview',
-    component: () => import('./pages/admin/app/AdminAdvertPreview.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminAdvertPreview.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Preview Advert' },
   },
@@ -678,37 +678,37 @@ router.register('admin', [
   /* Analytics & platform */
   {
     path:      '/admin/lga-data',
-    component: () => import('./pages/admin/app/AdminLGA.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminLGA.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'LGA Data' },
   },
    {
      path:      '/admin/analytics',
-     component: () => import('./pages/admin/app/Analytics.js?v=20260806e'),
+     component: () => import('./pages/admin/app/Analytics.js?v=20260806f'),
      guards:    [requireAdmin],
      meta:      { title: 'Governance Analytics' },
    },
    {
      path:      '/admin/active-users',
-     component: () => import('./pages/admin/app/ActiveUsers.js?v=20260806e'),
+     component: () => import('./pages/admin/app/ActiveUsers.js?v=20260806f'),
      guards:    [requireAdmin],
      meta:      { title: 'Top Active Users' },
    },
    {
      path:      '/admin/traffic',
-    component: () => import('./pages/admin/app/Traffic.js?v=20260806e'),
+    component: () => import('./pages/admin/app/Traffic.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Site Traffic' },
   },
   {
     path:      '/admin/settings',
-    component: () => import('./pages/admin/app/AdminSettings.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminSettings.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Platform Settings' },
   },
   {
     path:      '/admin/management',
-    component: () => import('./pages/admin/app/AdminManagement.js?v=20260806e'),
+    component: () => import('./pages/admin/app/AdminManagement.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Admin Management' },
   },
@@ -719,13 +719,13 @@ router.register('admin', [
     // Citizens who type any /admin/* URL directly are caught by requireAdmin
     // and redirected to /admin/login before this component renders.
     path:      '/admin/404',
-    component: () => import('./pages/admin/NotFound.js?v=20260806e'),
+    component: () => import('./pages/admin/NotFound.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Page Not Found' },
   },
   {
     path:      '/admin/*',
-    component: () => import('./pages/admin/NotFound.js?v=20260806e'),
+    component: () => import('./pages/admin/NotFound.js?v=20260806f'),
     guards:    [requireAdmin],
     meta:      { title: 'Page Not Found' },
   },
@@ -794,7 +794,7 @@ router.afterEach(({ to } = {}) => {
     const lgaId  = store.currentLGA?.id   ?? null;
     const userId = store.currentUser?.id  ?? null;
 
-    import('./api/client.js?v=20260806e')
+    import('./api/client.js?v=20260806f')
         .then(({ api }) => api.analytics.recordPageview(path, lgaId, userId))
         .catch(() => { /* Silently ignore — tracking must never break navigation */ });
   }

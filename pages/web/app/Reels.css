@@ -687,3 +687,28 @@
   }
   .rf-item__comment-drawer-handle { border-radius: 16px 16px 0 0; }
 }
+
+/* ── Edge to edge: no white frame around the video ──────────────────────────
+   The page shell (.ktg-layout__content) pads and width-caps every route, which
+   drew a white frame around the reel on all sides, on mobile and desktop alike.
+   Reels opts out of that framing the way the chat shell does, so the feed runs
+   to the screen edges. Where a portrait video genuinely cannot fill a wide
+   screen the surround is black — a video player's frame — never white. */
+.ktg-layout__content:has(.rf-wrap) {
+  padding: 0;
+  max-width: 100%;
+}
+
+.rf-wrap { background: #000; }
+
+@media (min-width: 640px) {
+  /* The inset column outline read as a border around the "padding"; the black
+     surround now carries the framing on its own. */
+  .rf-feed { box-shadow: none; }
+}
+
+@media (min-width: 900px) {
+  /* Drop the desktop stage padding so the video meets its black frame with no
+     grey gutter between. */
+  .rf-item { padding: 0; background: #000; }
+}

@@ -4,15 +4,15 @@
  * Guards: requireAuth + requireCitizen
  */
 
-import { WebLayout }           from '../../../components/layout/BaseLayout.js?v=20260806e';
-import { setPageLoading, showToast } from '../../../core/store.js?v=20260806e';
-import { api }                 from '../../../api/client.js?v=20260806e';
-import { PayoutPanel } from '../../../components/feature/PayoutPanel.js?v=20260806e';
-import { timeAgo }             from '../../../utils/date.js?v=20260806e';
-import { t }                   from '../../../core/i18n.js?v=20260806e';
+import { WebLayout }           from '../../../components/layout/BaseLayout.js?v=20260806f';
+import { setPageLoading, showToast } from '../../../core/store.js?v=20260806f';
+import { api }                 from '../../../api/client.js?v=20260806f';
+import { PayoutPanel } from '../../../components/feature/PayoutPanel.js?v=20260806f';
+import { timeAgo }             from '../../../utils/date.js?v=20260806f';
+import { t }                   from '../../../core/i18n.js?v=20260806f';
 
 export default class ReferralsPage extends WebLayout {
-    static styles = '/pages/web/app/Referrals.css?v=20260806e';
+    static styles = '/pages/web/app/Referrals.css?v=20260806f';
 
     constructor(props) {
         super({ title: 'Referral Programme', ...props });

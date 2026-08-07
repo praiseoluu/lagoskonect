@@ -6,13 +6,13 @@
  * Falls back to newest article if no headline is set.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806e';
-import { Button } from '../../../components/base/Button.js?v=20260806e';
-import { router } from '../../../core/router.js?v=20260806e';
-import { setPageLoading } from '../../../core/store.js?v=20260806e';
-import { api } from '../../../api/client.js?v=20260806e';
-import { t, getLanguage } from '../../../core/i18n.js?v=20260806e';
-import { translateArticle, needsTranslation, LANG_LABEL } from '../../../utils/translator.js?v=20260806e';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806f';
+import { Button } from '../../../components/base/Button.js?v=20260806f';
+import { router } from '../../../core/router.js?v=20260806f';
+import { setPageLoading } from '../../../core/store.js?v=20260806f';
+import { api } from '../../../api/client.js?v=20260806f';
+import { t, getLanguage } from '../../../core/i18n.js?v=20260806f';
+import { translateArticle, needsTranslation, LANG_LABEL } from '../../../utils/translator.js?v=20260806f';
 
 function formatDate(iso) {
   if (!iso) return '';
@@ -46,7 +46,7 @@ function stripMarkdown(str) {
 }
 
 export default class NewsPage extends WebLayout {
-  static styles = '/pages/web/app/News.css?v=20260806e';
+  static styles = '/pages/web/app/News.css?v=20260806f';
 
   constructor(props) {
     super({ title: t('news.title'), ...props });

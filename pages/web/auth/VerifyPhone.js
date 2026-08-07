@@ -12,16 +12,16 @@
  * then "Done" routes to /home (or /verification-success).
  */
 
-import { Component } from '../../../core/component.js?v=20260806e';
-import { Button } from '../../../components/base/Button.js?v=20260806e';
-import { AuthLayout } from './_AuthLayout.js?v=20260806e';
-import { store, showToast } from '../../../core/store.js?v=20260806e';
-import { router } from '../../../core/router.js?v=20260806e';
-import { api } from '../../../api/client.js?v=20260806e';
-import { saveSession } from '../../../utils/storage.js?v=20260806e';
+import { Component } from '../../../core/component.js?v=20260806f';
+import { Button } from '../../../components/base/Button.js?v=20260806f';
+import { AuthLayout } from './_AuthLayout.js?v=20260806f';
+import { store, showToast } from '../../../core/store.js?v=20260806f';
+import { router } from '../../../core/router.js?v=20260806f';
+import { api } from '../../../api/client.js?v=20260806f';
+import { saveSession } from '../../../utils/storage.js?v=20260806f';
 
 export default class VerifyPhonePage extends Component {
-  static styles = '/pages/web/auth/_AuthLayout.css?v=20260806e';
+  static styles = '/pages/web/auth/_AuthLayout.css?v=20260806f';
   static dependencies = ['/pages/web/auth/VerifyPhone.css'];
 
   constructor(props) {
