@@ -9,12 +9,12 @@
  * Guards:  requireAuth + requireCitizen
  */
 
-import { WebLayout }                          from '../../../components/layout/BaseLayout.js?v=20260806e';
-import { store, showToast, setPageLoading }   from '../../../core/store.js?v=20260806e';
-import { router }                             from '../../../core/router.js?v=20260806e';
-import { api }                                from '../../../api/client.js?v=20260806e';
-import { timeAgo }                            from '../../../utils/date.js?v=20260806e';
-import { t }                                  from '../../../core/i18n.js?v=20260806e';
+import { WebLayout }                          from '../../../components/layout/BaseLayout.js?v=20260806f';
+import { store, showToast, setPageLoading }   from '../../../core/store.js?v=20260806f';
+import { router }                             from '../../../core/router.js?v=20260806f';
+import { api }                                from '../../../api/client.js?v=20260806f';
+import { timeAgo }                            from '../../../utils/date.js?v=20260806f';
+import { t }                                  from '../../../core/i18n.js?v=20260806f';
 
 const REGION_PREFIX = '/west';
 
@@ -26,7 +26,7 @@ function fmtCount(n) {
 }
 
 export default class ReelsPage extends WebLayout {
-  static styles = '/pages/web/app/Reels.css?v=20260806e';
+  static styles = '/pages/web/app/Reels.css?v=20260806f';
 
   constructor(props) {
     super({ title: t('reels.title'), ...props });

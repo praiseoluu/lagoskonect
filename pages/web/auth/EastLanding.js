@@ -11,8 +11,8 @@
  * @version 2.0.0
  */
 
-import { LandingBase } from './_LandingBase.js?v=20260806e';
-import { t }           from '../../../core/i18n.js?v=20260806e';
+import { LandingBase } from './_LandingBase.js?v=20260806f';
+import { t }           from '../../../core/i18n.js?v=20260806f';
 
 export default class EastLandingPage extends LandingBase {
 

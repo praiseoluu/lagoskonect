@@ -7,17 +7,17 @@
  *           with admin-only context menu actions
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806e';
-import { Button } from '../../../components/base/Button.js?v=20260806e';
-import { Input } from '../../../components/base/Input.js?v=20260806e';
-import { Avatar, Tabs } from '../../../components/base/UI.js?v=20260806e';
-import { Badge } from '../../../components/base/Badge.js?v=20260806e';
-import { Card, StatCard } from '../../../components/base/Card.js?v=20260806e';
-import { Modal } from '../../../components/base/Modal.js?v=20260806e';
-import { store, showToast } from '../../../core/store.js?v=20260806e';
-import { router } from '../../../core/router.js?v=20260806e';
-import { api } from '../../../api/client.js?v=20260806e';
-import { timeAgo } from '../../../utils/date.js?v=20260806e';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806f';
+import { Button } from '../../../components/base/Button.js?v=20260806f';
+import { Input } from '../../../components/base/Input.js?v=20260806f';
+import { Avatar, Tabs } from '../../../components/base/UI.js?v=20260806f';
+import { Badge } from '../../../components/base/Badge.js?v=20260806f';
+import { Card, StatCard } from '../../../components/base/Card.js?v=20260806f';
+import { Modal } from '../../../components/base/Modal.js?v=20260806f';
+import { store, showToast } from '../../../core/store.js?v=20260806f';
+import { router } from '../../../core/router.js?v=20260806f';
+import { api } from '../../../api/client.js?v=20260806f';
+import { timeAgo } from '../../../utils/date.js?v=20260806f';
 
 const DEFAULT_REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
@@ -61,7 +61,7 @@ function isToday(iso) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default class ChatManagementPage extends AdminLayout {
-  static styles = '/pages/admin/app/ChatManagement.css?v=20260806e';
+  static styles = '/pages/admin/app/ChatManagement.css?v=20260806f';
   static dependencies = ['/components/base/Button.css', '/components/base/Badge.css']
 
   constructor(props) {

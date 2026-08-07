@@ -13,16 +13,16 @@
  * On success: transitions to success state, then routes to /login.
  */
 
-import { Component } from '../../../core/component.js?v=20260806e';
-import { Input } from '../../../components/base/Input.js?v=20260806e';
-import { Button } from '../../../components/base/Button.js?v=20260806e';
-import { PublicLayout } from './_PublicLayout.js?v=20260806e';
-import { router } from '../../../core/router.js?v=20260806e';
-import { api } from '../../../api/client.js?v=20260806e';
-import { showToast } from '../../../core/store.js?v=20260806e';
+import { Component } from '../../../core/component.js?v=20260806f';
+import { Input } from '../../../components/base/Input.js?v=20260806f';
+import { Button } from '../../../components/base/Button.js?v=20260806f';
+import { PublicLayout } from './_PublicLayout.js?v=20260806f';
+import { router } from '../../../core/router.js?v=20260806f';
+import { api } from '../../../api/client.js?v=20260806f';
+import { showToast } from '../../../core/store.js?v=20260806f';
 
 export default class ResetCredentialsPage extends Component {
-  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806e';
+  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806f';
   static dependencies = ['/pages/web/auth/PublicForm.css', '/components/base/Button.css'];
 
   constructor(props) {
