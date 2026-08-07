@@ -61,6 +61,7 @@ export default class ReelsPage extends WebLayout {
     this._setupVideoObserver();
     this._setupSentinel();
     this._bindEvents();
+    this._setupNavArrows();
   }
 
   beforeUnmount() {
@@ -244,6 +245,46 @@ export default class ReelsPage extends WebLayout {
     });
   }
 
+  /* ── Up / down navigation (desktop) ───────────────────────────────────── */
+
+  /**
+   * Explicit previous/next controls for mouse users, who have no swipe. The
+   * feed already snaps, so each press just scrolls one reel and lets the snap
+   * settle it. Hidden on touch by CSS, where the feed is swiped directly.
+   */
+  _setupNavArrows() {
+    const wrap = this._wrapEl();
+    const feed = this._feedEl();
+    if (!wrap || !feed || wrap.querySelector('.rf-nav')) return;
+
+    const nav = document.createElement('div');
+    nav.className = 'rf-nav';
+    nav.innerHTML = `
+      <button class="rf-nav__btn" data-nav="prev" type="button" aria-label="Previous reel">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+      </button>
+      <button class="rf-nav__btn" data-nav="next" type="button" aria-label="Next reel">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>`;
+    wrap.appendChild(nav);
+
+    const step = (dir) => {
+      const items = [...feed.querySelectorAll('.rf-item')];
+      if (!items.length) return;
+      // The reel filling the middle of the viewport is the current one.
+      const mid = feed.scrollTop + feed.clientHeight / 2;
+      let idx = items.findIndex(it => it.offsetTop <= mid && it.offsetTop + it.offsetHeight > mid);
+      if (idx < 0) idx = 0;
+      const next = items[Math.min(items.length - 1, Math.max(0, idx + dir))];
+      next?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    nav.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-nav]');
+      if (btn) step(btn.dataset.nav === 'next' ? 1 : -1);
+    });
+  }
+
   async _toggleLike(item, reelId) {
     const reel = this._reels.find(r => r.reelId === reelId);
     if (!reel) return;
@@ -291,9 +332,9 @@ export default class ReelsPage extends WebLayout {
     if (res.error || !res.data?.length) { list.innerHTML = '<div class="rf-item__comment-empty">No comments yet. Be the first!</div>'; return; }
     list.innerHTML = res.data.map(c => `
       <div class="rf-item__comment-item" role="listitem">
-        <div class="rf-item__comment-avatar">${(c.authorName || c.author || '?')[0].toUpperCase()}</div>
+        <div class="rf-item__comment-avatar">${c.avatarUrl ? `<img class="rf-item__comment-avatar-img" src="${this.esc(c.avatarUrl)}" alt="">` : this.esc((c.userName || c.authorName || c.author || '?').charAt(0).toUpperCase())}</div>
         <div class="rf-item__comment-body">
-          <div class="rf-item__comment-author">${this.esc(c.authorName || c.author || 'Anonymous')}</div>
+          <div class="rf-item__comment-author">${this.esc(c.userName || c.authorName || c.author || 'Anonymous')}</div>
           <p class="rf-item__comment-text">${this.esc(c.text || c.content || '')}</p>
           <div class="rf-item__comment-time">${c.createdAt ? this.esc(timeAgo(c.createdAt)) : ''}</div>
         </div>
@@ -313,7 +354,7 @@ export default class ReelsPage extends WebLayout {
       const name = store.currentUser?.name || 'You';
       const node = document.createElement('div');
       node.className = 'rf-item__comment-item'; node.setAttribute('role', 'listitem');
-      node.innerHTML = `<div class="rf-item__comment-avatar">${name[0].toUpperCase()}</div>
+      node.innerHTML = `<div class="rf-item__comment-avatar">${store.currentUser?.avatarUrl ? `<img class="rf-item__comment-avatar-img" src="${this.esc(store.currentUser.avatarUrl)}" alt="">` : this.esc(name.charAt(0).toUpperCase())}</div>
         <div class="rf-item__comment-body">
           <div class="rf-item__comment-author">${this.esc(name)}</div>
           <p class="rf-item__comment-text">${this.esc(text)}</p>
