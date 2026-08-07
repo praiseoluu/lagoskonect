@@ -346,7 +346,7 @@ export default class SharedChatPage extends WebLayout {
             <!-- Textarea -->
             <div class="chat-input-bar__input-wrap">
               <textarea class="chat-input-bar__textarea" id="chat-textarea"
-                placeholder="Message ${this.esc(lgaName)} Community…"
+                placeholder="Message…"
                 rows="1" aria-label="Type a message" autocomplete="off"></textarea>
             </div>
 

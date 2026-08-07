@@ -2879,24 +2879,27 @@
    phone's home indicator instead of under it.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── A self-contained LIGHT green-and-white theme ────────────────────────────
+   The chat is pinned to a light palette with hard-coded colours, NOT the app
+   tokens. On a phone set to dark mode the tokens flip dark, which turned the
+   whole thread near-black; the reference for this screen is green and white, so
+   the chat opts out of dark mode entirely and always reads the same. Every
+   colour a bubble, the header or the composer needs is set here, so nothing
+   falls through to a token that would flip. */
 :root {
-  /* The canvas behind the bubbles. An EXPLICIT soft neutral, not a token:
-     --color-surface is #F9FAFB, a hair off pure white, so white bubbles on it
-     were invisible and the thread read as one flat cramped block. This gives
-     the bubbles a real surface to sit on — the single change that makes the
-     redesign read as designed rather than broken. */
-  --chat-canvas: #e7ebf1;
+  --chat-canvas:  #eef1f5;   /* soft grey behind the bubbles */
+  --chat-surface: #ffffff;   /* header, composer, incoming bubble */
+  --chat-ink:     #1f2430;   /* primary text on light */
+  --chat-ink-dim: #667085;   /* secondary text, timestamps */
+  --chat-line:    #e6e9ef;   /* hairlines */
+  --chat-green:   #068927;   /* brand — own bubble, name, accents */
   --chat-bubble-radius: 18px;
   --chat-bubble-tail: 6px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Darker than --color-bg (#0F1712) so the bubbles, which use --color-bg,
-       lift off the canvas in dark mode too. */
-    --chat-canvas: #090d0a;
-  }
-}
+.chat-page,
+.chat-shell,
+.chat-list-sidebar { background: var(--chat-surface); }
 
 /* ── Canvas ──────────────────────────────────────────────────────────────── */
 
@@ -2911,7 +2914,9 @@
 /* The date pill was surface-coloured, which is now the canvas — it would
    vanish into the background. Lift it onto white so it floats over the run. */
 .chat-date-sep span {
-  background: var(--color-bg, #fff);
+  background: var(--chat-surface);
+  color: var(--chat-ink-dim);
+  border-color: var(--chat-line);
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
@@ -2943,7 +2948,7 @@
 .chat-msg__name {
   font-size: 12px;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-primary);
+  color: var(--chat-green);
   padding-left: 2px;
   margin-bottom: 3px;
 }
@@ -2954,8 +2959,8 @@
   border-radius: var(--chat-bubble-radius);
   padding: 10px 14px;
   gap: 3px;
-  background: var(--color-bg, #fff);
-  border: 1px solid rgba(0,0,0,0.04);
+  background: var(--chat-surface);
+  border: 1px solid var(--chat-line);
   /* A real lift off the canvas — the hairline alone was invisible on the
      near-white surface the old canvas produced. */
   box-shadow: 0 1px 2px rgba(16,24,40,0.06), 0 1px 1px rgba(16,24,40,0.04);
@@ -2971,7 +2976,7 @@
 }
 
 .chat-msg__bubble--own {
-  background: var(--color-primary, #068927);
+  background: var(--chat-green);
   border-color: transparent;
   /* Flat, not glowing: the heavy gradient and coloured shadow made every
      outgoing line shout. A brand-green fill carries the meaning on its own. */
@@ -2981,14 +2986,23 @@
 .chat-msg__bubble:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
 .chat-msg__bubble--own:hover { box-shadow: 0 2px 8px rgba(6,137,39,0.24); }
 
-.chat-msg__text { font-size: 15px; line-height: 1.45; }
+/* Text colours are pinned so dark mode cannot flip them to white-on-white. */
+.chat-msg__text { font-size: 15px; line-height: 1.45; color: var(--chat-ink); }
+.chat-msg__bubble--own .chat-msg__text { color: #fff; }
 
-.chat-msg__time { font-size: 10.5px; margin-top: 2px; opacity: 0.85; }
+.chat-msg__time { font-size: 10.5px; margin-top: 2px; color: var(--chat-ink-dim); }
+.chat-msg__bubble--own .chat-msg__time { color: rgba(255,255,255,0.75); }
+
+/* Reply-quote text, pinned for the same reason. */
+.chat-msg__reply-name { color: var(--chat-green); }
+.chat-msg__reply-text { color: var(--chat-ink-dim); }
+.chat-msg__bubble--own .chat-msg__reply-name,
+.chat-msg__bubble--own .chat-msg__reply-text { color: rgba(255,255,255,0.9); }
 
 /* ── Reply quote inside a bubble ─────────────────────────────────────────── */
 
 .chat-msg__reply {
-  border-left: 3px solid var(--color-primary, #068927);
+  border-left: 3px solid var(--chat-green);
   border-radius: 6px;
   padding: 4px 8px;
   background: rgba(6,137,39,0.06);
@@ -3003,52 +3017,67 @@
 .chat-reaction {
   padding: 2px 8px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--color-border-light, rgba(0,0,0,0.08));
-  background: var(--color-bg, #fff);
+  border: 1px solid var(--chat-line);
+  background: var(--chat-surface);
+  color: var(--chat-ink);
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 .chat-reaction--active {
-  border-color: var(--color-primary, #068927);
-  background: var(--color-primary-15, #e6f4ea);
+  border-color: var(--chat-green);
+  background: #e6f4ea;
+  color: var(--chat-green);
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
 
 .chat-header {
-  height: 58px;
+  height: 60px;
   padding: 0 var(--space-4);
   gap: var(--space-3);
-  background: var(--color-bg, #fff);
+  background: var(--chat-surface);
+  border-bottom: 1px solid var(--chat-line);
 }
-.chat-header__avatar { width: 38px; height: 38px; }
-.chat-header__name { font-size: 15px; }
+.chat-header__avatar {
+  width: 40px; height: 40px;
+  background: #e6f4ea;
+  color: var(--chat-green);
+}
+.chat-header__name    { font-size: 15.5px; color: var(--chat-ink); }
+.chat-header__members { color: var(--chat-ink-dim); }
+.chat-header__icon-btn,
+.chat-header__back-btn { color: var(--chat-ink-dim); }
 
 /* ── Composer ────────────────────────────────────────────────────────────── */
 
 .chat-input-bar {
-  gap: 6px;
-  padding: 10px var(--space-3);
+  /* Tight, even gaps: the old 6px left the emoji / mic / send visibly adrift
+     from one another. */
+  gap: 2px;
+  padding: 8px var(--space-2);
   /* Clear the iOS/Android home indicator. */
-  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-  align-items: center;   /* icons centred against a taller pill */
-  background: var(--color-bg, #fff);
-  border-top: 1px solid var(--color-border-light, #F3F4F6);
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  align-items: center;
+  background: var(--chat-surface);
+  border-top: 1px solid var(--chat-line);
 }
 
-/* A taller, rounder pill — the old one was a thin slot the placeholder barely
-   fit in. Comfortable to tap and clearly the place you type. */
+/* The pill takes ALL the room left over and refuses to shrink, so the
+   placeholder never gets squeezed onto a second line — the single biggest
+   complaint. The icons keep their intrinsic size around it. */
 .chat-input-bar__input-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
   border-radius: 24px;
   border: 1px solid transparent;   /* border shows only on focus */
-  padding: 10px 16px;
+  padding: 9px 16px;
   background: var(--chat-canvas);
   display: flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 42px;
 }
 .chat-input-bar__input-wrap:focus-within {
-  background: var(--color-bg, #fff);
-  border-color: var(--color-primary, #068927);
+  background: #fff;
+  border-color: var(--chat-green);
   box-shadow: 0 0 0 3px rgba(6,137,39,0.12);
 }
 
@@ -3056,7 +3085,17 @@
   font-size: 15px;
   line-height: 1.35;
   min-height: 20px;
+  color: var(--chat-ink);
 }
+.chat-input-bar__textarea::placeholder { color: var(--chat-ink-dim); }
+
+/* Icons: dim ink, and a touch smaller so the trio at the end sits together
+   rather than spread across the bar. The send button keeps its green fill. */
+.chat-input-bar__icon-btn {
+  color: var(--chat-ink-dim);
+  width: 40px; height: 40px;
+}
+.chat-input-bar__icon-btn:hover { color: var(--chat-ink); background: var(--chat-canvas); }
 
 /* 16px keeps iOS from zooming the viewport when the field is focused. */
 @supports (-webkit-touch-callout: none) {
@@ -3078,16 +3117,17 @@
   .chat-msg__bubble { padding: 9px 13px; }
   .chat-msg__text { font-size: 15px; }   /* readable at arm's length */
 
-  .chat-header { height: 54px; padding: 0 var(--space-3); }
-  .chat-header__avatar { width: 34px; height: 34px; }
-  .chat-header__name { font-size: 15px; }
+  .chat-header { height: 58px; padding: 0 var(--space-3); }
+  .chat-header__avatar { width: 38px; height: 38px; }
+  .chat-header__name { font-size: 15.5px; }
 
-  /* Touch targets: the header and composer icons go from 36 to 42px so they
-     clear the ~44px minimum without the row growing taller. */
+  /* Header buttons stay a comfortable 40px tap target. */
   .chat-header__icon-btn,
-  .chat-header__back-btn,
-  .chat-input-bar__icon-btn { width: 42px; height: 42px; }
+  .chat-header__back-btn { width: 40px; height: 40px; }
 
+  /* Composer icons a little snugger so the emoji / mic / send trio reads as a
+     group, not three widely-spaced buttons. */
+  .chat-input-bar__icon-btn { width: 38px; height: 38px; }
   .chat-input-bar__send-btn { width: 42px; height: 42px; }
 
   /* "Enter to send · Shift+Enter for new line" is desktop guidance; on a
@@ -3099,6 +3139,28 @@
   .chat-msg { max-width: 86%; }
 }
 
+/* ── Pin the remaining surfaces ──────────────────────────────────────────────
+   The community list (a slide-in overlay on mobile) and the search bar had
+   their backgrounds pinned white above; their text must be pinned too, or dark
+   mode would flip it to white-on-white. */
+.chat-list-sidebar__title      { color: var(--chat-ink); }
+.chat-list-item__name          { color: var(--chat-ink); }
+.chat-list-item--active .chat-list-item__name { color: var(--chat-green); }
+.chat-list-item__preview,
+.chat-list-item__time,
+.chat-list-item__meta          { color: var(--chat-ink-dim); }
+.chat-list-item:hover          { background: var(--chat-canvas); }
+.chat-list-item--active        { background: #e6f4ea; }
+.chat-list-sidebar__search-input,
+.chat-search-bar,
+.chat-search-bar__input {
+  background: var(--chat-canvas);
+  color: var(--chat-ink);
+  border-color: var(--chat-line);
+}
+.chat-region-group__label      { color: var(--chat-ink-dim); }
+.chat-empty, .chat-error, .chat-list-sidebar__empty { color: var(--chat-ink-dim); }
+
 /* ── Accessibility ───────────────────────────────────────────────────────── */
 
 /* A visible focus ring for keyboard users, on the interactive parts that the
@@ -3107,6 +3169,6 @@
 .chat-reaction:focus-visible,
 .chat-input-bar__send-btn:focus-visible,
 .chat-header__icon-btn:focus-visible {
-  outline: 2px solid var(--color-primary, #068927);
+  outline: 2px solid var(--chat-green);
   outline-offset: 2px;
 }
