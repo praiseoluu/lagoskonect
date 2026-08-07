@@ -11,10 +11,10 @@
  *     static `styles` property.
  *
  * Usage:
- *   import { Button, Input, Modal, Table }    from '../../components/index.js?v=20260806d';
- *   import { WebLayout, AdminLayout }          from '../../components/index.js?v=20260806d';
- *   import { StatCard, NewsCard, ReelCard }    from '../../components/index.js?v=20260806d';
- *   import { OTPInput, Dropdown, FileUpload }  from '../../components/index.js?v=20260806d';
+ *   import { Button, Input, Modal, Table }    from '../../components/index.js?v=20260806e';
+ *   import { WebLayout, AdminLayout }          from '../../components/index.js?v=20260806e';
+ *   import { StatCard, NewsCard, ReelCard }    from '../../components/index.js?v=20260806e';
+ *   import { OTPInput, Dropdown, FileUpload }  from '../../components/index.js?v=20260806e';
  *
  * @module  ComponentIndex
  * @version 2.0.0
@@ -25,11 +25,11 @@
    ══════════════════════════════════════════════════════════════════════════ */
 
 // ── Primitives ─────────────────────────────────────────────────────────────
-export { Button }       from './base/Button.js?v=20260806d';
-export { Input }        from './base/Input.js?v=20260806d';
-export { Badge }        from './base/Badge.js?v=20260806d';
-export { Modal }        from './base/Modal.js?v=20260806d';
-export { Table }        from './base/Table.js?v=20260806d';
+export { Button }       from './base/Button.js?v=20260806e';
+export { Input }        from './base/Input.js?v=20260806e';
+export { Badge }        from './base/Badge.js?v=20260806e';
+export { Modal }        from './base/Modal.js?v=20260806e';
+export { Table }        from './base/Table.js?v=20260806e';
 
 // ── Card family ────────────────────────────────────────────────────────────
 export {
@@ -37,7 +37,7 @@ export {
   StatCard,
   NewsCard,
   ReelCard,
-} from './base/Card.js?v=20260806d';
+} from './base/Card.js?v=20260806e';
 
 // ── UI utilities ───────────────────────────────────────────────────────────
 export {
@@ -45,7 +45,7 @@ export {
   Avatar,
   Tabs,
   Toggle,
-} from './base/UI.js?v=20260806d';
+} from './base/UI.js?v=20260806e';
 
 // ── Form components ────────────────────────────────────────────────────────
 export {
@@ -54,7 +54,7 @@ export {
   FileUpload,
   ProgressBar,
   ChatBubble,
-} from './base/Forms.js?v=20260806d';
+} from './base/Forms.js?v=20260806e';
 
 /* ══════════════════════════════════════════════════════════════════════════
    LAYOUT COMPONENTS
@@ -65,21 +65,21 @@ export {
   Sidebar,
   WebSidebar,
   AdminSidebar,
-} from './layout/Sidebar.js?v=20260806d';
+} from './layout/Sidebar.js?v=20260806e';
 
 // ── Topbar ─────────────────────────────────────────────────────────────────
 export {
   Topbar,
   WebTopbar,
   AdminTopbar,
-} from './layout/Topbar.js?v=20260806d';
+} from './layout/Topbar.js?v=20260806e';
 
 // ── Page layouts ───────────────────────────────────────────────────────────
 export {
   BaseLayout,
   WebLayout,
   AdminLayout,
-} from './layout/BaseLayout.js?v=20260806d';
+} from './layout/BaseLayout.js?v=20260806e';
 
 /* ══════════════════════════════════════════════════════════════════════════
    CSS MANIFEST  (reference only — do not uncomment)

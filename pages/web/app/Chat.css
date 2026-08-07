@@ -2880,11 +2880,22 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* The canvas behind the bubbles. Distinct from --color-bg so a white
-     incoming bubble has something to sit on. */
-  --chat-canvas: var(--color-surface, #f6f7f9);
-  --chat-bubble-radius: 20px;
-  --chat-bubble-tail: 7px;
+  /* The canvas behind the bubbles. An EXPLICIT soft neutral, not a token:
+     --color-surface is #F9FAFB, a hair off pure white, so white bubbles on it
+     were invisible and the thread read as one flat cramped block. This gives
+     the bubbles a real surface to sit on — the single change that makes the
+     redesign read as designed rather than broken. */
+  --chat-canvas: #e7ebf1;
+  --chat-bubble-radius: 18px;
+  --chat-bubble-tail: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Darker than --color-bg (#0F1712) so the bubbles, which use --color-bg,
+       lift off the canvas in dark mode too. */
+    --chat-canvas: #090d0a;
+  }
 }
 
 /* ── Canvas ──────────────────────────────────────────────────────────────── */
@@ -2894,7 +2905,7 @@
   /* Spacing is owned by the messages themselves so a run can group tightly
      while groups breathe; a flex gap could not tell the two apart. */
   gap: 0;
-  padding: var(--space-4) var(--space-4) var(--space-3);
+  padding: var(--space-5) var(--space-4) var(--space-3);
 }
 
 /* The date pill was surface-coloured, which is now the canvas — it would
@@ -2909,8 +2920,8 @@
 .chat-msg {
   align-items: flex-end;
   gap: var(--space-2);
-  max-width: 74%;
-  margin-bottom: 12px;   /* between groups */
+  max-width: 76%;
+  margin-bottom: 16px;   /* between groups — room to breathe */
 }
 
 .chat-msg--grouped { margin-bottom: 2px; }   /* within a run */
@@ -2941,11 +2952,13 @@
 
 .chat-msg__bubble {
   border-radius: var(--chat-bubble-radius);
-  padding: 9px 13px;
+  padding: 10px 14px;
   gap: 3px;
   background: var(--color-bg, #fff);
-  border: 1px solid var(--color-border-light, rgba(0,0,0,0.06));
-  box-shadow: 0 1px 1.5px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.04);
+  /* A real lift off the canvas — the hairline alone was invisible on the
+     near-white surface the old canvas produced. */
+  box-shadow: 0 1px 2px rgba(16,24,40,0.06), 0 1px 1px rgba(16,24,40,0.04);
 }
 
 /* One gentle tail per run: the corner nearest the avatar on the first bubble.
@@ -2968,9 +2981,9 @@
 .chat-msg__bubble:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
 .chat-msg__bubble--own:hover { box-shadow: 0 2px 8px rgba(6,137,39,0.24); }
 
-.chat-msg__text { font-size: 14.5px; line-height: 1.4; }
+.chat-msg__text { font-size: 15px; line-height: 1.45; }
 
-.chat-msg__time { font-size: 10.5px; margin-top: 1px; }
+.chat-msg__time { font-size: 10.5px; margin-top: 2px; opacity: 0.85; }
 
 /* ── Reply quote inside a bubble ─────────────────────────────────────────── */
 
@@ -3013,25 +3026,37 @@
 /* ── Composer ────────────────────────────────────────────────────────────── */
 
 .chat-input-bar {
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  gap: 6px;
+  padding: 10px var(--space-3);
   /* Clear the iOS/Android home indicator. */
-  padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
-  align-items: flex-end;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  align-items: center;   /* icons centred against a taller pill */
   background: var(--color-bg, #fff);
+  border-top: 1px solid var(--color-border-light, #F3F4F6);
 }
 
+/* A taller, rounder pill — the old one was a thin slot the placeholder barely
+   fit in. Comfortable to tap and clearly the place you type. */
 .chat-input-bar__input-wrap {
-  border-radius: var(--radius-2xl, 22px);
-  border-width: 1px;
-  padding: 8px 14px;
+  border-radius: 24px;
+  border: 1px solid transparent;   /* border shows only on focus */
+  padding: 10px 16px;
   background: var(--chat-canvas);
+  display: flex;
+  align-items: center;
+  min-height: 44px;
 }
 .chat-input-bar__input-wrap:focus-within {
   background: var(--color-bg, #fff);
+  border-color: var(--color-primary, #068927);
+  box-shadow: 0 0 0 3px rgba(6,137,39,0.12);
 }
 
-.chat-input-bar__textarea { font-size: 15px; }
+.chat-input-bar__textarea {
+  font-size: 15px;
+  line-height: 1.35;
+  min-height: 20px;
+}
 
 /* 16px keeps iOS from zooming the viewport when the field is focused. */
 @supports (-webkit-touch-callout: none) {
@@ -3050,7 +3075,7 @@
   .chat-msg__avatar img,
   .chat-msg__avatar > * { width: 30px; height: 30px; }
 
-  .chat-msg__bubble { padding: 8px 12px; }
+  .chat-msg__bubble { padding: 9px 13px; }
   .chat-msg__text { font-size: 15px; }   /* readable at arm's length */
 
   .chat-header { height: 54px; padding: 0 var(--space-3); }

@@ -7,17 +7,17 @@
  * Uses the same AuthLayout as citizen auth pages.
  */
 
-import { Component } from '../../../core/component.js?v=20260806d';
-import { Input } from '../../../components/base/Input.js?v=20260806d';
-import { Button } from '../../../components/base/Button.js?v=20260806d';
-import { AuthLayout } from './_AuthLayout.js?v=20260806d';
-import { store, showToast } from '../../../core/store.js?v=20260806d';
-import { router } from '../../../core/router.js?v=20260806d';
-import { api } from '../../../api/client.js?v=20260806d';
-import { saveSession } from '../../../utils/storage.js?v=20260806d';
+import { Component } from '../../../core/component.js?v=20260806e';
+import { Input } from '../../../components/base/Input.js?v=20260806e';
+import { Button } from '../../../components/base/Button.js?v=20260806e';
+import { AuthLayout } from './_AuthLayout.js?v=20260806e';
+import { store, showToast } from '../../../core/store.js?v=20260806e';
+import { router } from '../../../core/router.js?v=20260806e';
+import { api } from '../../../api/client.js?v=20260806e';
+import { saveSession } from '../../../utils/storage.js?v=20260806e';
 
 export default class ForceChangePasswordPage extends Component {
-  static styles = '/pages/web/auth/_AuthLayout.css?v=20260806d';
+  static styles = '/pages/web/auth/_AuthLayout.css?v=20260806e';
 
   constructor(props) {
     super(props);

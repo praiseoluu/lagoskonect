@@ -19,13 +19,13 @@
  * Tabs are commented out — can be re-enabled if the client requests them.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806d';
-import { Avatar } from '../../../components/base/UI.js?v=20260806d';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806d';
-import { router } from '../../../core/router.js?v=20260806d';
-import { api } from '../../../api/client.js?v=20260806d';
-import { timeAgo } from '../../../utils/date.js?v=20260806d';
-import { t } from '../../../core/i18n.js?v=20260806d';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806e';
+import { Avatar } from '../../../components/base/UI.js?v=20260806e';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806e';
+import { router } from '../../../core/router.js?v=20260806e';
+import { api } from '../../../api/client.js?v=20260806e';
+import { timeAgo } from '../../../utils/date.js?v=20260806e';
+import { t } from '../../../core/i18n.js?v=20260806e';
 
 // ── Category icon map ─────────────────────────────────────────────────────
 
@@ -71,7 +71,7 @@ const CATEGORY_LABEL_KEYS = {
 // ── Page ──────────────────────────────────────────────────────────────────
 
 export default class NotificationsPage extends WebLayout {
-  static styles = '/pages/web/app/Notifications.css?v=20260806d';
+  static styles = '/pages/web/app/Notifications.css?v=20260806e';
 
   constructor(props) {
     super({ title: t('notifications.title'), ...props });

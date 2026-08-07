@@ -17,7 +17,7 @@
  *   - Use this.subscribe() instead of store.subscribe() — auto-cleaned up
  */
 
-import { loadCSS } from '../utils/cssLoader.js?v=20260806d';
+import { loadCSS } from '../utils/cssLoader.js?v=20260806e';
 
 export class Component {
   /**
