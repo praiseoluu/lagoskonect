@@ -11,16 +11,16 @@
  * userId in sessionStorage, routes to /verify-identity.
  */
 
-import { Component } from '../../../core/component.js?v=20260806c';
-import { Input } from '../../../components/base/Input.js?v=20260806c';
-import { Button } from '../../../components/base/Button.js?v=20260806c';
-import { PublicLayout } from './_PublicLayout.js?v=20260806c';
-import { router } from '../../../core/router.js?v=20260806c';
-import { api } from '../../../api/client.js?v=20260806c';
-import { showToast } from '../../../core/store.js?v=20260806c';
+import { Component } from '../../../core/component.js?v=20260806d';
+import { Input } from '../../../components/base/Input.js?v=20260806d';
+import { Button } from '../../../components/base/Button.js?v=20260806d';
+import { PublicLayout } from './_PublicLayout.js?v=20260806d';
+import { router } from '../../../core/router.js?v=20260806d';
+import { api } from '../../../api/client.js?v=20260806d';
+import { showToast } from '../../../core/store.js?v=20260806d';
 
 export default class ForgotPasswordPage extends Component {
-  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806c';
+  static styles = '/pages/web/auth/_PublicLayout.css?v=20260806d';
   static dependencies = ['/pages/web/auth/PublicForm.css', '/components/base/Button.css'];
 
   constructor(props) {

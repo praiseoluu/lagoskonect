@@ -21,11 +21,11 @@
  * loading the queue is one request rather than one per article.
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806c';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806c';
-import { api } from '../../../api/client.js?v=20260806c';
-import { BASE_URL } from '../../../api/_fetch.js?v=20260806c';
-import { formatDateTime } from '../../../utils/date.js?v=20260806c';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806d';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806d';
+import { api } from '../../../api/client.js?v=20260806d';
+import { BASE_URL } from '../../../api/_fetch.js?v=20260806d';
+import { formatDateTime } from '../../../utils/date.js?v=20260806d';
 
 const COUNTRIES = [
   { code: 'ng', label: 'Nigeria' },
@@ -50,7 +50,7 @@ const FALLBACK_TOPICS = [
 ];
 
 export default class NewsImportPage extends AdminLayout {
-  static styles = '/pages/admin/app/NewsImport.css?v=20260806c';
+  static styles = '/pages/admin/app/NewsImport.css?v=20260806d';
 
   constructor(props) {
     super({ title: 'Import News', ...props });

@@ -2,7 +2,7 @@
  * LagKonnect — Adverts API
  */
 
-import { _fetch, BASE_URL } from './_fetch.js?v=20260806c';
+import { _fetch, BASE_URL } from './_fetch.js?v=20260806d';
 
 export const adverts = {
 

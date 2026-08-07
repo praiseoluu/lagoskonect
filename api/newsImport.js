@@ -7,7 +7,7 @@
  * in server/.env and every request here goes through our own backend.
  */
 
-import { _fetch } from './_fetch.js?v=20260806c';
+import { _fetch } from './_fetch.js?v=20260806d';
 
 export const newsImport = {
   /**

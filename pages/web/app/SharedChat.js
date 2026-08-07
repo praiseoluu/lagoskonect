@@ -19,12 +19,12 @@
  *  ✅ Single-emoji text rendered as large sticker
  */
 
-import { WebLayout }                        from '../../../components/layout/BaseLayout.js?v=20260806c';
-import { Avatar }                           from '../../../components/base/UI.js?v=20260806c';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806c';
-import { api }                              from '../../../api/client.js?v=20260806c';
-import { sseClient }                        from '../../../core/sseClient.js?v=20260806c';
-import { t }                                from '../../../core/i18n.js?v=20260806c';
+import { WebLayout }                        from '../../../components/layout/BaseLayout.js?v=20260806d';
+import { Avatar }                           from '../../../components/base/UI.js?v=20260806d';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806d';
+import { api }                              from '../../../api/client.js?v=20260806d';
+import { sseClient }                        from '../../../core/sseClient.js?v=20260806d';
+import { t }                                from '../../../core/i18n.js?v=20260806d';
 
 // ══════════════════════════════════════════════════════════════════════════
 // Constants
@@ -159,7 +159,7 @@ function fileExtBadge(name = '') {
 // ══════════════════════════════════════════════════════════════════════════
 
 export default class SharedChatPage extends WebLayout {
-    static styles = '/pages/web/app/Chat.css?v=20260806c';
+    static styles = '/pages/web/app/Chat.css?v=20260806d';
 
     /** Override in subclasses: return the profile URL for a given username. */
     _profileUrl(username) { return `/u/${encodeURIComponent(username)}`; }
@@ -626,6 +626,25 @@ export default class SharedChatPage extends WebLayout {
             const r = p.region || 'west';
             if (!groups[r]) groups[r] = [];
             groups[r].push(p);
+        }
+
+        // Within a region, the community talked in most recently rises to the
+        // top, the way every messenger orders a conversation list — so a room
+        // with a new message is where you expect it rather than buried in a
+        // fixed alphabetical list. Unread rooms outrank read ones; rooms with
+        // no messages yet settle to the bottom, ordered by name so the list is
+        // still stable and scannable.
+        const activityRank = (p) => {
+            const t = p.lastMessage?.createdAt ? new Date(p.lastMessage.createdAt).getTime() : 0;
+            return { unread: (p.unreadCount || 0) > 0 ? 1 : 0, t };
+        };
+        for (const r of Object.keys(groups)) {
+            groups[r].sort((a, b) => {
+                const ra = activityRank(a), rb = activityRank(b);
+                if (ra.unread !== rb.unread) return rb.unread - ra.unread;   // unread first
+                if (rb.t !== ra.t)           return rb.t - ra.t;             // newest activity first
+                return a.name.localeCompare(b.name);                        // then alphabetical
+            });
         }
 
         const html = REGION_ORDER
