@@ -37,7 +37,7 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806g';
+import { Component } from '../../core/component.js?v=20260806h';
 
 /* ── Inline SVG icons ───────────────────────────────────────────────────── */
 
@@ -100,7 +100,7 @@ const TYPE_MAP = Object.freeze({
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class Input extends Component {
-  static styles = '/components/base/Input.css?v=20260806g';
+  static styles = '/components/base/Input.css?v=20260806h';
 
   constructor(props = {}) {
     super({

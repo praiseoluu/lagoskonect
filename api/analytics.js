@@ -2,7 +2,7 @@
  * LagKonnect — Analytics API
  * Dashboard + Analytics page endpoints.
  */
-import { _fetch, BASE_URL } from './_fetch.js?v=20260806g';
+import { _fetch, BASE_URL } from './_fetch.js?v=20260806h';
 
 export const analytics = {
 

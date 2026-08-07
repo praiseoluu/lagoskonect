@@ -12,18 +12,18 @@
  * On "use backup code": switches to backup code input.
  */
 
-import { Component } from '../../../core/component.js?v=20260806g';
-import { AuthLayout } from './_AuthLayout.js?v=20260806g';
-import { Input } from '../../../components/base/Input.js?v=20260806g';
-import { Button } from '../../../components/base/Button.js?v=20260806g';
-import { t } from '../../../core/i18n.js?v=20260806g';
-import { store, showToast } from '../../../core/store.js?v=20260806g';
-import { router } from '../../../core/router.js?v=20260806g';
-import { api } from '../../../api/client.js?v=20260806g';
-import { saveSession } from '../../../utils/storage.js?v=20260806g';
+import { Component } from '../../../core/component.js?v=20260806h';
+import { AuthLayout } from './_AuthLayout.js?v=20260806h';
+import { Input } from '../../../components/base/Input.js?v=20260806h';
+import { Button } from '../../../components/base/Button.js?v=20260806h';
+import { t } from '../../../core/i18n.js?v=20260806h';
+import { store, showToast } from '../../../core/store.js?v=20260806h';
+import { router } from '../../../core/router.js?v=20260806h';
+import { api } from '../../../api/client.js?v=20260806h';
+import { saveSession } from '../../../utils/storage.js?v=20260806h';
 
 export default class TwoFactorLoginPage extends Component {
-  static styles = '/pages/web/auth/_AuthLayout.css?v=20260806g';
+  static styles = '/pages/web/auth/_AuthLayout.css?v=20260806h';
 
   constructor(props) {
     super(props);

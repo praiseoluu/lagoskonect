@@ -41,7 +41,7 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806g';
+import { Component } from '../../core/component.js?v=20260806h';
 
 /* ── Valid prop values ──────────────────────────────────────────────────── */
 
@@ -54,7 +54,7 @@ const VALID_TYPES    = Object.freeze(['button', 'submit', 'reset']);
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class Button extends Component {
-  static styles = '/components/base/Button.css?v=20260806g';
+  static styles = '/components/base/Button.css?v=20260806h';
 
   constructor(props = {}) {
     super({

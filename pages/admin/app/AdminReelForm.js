@@ -4,19 +4,19 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806g';
-import { Input } from '../../../components/base/Input.js?v=20260806g';
-import { Button } from '../../../components/base/Button.js?v=20260806g';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806g';
-import { router } from '../../../core/router.js?v=20260806g';
-import { api } from '../../../api/client.js?v=20260806g';
-import { extractVideoThumbnail } from '../../../utils/thumbnail.js?v=20260806g';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806h';
+import { Input } from '../../../components/base/Input.js?v=20260806h';
+import { Button } from '../../../components/base/Button.js?v=20260806h';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806h';
+import { router } from '../../../core/router.js?v=20260806h';
+import { api } from '../../../api/client.js?v=20260806h';
+import { extractVideoThumbnail } from '../../../utils/thumbnail.js?v=20260806h';
 
 const UPLOAD_SVG = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>';
 const SEND_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
 
 export default class AdminReelFormPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminReelForm.css?v=20260806g';
+  static styles = '/pages/admin/app/AdminReelForm.css?v=20260806h';
 
   constructor(props) {
     const isEdit = !!props.params?.id;

@@ -11,16 +11,16 @@
  *   5. Source link
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806g';
-import { Badge } from '../../../components/base/Badge.js?v=20260806g';
-import { setPageLoading } from '../../../core/store.js?v=20260806g';
-import { router } from '../../../core/router.js?v=20260806g';
-import { api } from '../../../api/client.js?v=20260806g';
-import { formatDate } from '../../../utils/date.js?v=20260806g';
-import { t } from '../../../core/i18n.js?v=20260806g';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806h';
+import { Badge } from '../../../components/base/Badge.js?v=20260806h';
+import { setPageLoading } from '../../../core/store.js?v=20260806h';
+import { router } from '../../../core/router.js?v=20260806h';
+import { api } from '../../../api/client.js?v=20260806h';
+import { formatDate } from '../../../utils/date.js?v=20260806h';
+import { t } from '../../../core/i18n.js?v=20260806h';
 
 export default class NewsDetailPage extends WebLayout {
-  static styles = '/pages/web/app/NewsDetail.css?v=20260806g';
+  static styles = '/pages/web/app/NewsDetail.css?v=20260806h';
   static dependencies = ['/components/base/Badge.css']
 
   constructor(props) {

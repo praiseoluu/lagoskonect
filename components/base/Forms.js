@@ -30,8 +30,8 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806g';
-import { timeAgo }   from '../../utils/date.js?v=20260806g';
+import { Component } from '../../core/component.js?v=20260806h';
+import { timeAgo }   from '../../utils/date.js?v=20260806h';
 
 /* ── Shared SVG constants ───────────────────────────────────────────────── */
 
@@ -100,7 +100,7 @@ const ICON = Object.freeze({
  *   otp.setError('Invalid code. Please try again.');
  */
 export class OTPInput extends Component {
-  static styles = '/components/base/Forms.css?v=20260806g';
+  static styles = '/components/base/Forms.css?v=20260806h';
 
   constructor(props = {}) {
     super({
@@ -293,7 +293,7 @@ export class OTPInput extends Component {
  *   dd.setError('Required');
  */
 export class Dropdown extends Component {
-  static styles = '/components/base/Forms.css?v=20260806g';
+  static styles = '/components/base/Forms.css?v=20260806h';
 
   constructor(props = {}) {
     super({
@@ -541,7 +541,7 @@ export class Dropdown extends Component {
  *   uploader.clear();
  */
 export class FileUpload extends Component {
-  static styles = '/components/base/Forms.css?v=20260806g';
+  static styles = '/components/base/Forms.css?v=20260806h';
 
   constructor(props = {}) {
     super({
@@ -752,7 +752,7 @@ export class FileUpload extends Component {
  *   ProgressBar.html({ value: 60, color: 'success', animated: true });
  */
 export class ProgressBar extends Component {
-  static styles = '/components/base/Forms.css?v=20260806g';
+  static styles = '/components/base/Forms.css?v=20260806h';
 
   constructor(props = {}) {
     super({
@@ -872,7 +872,7 @@ export class ProgressBar extends Component {
  *   ChatBubble.html({ message: 'Thanks!', variant: 'sent', timestamp: Date.now() });
  */
 export class ChatBubble extends Component {
-  static styles = '/components/base/Forms.css?v=20260806g';
+  static styles = '/components/base/Forms.css?v=20260806h';
 
   constructor(props = {}) {
     super({

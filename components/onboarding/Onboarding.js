@@ -22,11 +22,11 @@
  * @version 1.0.0
  */
 
-import { WebLayout }                        from '../layout/BaseLayout.js?v=20260806g';
-import { router }                           from '../../core/router.js?v=20260806g';
-import { store, setPageLoading }            from '../../core/store.js?v=20260806g';
-import { api }                              from '../../api/client.js?v=20260806g';
-import { t }                                from '../../core/i18n.js?v=20260806g';
+import { WebLayout }                        from '../layout/BaseLayout.js?v=20260806h';
+import { router }                           from '../../core/router.js?v=20260806h';
+import { store, setPageLoading }            from '../../core/store.js?v=20260806h';
+import { api }                              from '../../api/client.js?v=20260806h';
+import { t }                                from '../../core/i18n.js?v=20260806h';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 
@@ -51,7 +51,7 @@ const IC_BELL_SM = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" 
    ══════════════════════════════════════════════════════════════════════════ */
 
 export default class Onboarding extends WebLayout {
-  static styles = '/pages/web/app/Welcome.css?v=20260806g';
+  static styles = '/pages/web/app/Welcome.css?v=20260806h';
 
   /**
    * @param {{ homeRoute?: string, regionBrand?: string }} props

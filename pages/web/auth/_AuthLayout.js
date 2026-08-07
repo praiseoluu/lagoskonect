@@ -13,7 +13,7 @@
  *   });
  */
 
-import { LanguageSwitcher } from "../../../components/feature/LanguageSwitcher.js?v=20260806g";
+import { LanguageSwitcher } from "../../../components/feature/LanguageSwitcher.js?v=20260806h";
 
 export class AuthLayout {
     /**
@@ -90,7 +90,7 @@ export class AuthLayout {
      * element exists in the DOM. The switcher is registered as a child
      * of the host so it is unmounted automatically with the page.
      *
-     * @param {import('../../../core/component.js?v=20260806g').Component} host
+     * @param {import('../../../core/component.js?v=20260806h').Component} host
      * @returns {LanguageSwitcher|null}
      */
     static mountLanguageSwitcher(host) {

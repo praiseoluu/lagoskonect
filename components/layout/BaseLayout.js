@@ -17,18 +17,18 @@
  * @version 2.0.0
  */
 
-import { Component }      from '../../core/component.js?v=20260806g';
+import { Component }      from '../../core/component.js?v=20260806h';
 // Versioned: the sidebar and topbar are shared by every page, so a browser
 // holding an old copy shows stale navigation no matter what else is deployed.
 // A fresh URL is the only thing a populated cache cannot ignore.
-import { WebSidebar, AdminSidebar } from './Sidebar.js?v=20260806g';
-import { WebTopbar, AdminTopbar }   from './Topbar.js?v=20260806g';
-import { ToastContainer } from '../base/UI.js?v=20260806g';
-import { store }          from '../../core/store.js?v=20260806g';
-import { api }            from '../../api/client.js?v=20260806g';
-import { CreateReelModal }  from '../feature/CreateReel.js?v=20260806g';
-import { SelectLGAModal }   from '../feature/SelectLGAModal.js?v=20260806g';
-import { sseClient }        from '../../core/sseClient.js?v=20260806g';
+import { WebSidebar, AdminSidebar } from './Sidebar.js?v=20260806h';
+import { WebTopbar, AdminTopbar }   from './Topbar.js?v=20260806h';
+import { ToastContainer } from '../base/UI.js?v=20260806h';
+import { store }          from '../../core/store.js?v=20260806h';
+import { api }            from '../../api/client.js?v=20260806h';
+import { CreateReelModal }  from '../feature/CreateReel.js?v=20260806h';
+import { SelectLGAModal }   from '../feature/SelectLGAModal.js?v=20260806h';
+import { sseClient }        from '../../core/sseClient.js?v=20260806h';
 
 /* ── Brand helper ───────────────────────────────────────────────────────── */
 const BRAND_MAP = Object.freeze({
@@ -50,7 +50,7 @@ function getBrandName() {
    BaseLayout
    ══════════════════════════════════════════════════════════════════════════ */
 export class BaseLayout extends Component {
-  static styles = '/components/layout/BaseLayout.css?v=20260806g';
+  static styles = '/components/layout/BaseLayout.css?v=20260806h';
 
   constructor(props = {}) {
     super({ title: '', breadcrumbs: [], ...props });
@@ -204,7 +204,7 @@ export class WebLayout extends BaseLayout {
   async afterMount() {
     // Auth guard
     if (!store.isAuthenticated || store.role !== 'citizen') {
-      const { router } = await import('../../core/router.js?v=20260806g');
+      const { router } = await import('../../core/router.js?v=20260806h');
       router.replace('/login');
       return;
     }
@@ -266,7 +266,7 @@ export class AdminLayout extends BaseLayout {
       (store.role === 'admin' || store.role === 'super_admin');
 
     if (!isAdmin) {
-      const { router } = await import('../../core/router.js?v=20260806g');
+      const { router } = await import('../../core/router.js?v=20260806h');
       router.replace('/login');
       return;
     }
