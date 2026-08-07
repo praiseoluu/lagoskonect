@@ -544,3 +544,146 @@
   background: rgba(0, 0, 0, 0.72);
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REELS REDESIGN LAYER
+   ───────────────────────────────────────────────────────────────────────────
+   Appended so it wins on cascade order. Reuses the existing markup (plus the
+   .rf-item__comment-avatar-img and .rf-nav that Reels.js now emits) and adds
+   no behaviour beyond the up/down arrows already wired in JS.
+
+   Goals, from the feedback:
+     · phone: the video fills the screen edge to edge, actions float over it as
+       a rail instead of a white strip stealing height;
+     · the commenter's real picture and name (the API sends them — the old code
+       read the wrong field and showed "Anonymous");
+     · desktop: comments open as a panel beside the video, and mouse users get
+       explicit up/down controls.
+   Light theme throughout — only the arrangement changes.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Comment identity ────────────────────────────────────────────────────── */
+
+.rf-item__comment-avatar { width: 34px; height: 34px; overflow: hidden; }
+.rf-item__comment-avatar-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+.rf-item__comment-author { font-size: 13px; }
+.rf-item__comment-text  { font-size: 14px; color: var(--color-text-primary, #111827); }
+
+/* ── Up / down navigation (desktop only) ─────────────────────────────────── */
+
+.rf-nav {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;                 /* shown on desktop pointers below */
+  flex-direction: column;
+  gap: 14px;
+  z-index: 20;
+}
+.rf-nav__btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border, #e5e7eb);
+  background: #fff;
+  color: var(--color-text-primary, #111827);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  transition: transform 0.12s, background 0.12s;
+}
+.rf-nav__btn:hover { background: #f3f4f6; transform: scale(1.06); }
+.rf-nav__btn:focus-visible { outline: 2px solid var(--color-primary, #068927); outline-offset: 2px; }
+
+/* Only a real mouse gets the arrows; touch swipes the feed directly. */
+@media (hover: hover) and (pointer: fine) and (min-width: 900px) {
+  .rf-nav { display: flex; }
+}
+
+/* ═══ Phone: full-bleed video, actions overlaid as a rail ════════════════ */
+
+@media (max-width: 899px) {
+  /* The media already flexes to fill; dropping the white action strip out of
+     flow lets it fill the whole item, edge to edge. */
+  .rf-item__below {
+    position: absolute;
+    right: 6px;
+    bottom: 96px;              /* clear of the caption gradient at the foot */
+    background: none;
+    border-top: none;
+    z-index: 6;
+    padding: 0;
+  }
+
+  .rf-item__action-bar {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 0;
+  }
+
+  /* Icons sit directly on the video: white, drop-shadowed, TikTok-style. */
+  .rf-item__btn {
+    flex-direction: column;
+    gap: 4px;
+    width: 52px;
+    padding: 0;
+    color: #fff;
+    background: none;
+  }
+  .rf-item__btn:hover,
+  .rf-item__btn:focus-visible { background: none; color: #fff; }
+  .rf-item__btn svg {
+    width: 32px; height: 32px;
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.5));
+  }
+  .rf-item__btn-count {
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+  }
+  .rf-item__btn--liked,
+  .rf-item__btn--liked svg { color: #ff3040; }
+  .rf-item__btn--share { margin-left: 0; }   /* reset the row's auto margin */
+
+  /* No borders/radius on the item now that it is a full-screen stage. */
+  .rf-item {
+    border-bottom: none;
+    background: #000;
+  }
+}
+
+/* ═══ Desktop: comments as a side panel beside the video ═════════════════ */
+
+@media (min-width: 900px) {
+  /* Tighten the stage so the letterbox around a portrait video reads as an
+     intentional frame rather than stray padding. */
+  .rf-item { padding: 12px 20px; gap: 12px; }
+
+  /* The drawer leaves the foot of the video and docks to its right as a
+     standing panel — offset past the action rail so the two do not overlap. */
+  .rf-item__comment-drawer {
+    left: calc(100% + 76px);
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: min(360px, 32vw);
+    height: 100%;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+    transform: translateX(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.24s ease, opacity 0.24s ease;
+  }
+  .rf-item__comment-drawer--open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .rf-item__comment-drawer-handle { border-radius: 16px 16px 0 0; }
+}
