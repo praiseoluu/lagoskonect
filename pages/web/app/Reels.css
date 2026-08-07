@@ -688,27 +688,37 @@
   .rf-item__comment-drawer-handle { border-radius: 16px 16px 0 0; }
 }
 
-/* ── Edge to edge: no white frame around the video ──────────────────────────
+/* ── Edge to edge, on a light surround ──────────────────────────────────────
    The page shell (.ktg-layout__content) pads and width-caps every route, which
-   drew a white frame around the reel on all sides, on mobile and desktop alike.
-   Reels opts out of that framing the way the chat shell does, so the feed runs
-   to the screen edges. Where a portrait video genuinely cannot fill a wide
-   screen the surround is black — a video player's frame — never white. */
+   drew a white frame around the reel on all sides. Reels opts out of that
+   framing the way the chat shell does, so the feed runs to the screen edges.
+
+   The surround itself is the app's light background, NOT black — a portrait
+   video on a wide desktop is centred on white, the way the rest of the app
+   reads, rather than sitting in a dark player. Pinned to an explicit light
+   value so a phone in dark mode cannot flip the reels page dark. Only the media
+   element keeps its black fill, because that is where the video actually is. */
 .ktg-layout__content:has(.rf-wrap) {
   padding: 0;
   max-width: 100%;
 }
 
-.rf-wrap { background: #000; }
+.rf-wrap { background: #ffffff; }
 
 @media (min-width: 640px) {
-  /* The inset column outline read as a border around the "padding"; the black
-     surround now carries the framing on its own. */
+  /* The inset column outline read as a border around the framing; dropped. */
   .rf-feed { box-shadow: none; }
 }
 
 @media (min-width: 900px) {
-  /* Drop the desktop stage padding so the video meets its black frame with no
-     grey gutter between. */
-  .rf-item { padding: 0; background: #000; }
+  /* Light stage, video centred on it, no grey gutter. */
+  .rf-item { padding: 0; background: #ffffff; }
+
+  /* On the light surround the action rail needs its own edges and dark labels,
+     or the white button circles and grey counts would vanish into the page. */
+  .rf-item__btn        { color: #4b5563; }
+  .rf-item__btn-count  { color: #111827; }
+  .rf-item__btn svg    { border: 1px solid #e5e7eb; }
+  .rf-item__btn--liked { color: #ff3040; }
+  .rf-item__btn--liked .rf-item__btn-count { color: #ff3040; }
 }
