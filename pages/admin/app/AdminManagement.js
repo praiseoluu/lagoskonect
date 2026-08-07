@@ -7,15 +7,15 @@
  * Section 2 — Admin Team: list, invite, role/status/remove (super_admin only)
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806f';
-import { Input }       from '../../../components/base/Input.js?v=20260806f';
-import { Button }      from '../../../components/base/Button.js?v=20260806f';
-import { Modal }       from '../../../components/base/Modal.js?v=20260806f';
-import { Avatar }      from '../../../components/base/UI.js?v=20260806f';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806f';
-import { store }       from '../../../core/store.js?v=20260806f';
-import { api }         from '../../../api/client.js?v=20260806f';
-import { timeAgo }     from '../../../utils/date.js?v=20260806f';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806g';
+import { Input }       from '../../../components/base/Input.js?v=20260806g';
+import { Button }      from '../../../components/base/Button.js?v=20260806g';
+import { Modal }       from '../../../components/base/Modal.js?v=20260806g';
+import { Avatar }      from '../../../components/base/UI.js?v=20260806g';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806g';
+import { store }       from '../../../core/store.js?v=20260806g';
+import { api }         from '../../../api/client.js?v=20260806g';
+import { timeAgo }     from '../../../utils/date.js?v=20260806g';
 
 const ROLE_LABELS = { super_admin: 'Super Admin', admin: 'Admin' };
 const ROLE_COLORS = { super_admin: 'am-role--super', admin: 'am-role--admin' };
@@ -31,7 +31,7 @@ const EYE_SVG     = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"
 const CAM_SVG     = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>';
 
 export default class AdminManagementPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminManagement.css?v=20260806f';
+  static styles = '/pages/admin/app/AdminManagement.css?v=20260806g';
 
   constructor(props) {
     super({

@@ -22,13 +22,13 @@
  * @version 2.0.0
  */
 
-import { Component }              from '../../../core/component.js?v=20260806f';
-import { Input }                  from '../../../components/base/Input.js?v=20260806f';
-import { Button }                 from '../../../components/base/Button.js?v=20260806f';
-import { store, showToast }       from '../../../core/store.js?v=20260806f';
-import { router }                 from '../../../core/router.js?v=20260806f';
-import { api }                    from '../../../api/client.js?v=20260806f';
-import { saveSession }            from '../../../utils/storage.js?v=20260806f';
+import { Component }              from '../../../core/component.js?v=20260806g';
+import { Input }                  from '../../../components/base/Input.js?v=20260806g';
+import { Button }                 from '../../../components/base/Button.js?v=20260806g';
+import { store, showToast }       from '../../../core/store.js?v=20260806g';
+import { router }                 from '../../../core/router.js?v=20260806g';
+import { api }                    from '../../../api/client.js?v=20260806g';
+import { saveSession }            from '../../../utils/storage.js?v=20260806g';
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 
@@ -50,7 +50,7 @@ const ARROW_ICON = `
    ══════════════════════════════════════════════════════════════════════════ */
 
 export default class AdminLoginPage extends Component {
-  static styles       = '/pages/web/auth/_AuthLayout.css?v=20260806f';
+  static styles       = '/pages/web/auth/_AuthLayout.css?v=20260806g';
   static dependencies = ['/pages/admin/auth/AdminLogin.css'];
 
   constructor(props) {

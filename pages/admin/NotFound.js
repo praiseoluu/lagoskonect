@@ -2,7 +2,7 @@
  * KTG Connect — 404 Not Found (Admin App)
  * Route: /admin/404
  */
-import { Component } from '../../../core/component.js?v=20260806f';
+import { Component } from '../../../core/component.js?v=20260806g';
 
 export default class AdminNotFoundPage extends Component {
   render() {
