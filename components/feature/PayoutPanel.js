@@ -11,15 +11,15 @@
  * when an admin gets round to it.
  */
 
-import { Component } from '../../core/component.js?v=20260806e';
-import { showToast } from '../../core/store.js?v=20260806e';
-import { api } from '../../api/client.js?v=20260806e';
-import { formatDate } from '../../utils/date.js?v=20260806e';
+import { Component } from '../../core/component.js?v=20260806f';
+import { showToast } from '../../core/store.js?v=20260806f';
+import { api } from '../../api/client.js?v=20260806f';
+import { formatDate } from '../../utils/date.js?v=20260806f';
 
 const naira = (n) => '₦' + Number(n || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export class PayoutPanel extends Component {
-  static styles = '/components/feature/PayoutPanel.css?v=20260806e';
+  static styles = '/components/feature/PayoutPanel.css?v=20260806f';
 
   constructor(props = {}) {
     super(props);

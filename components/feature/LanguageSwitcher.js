@@ -21,7 +21,7 @@
  *                                 Default: 'default'.
  *
  * Usage:
- *   import { LanguageSwitcher } from './LanguageSwitcher.js?v=20260806e';
+ *   import { LanguageSwitcher } from './LanguageSwitcher.js?v=20260806f';
  *
  *   const switcher = new LanguageSwitcher({ compact: true, align: 'end' });
  *   this.addChild(switcher);
@@ -31,15 +31,15 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806e';
-import { store }     from '../../core/store.js?v=20260806e';
+import { Component } from '../../core/component.js?v=20260806f';
+import { store }     from '../../core/store.js?v=20260806f';
 import {
   LANGUAGES,
   getLanguage,
   getLanguageMeta,
   setLanguage,
   t,
-} from '../../core/i18n.js?v=20260806e';
+} from '../../core/i18n.js?v=20260806f';
 
 /* ── Inline SVG icons ───────────────────────────────────────────────────── */
 const ICON_GLOBE = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -65,7 +65,7 @@ const VALID_VARIANT   = Object.freeze(['default', 'ghost']);
    Component
    ══════════════════════════════════════════════════════════════════════════ */
 export class LanguageSwitcher extends Component {
-  static styles = '/components/feature/LanguageSwitcher.css?v=20260806e';
+  static styles = '/components/feature/LanguageSwitcher.css?v=20260806f';
 
   constructor(props = {}) {
     super(props);
