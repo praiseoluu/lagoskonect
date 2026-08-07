@@ -11,13 +11,13 @@
  *   TrendCard       — KPI card with value + trend arrow
  */
 
-import { Component } from '../../core/component.js?v=20260806d';
+import { Component } from '../../core/component.js?v=20260806e';
 
 // ── BarChart ───────────────────────────────────────────────────────────────
 // Props: { data: [{label, value, value2?}], color, color2, legend: [str,str], height }
 
 export class BarChart extends Component {
-  static styles = '/components/charts/Charts.css?v=20260806d';
+  static styles = '/components/charts/Charts.css?v=20260806e';
 
   render() { return '<div class="ktg-bar-chart"></div>'; }
 
@@ -109,7 +109,7 @@ export class BarChart extends Component {
 // }
 
 export class ClusterBarChart extends Component {
-  static styles = '/components/charts/Charts.css?v=20260806d';
+  static styles = '/components/charts/Charts.css?v=20260806e';
 
   render() { return '<div class="dash-cluster-chart__inner"></div>'; }
 
@@ -194,7 +194,7 @@ export class ClusterBarChart extends Component {
 // Mini SVG sparkline. Props: { values: number[], color, fillColor }
 
 export class SparklineChart extends Component {
-  static styles = '/components/charts/Charts.css?v=20260806d';
+  static styles = '/components/charts/Charts.css?v=20260806e';
 
   render() { return '<div class="ktg-sparkline"></div>'; }
 
@@ -225,7 +225,7 @@ export class SparklineChart extends Component {
 // Horizontal progress bars. Props: { data: [{label, pct, count}] }
 
 export class TopicsChart extends Component {
-  static styles = '/components/charts/Charts.css?v=20260806d';
+  static styles = '/components/charts/Charts.css?v=20260806e';
 
   render() { return '<div class="ktg-topics-chart"></div>'; }
 
@@ -254,7 +254,7 @@ export class TopicsChart extends Component {
 // LGA engagement grid. Props: { data: [{lgaName, level, score, activeUsers, interactions}] }
 
 export class HeatmapChart extends Component {
-  static styles = '/components/charts/Charts.css?v=20260806d';
+  static styles = '/components/charts/Charts.css?v=20260806e';
 
   render() { return '<div class="ktg-heatmap-chart"></div>'; }
 
@@ -291,7 +291,7 @@ export class HeatmapChart extends Component {
 // KPI card. Props: { label, value, trend, trendLabel, trendUp }
 
 export class TrendCard extends Component {
-  static styles = '/components/charts/Charts.css?v=20260806d';
+  static styles = '/components/charts/Charts.css?v=20260806e';
 
   render() { return '<div class="ktg-trend-card"></div>'; }
 

@@ -4,11 +4,11 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806d';
-import { Button } from '../../../components/base/Button.js?v=20260806d';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806d';
-import { api } from '../../../api/client.js?v=20260806d';
-import { BarChart } from '../../../components/charts/Charts.js?v=20260806d';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806e';
+import { Button } from '../../../components/base/Button.js?v=20260806e';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260806e';
+import { api } from '../../../api/client.js?v=20260806e';
+import { BarChart } from '../../../components/charts/Charts.js?v=20260806e';
 
 const REFRESH_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>';
 const EXPORT_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
@@ -46,7 +46,7 @@ function defaultFrom() {
 function defaultTo() { return new Date().toISOString().slice(0, 10); }
 
 export default class TrafficPage extends AdminLayout {
-  static styles = '/pages/admin/app/Traffic.css?v=20260806d';
+  static styles = '/pages/admin/app/Traffic.css?v=20260806e';
 
   constructor(props) {
     super({

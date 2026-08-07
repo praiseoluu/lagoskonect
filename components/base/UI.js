@@ -24,8 +24,8 @@
  * @version 2.0.0
  */
 
-import { Component }              from '../../core/component.js?v=20260806d';
-import { store, dismissToast }    from '../../core/store.js?v=20260806d';
+import { Component }              from '../../core/component.js?v=20260806e';
+import { store, dismissToast }    from '../../core/store.js?v=20260806e';
 
 /* ── Shared SVG icon constants ──────────────────────────────────────────── */
 
@@ -102,7 +102,7 @@ const VALID_AVATAR_SIZES = Object.freeze(['xs', 'sm', 'md', 'lg', 'xl']);
  *   toasts.mount(document.body, { append: true });
  */
 export class ToastContainer extends Component {
-  static styles = '/components/base/UI.css?v=20260806d';
+  static styles = '/components/base/UI.css?v=20260806e';
 
   /* ── Render ───────────────────────────────────────────────────────────── */
 
@@ -202,7 +202,7 @@ export class ToastContainer extends Component {
  *   Avatar.html({ name: 'Aisha Musa', size: 'md', online: true });
  */
 export class Avatar extends Component {
-  static styles = '/components/base/UI.css?v=20260806d';
+  static styles = '/components/base/UI.css?v=20260806e';
 
   constructor(props = {}) {
     super({
@@ -291,7 +291,7 @@ export class Avatar extends Component {
  *   tabs.getActive();
  */
 export class Tabs extends Component {
-  static styles = '/components/base/UI.css?v=20260806d';
+  static styles = '/components/base/UI.css?v=20260806e';
 
   constructor(props = {}) {
     super({
@@ -384,7 +384,7 @@ export class Tabs extends Component {
  *   toggle.setValue(false);
  */
 export class Toggle extends Component {
-  static styles = '/components/base/UI.css?v=20260806d';
+  static styles = '/components/base/UI.css?v=20260806e';
 
   constructor(props = {}) {
     super({

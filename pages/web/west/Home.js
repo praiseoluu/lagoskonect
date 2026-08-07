@@ -12,15 +12,15 @@
  *      Community Chat  — online count, top contributors, Open Community Chat btn
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806d';
-import { NewsCard } from '../../../components/base/Card.js?v=20260806d';
-import { ReelCard } from '../../../components/base/Card.js?v=20260806d';
-import { Avatar } from '../../../components/base/UI.js?v=20260806d';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806d';
-import { router } from '../../../core/router.js?v=20260806d';
-import { api } from '../../../api/client.js?v=20260806d';
-import { timeAgo } from '../../../utils/date.js?v=20260806d';
-import { t } from '../../../core/i18n.js?v=20260806d';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806e';
+import { NewsCard } from '../../../components/base/Card.js?v=20260806e';
+import { ReelCard } from '../../../components/base/Card.js?v=20260806e';
+import { Avatar } from '../../../components/base/UI.js?v=20260806e';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806e';
+import { router } from '../../../core/router.js?v=20260806e';
+import { api } from '../../../api/client.js?v=20260806e';
+import { timeAgo } from '../../../utils/date.js?v=20260806e';
+import { t } from '../../../core/i18n.js?v=20260806e';
 
 /* ── Ad sidebar marquee ─────────────────────────────────────────────────── */
 
@@ -37,7 +37,7 @@ const AD_MIN_SET_SIZE = 4;
 export default class HomePage extends WebLayout {
   // ?v= must match the version in app.js's import of this file — the two are
   // a matched pair, and a year-long max-age means a mismatch sticks.
-  static styles = '/pages/web/app/Home.css?v=20260806d';
+  static styles = '/pages/web/app/Home.css?v=20260806e';
 
   constructor(props) {
     super({ title: t('home.title'), ...props });
