@@ -4,7 +4,7 @@
  * All citizen methods → real PHP backend
  */
 
-import { _fetch } from './_fetch.js?v=20260806h';
+import { _fetch } from './_fetch.js?v=20260807a';
 
 export const notifications = {
 

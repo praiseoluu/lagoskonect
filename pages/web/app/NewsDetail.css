@@ -43,22 +43,30 @@
 
 .news-detail-hero-wrap {
   width: 100%;
-  aspect-ratio: 16 / 7;
+  /* Show the WHOLE picture, not a hard 16:7 crop of it. Portrait shots and
+     tall posters were being sliced through people's faces; here the image
+     keeps its own proportions and is simply capped in height, centred on a
+     soft surface so any letterboxing reads as intentional framing. */
+  max-height: 68vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   background: var(--color-surface);
 }
 
 .news-detail-hero {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  max-width: 100%;
+  max-height: 68vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   display: block;
 }
 
 .news-detail-hero-placeholder {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16 / 7;
   background: linear-gradient(135deg, var(--color-primary-15) 0%, var(--color-surface) 100%);
   display: flex;
   align-items: center;
@@ -352,13 +360,15 @@
 /* ── Responsive ───────────────────────────────────────────────────────── */
 
 @media (max-width: 900px) {
-  .news-detail-hero-wrap   { aspect-ratio: 16/9; }
+  .news-detail-hero-wrap,
+  .news-detail-hero        { max-height: 56vh; }
   .news-detail-reading-col { padding: var(--space-5) var(--space-5); }
   .news-detail-title       { font-size: var(--font-size-2xl); }
 }
 
 @media (max-width: 600px) {
-  .news-detail-hero-wrap   { aspect-ratio: 4/3; }
+  .news-detail-hero-wrap,
+  .news-detail-hero        { max-height: 48vh; }
   .news-detail-reading-col { padding: var(--space-4) var(--space-4); }
   .news-detail-title       { font-size: var(--font-size-xl); }
   .news-detail-body        { font-size: var(--font-size-base); }

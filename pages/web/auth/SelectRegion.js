@@ -17,7 +17,7 @@
  * @version 3.0.0
  */
 
-import { Component } from '../../../core/component.js?v=20260806h';
+import { Component } from '../../../core/component.js?v=20260807a';
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 
@@ -74,7 +74,7 @@ const COMMITMENTS = Object.freeze([
    ══════════════════════════════════════════════════════════════════════════ */
 
 export default class SelectRegionPage extends Component {
-  static styles = '/pages/web/auth/SelectRegion.css?v=20260806h';
+  static styles = '/pages/web/auth/SelectRegion.css?v=20260807a';
 
   /* ── Render ───────────────────────────────────────────────────────────── */
 

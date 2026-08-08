@@ -541,6 +541,9 @@ export default {
         reelCommented: {
             title: '{actorName} deere reel gị nkọwa',
         },
+        reelReplied: {
+            title: '{actorName} zara nkọwa gị',
+        },
         newReel: {
             title: '@{actorName} etinyela reel ọhụrụ',
         },

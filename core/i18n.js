@@ -10,7 +10,7 @@
  * That tears down and remounts the active page (and its sidebar/topbar children), so every t() call is re-evaluated with new dictionary.
  *
  * Usage:
- *   import { t, setLanguage, getLanguage } from '../core/i18n.js?v=20260806h';
+ *   import { t, setLanguage, getLanguage } from '../core/i18n.js?v=20260807a';
  *
  *   t('nav.home)                       -> "Ilé" (in Yoruba)
  *   t('topbar.changeLGA', { name })    -> interpolates {name}
@@ -23,11 +23,11 @@
  *      pcm -   Nigerian Pidgin
  */
 
-import { loadPrefs, savePrefs } from '../utils/storage.js?v=20260806h';
-import en from '../locales/en.js?v=20260806h';
-import yo from '../locales/yo.js?v=20260806h';
-import ig from '../locales/ig.js?v=20260806h';
-import pcm from '../locales/pcm.js?v=20260806h';
+import { loadPrefs, savePrefs } from '../utils/storage.js?v=20260807a';
+import en from '../locales/en.js?v=20260807a';
+import yo from '../locales/yo.js?v=20260807a';
+import ig from '../locales/ig.js?v=20260807a';
+import pcm from '../locales/pcm.js?v=20260807a';
 
 
 // ------ Supported languages ---------------------------------------------------------------------
@@ -141,7 +141,7 @@ export async function setLanguage(code) {
     });
 
     // Re-render the current page with the new dictionary.
-    const { router } = await import('./router.js?v=20260806h');
+    const { router } = await import('./router.js?v=20260807a');
     router.reload();
 
 

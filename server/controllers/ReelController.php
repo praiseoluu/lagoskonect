@@ -302,31 +302,52 @@ class ReelController {
         requireRole('citizen');
         $p = Paginator::params($_GET, 20);
 
-        $countStmt = $this->db->prepare('SELECT COUNT(*) FROM reel_comments WHERE reel_id = ?');
-        $countStmt->execute([$reelId]);
+        // parentId decides which slice of the thread we return:
+        //   absent → the top-level comments (parent_id IS NULL), newest first,
+        //            like TikTok's main list;
+        //   set    → the replies under that one comment, OLDEST first, so a
+        //            thread reads top-to-bottom in the order it was written.
+        $parentId = isset($_GET['parentId']) && $_GET['parentId'] !== ''
+            ? (int) $_GET['parentId']
+            : null;
+
+        if ($parentId === null) {
+            $where  = 'c.reel_id = ? AND c.parent_id IS NULL';
+            $params = [$reelId];
+            $order  = 'c.created_at DESC';
+        } else {
+            $where  = 'c.reel_id = ? AND c.parent_id = ?';
+            $params = [$reelId, $parentId];
+            $order  = 'c.created_at ASC';
+        }
+
+        $countStmt = $this->db->prepare("SELECT COUNT(*) FROM reel_comments c WHERE $where");
+        $countStmt->execute($params);
         $total = (int) $countStmt->fetchColumn();
 
         // Join the user so the comment shows their CURRENT name and picture,
         // not the snapshot taken when they commented. The stored user_name /
         // avatar_url are a fallback for a since-deleted account; on their own
         // they were often null, which is why comments showed only an initial.
-        $stmt = $this->db->prepare('
+        $stmt = $this->db->prepare("
             SELECT c.*, u.username AS u_username, u.name AS u_name, u.avatar_url AS u_avatar
               FROM reel_comments c
               LEFT JOIN users u ON u.id = c.user_id
-             WHERE c.reel_id = ?
-             ORDER BY c.created_at DESC LIMIT ? OFFSET ?
-        ');
-        $stmt->execute([$reelId, $p['limit'], $p['offset']]);
+             WHERE $where
+             ORDER BY $order LIMIT ? OFFSET ?
+        ");
+        $stmt->execute([...$params, $p['limit'], $p['offset']]);
 
         $items = array_map(fn($c) => [
-            'id'        => (int) $c['id'],
-            'reelId'    => $c['reel_id'],
-            'userId'    => (int) $c['user_id'],
-            'userName'  => $c['u_username'] ?: $c['u_name'] ?: $c['user_name'],
-            'avatarUrl' => $c['u_avatar'] ?: $c['avatar_url'],
-            'text'      => $c['text'],
-            'createdAt' => $c['created_at'],
+            'id'         => (int) $c['id'],
+            'reelId'     => $c['reel_id'],
+            'parentId'   => $c['parent_id'] !== null ? (int) $c['parent_id'] : null,
+            'userId'     => (int) $c['user_id'],
+            'userName'   => $c['u_username'] ?: $c['u_name'] ?: $c['user_name'],
+            'avatarUrl'  => $c['u_avatar'] ?: $c['avatar_url'],
+            'text'       => $c['text'],
+            'replyCount' => (int) ($c['reply_count'] ?? 0),
+            'createdAt'  => $c['created_at'],
         ], $stmt->fetchAll());
 
         Response::paginated($items, $p['page'], $p['perPage'], $total);
@@ -340,47 +361,81 @@ class ReelController {
         $text = trim($body['text'] ?? '');
         if (!$text) Response::error('VALIDATION_ERROR', 'Comment cannot be empty.', 422);
 
+        // A reply carries the id of the comment it answers. We flatten it onto
+        // the ROOT of that thread: if the target is itself a reply, we hang the
+        // new one under the same root, so the tree never grows past two levels
+        // (exactly how TikTok behaves).
+        $parentReq = isset($body['parentId']) && $body['parentId'] !== ''
+            ? (int) $body['parentId']
+            : null;
+        $rootId       = null;   // parent_id we store (a root comment id, or null)
+        $notifyUserId = null;   // author of the comment being replied to
+        if ($parentReq !== null) {
+            $pStmt = $this->db->prepare('SELECT id, parent_id, user_id FROM reel_comments WHERE id = ? AND reel_id = ?');
+            $pStmt->execute([$parentReq, $reelId]);
+            $parent = $pStmt->fetch();
+            if (!$parent) Response::error('NOT_FOUND', 'The comment you are replying to no longer exists.', 404);
+            $rootId       = $parent['parent_id'] !== null ? (int) $parent['parent_id'] : (int) $parent['id'];
+            $notifyUserId = (int) $parent['user_id'];
+        }
+
         $userStmt = $this->db->prepare('SELECT name, username, avatar_url FROM users WHERE id = ?');
         $userStmt->execute([$auth['userId']]);
         $user = $userStmt->fetch();
         if (!$user) Response::error('NOT_FOUND', 'User not found.', 404);
 
         $stmt = $this->db->prepare('
-            INSERT INTO reel_comments (reel_id, user_id, user_name, avatar_url, text, created_at)
-            VALUES (?, ?, ?, ?, ?, NOW())
+            INSERT INTO reel_comments (reel_id, user_id, parent_id, user_name, avatar_url, text, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, NOW())
         ');
-        $stmt->execute([$reelId, $auth['userId'], $user['username'] ?? $user['name'], $user['avatar_url'], $text]);
+        $stmt->execute([$reelId, $auth['userId'], $rootId, $user['username'] ?? $user['name'], $user['avatar_url'], $text]);
         $commentId = (int) $this->db->lastInsertId();
 
+        // comment_count on the reel counts every comment, replies included, so
+        // the tab badge matches the total conversation. reply_count is bumped
+        // only on the root so the "View N replies" toggle is accurate.
         $this->db->prepare('UPDATE reels SET comment_count = comment_count + 1 WHERE reel_id = ?')
                  ->execute([$reelId]);
+        if ($rootId !== null) {
+            $this->db->prepare('UPDATE reel_comments SET reply_count = reply_count + 1 WHERE id = ?')
+                     ->execute([$rootId]);
+        }
 
-        // Notify reel owner (skip self-comments)
-        $reelOwnerStmt = $this->db->prepare('SELECT author_id, caption FROM reels WHERE reel_id = ?');
-        $reelOwnerStmt->execute([$reelId]);
-        $reelOwner = $reelOwnerStmt->fetch();
-        if ($reelOwner && (int) $reelOwner['author_id'] !== $auth['userId']) {
-            NotificationService::send($this->db, (int) $reelOwner['author_id'], [
+        $actorName = $user['username'] ?? $user['name'];
+
+        // Notify the person being replied to (skip self). Falls back to the
+        // reel owner for a top-level comment.
+        $notifyTarget = $rootId !== null ? $notifyUserId : null;
+        if ($notifyTarget === null) {
+            $reelOwnerStmt = $this->db->prepare('SELECT author_id FROM reels WHERE reel_id = ?');
+            $reelOwnerStmt->execute([$reelId]);
+            $reelOwner = $reelOwnerStmt->fetch();
+            $notifyTarget = $reelOwner ? (int) $reelOwner['author_id'] : null;
+        }
+        if ($notifyTarget && $notifyTarget !== $auth['userId']) {
+            NotificationService::send($this->db, $notifyTarget, [
                 'category'       => 'Community',
                 'priority'       => 'normal',
-                'title'          => ($user['username'] ?? $user['name']) . ' commented on your reel',
+                'title'          => $actorName . ($rootId !== null ? ' replied to your comment' : ' commented on your reel'),
                 'body'           => '"' . mb_substr($text, 0, 80) . '"',
-                'actorName'      => $user['username'] ?? $user['name'],
+                'actorName'      => $actorName,
                 'actorAvatarUrl' => $user['avatar_url'],
                 'linkTo'         => "/reels/{$reelId}",
-                'templateKey'    => 'notifTemplates.reelCommented',
-                'templateVars'   => ['actorName' => $user['username'] ?? $user['name']],
+                'templateKey'    => $rootId !== null ? 'notifTemplates.reelReplied' : 'notifTemplates.reelCommented',
+                'templateVars'   => ['actorName' => $actorName],
             ], 'notif_reel_comments');
         }
 
         Response::json([
-            'id'        => $commentId,
-            'reelId'    => $reelId,
-            'userId'    => $auth['userId'],
-            'userName'  => $user['name'],
-            'avatarUrl' => $user['avatar_url'],
-            'text'      => $text,
-            'createdAt' => gmdate('Y-m-d\TH:i:s\Z'),
+            'id'         => $commentId,
+            'reelId'     => $reelId,
+            'parentId'   => $rootId,
+            'userId'     => $auth['userId'],
+            'userName'   => $actorName,
+            'avatarUrl'  => $user['avatar_url'],
+            'text'       => $text,
+            'replyCount' => 0,
+            'createdAt'  => gmdate('Y-m-d\TH:i:s\Z'),
         ], 201);
     }
 

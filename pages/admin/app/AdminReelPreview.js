@@ -4,12 +4,12 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806h';
-import { Button }      from '../../../components/base/Button.js?v=20260806h';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806h';
-import { router }      from '../../../core/router.js?v=20260806h';
-import { api }         from '../../../api/client.js?v=20260806h';
-import { formatDate }  from '../../../utils/date.js?v=20260806h';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260807a';
+import { Button }      from '../../../components/base/Button.js?v=20260807a';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260807a';
+import { router }      from '../../../core/router.js?v=20260807a';
+import { api }         from '../../../api/client.js?v=20260807a';
+import { formatDate }  from '../../../utils/date.js?v=20260807a';
 
 const TRASH_SVG  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>';
 const EDIT_SVG   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
@@ -27,7 +27,7 @@ const SHARE2_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
 const COMMENT_SVG= '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>';
 
 export default class AdminReelPreviewPage extends AdminLayout {
-  static styles = '/pages/admin/app/AdminReelPreview.css?v=20260806h';
+  static styles = '/pages/admin/app/AdminReelPreview.css?v=20260807a';
 
   constructor(props) {
     super({

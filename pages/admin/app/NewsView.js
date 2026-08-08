@@ -4,17 +4,17 @@
  * Guards: requireAdmin
  */
 
-import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260806h';
-import { Button } from '../../../components/base/Button.js?v=20260806h';
-import { Badge } from '../../../components/base/Badge.js?v=20260806h';
-import { Modal } from '../../../components/base/Modal.js?v=20260806h';
-import { showToast, setPageLoading } from '../../../core/store.js?v=20260806h';
-import { router } from '../../../core/router.js?v=20260806h';
-import { api } from '../../../api/client.js?v=20260806h';
-import { formatDate } from '../../../utils/date.js?v=20260806h';
+import { AdminLayout } from '../../../components/layout/BaseLayout.js?v=20260807a';
+import { Button } from '../../../components/base/Button.js?v=20260807a';
+import { Badge } from '../../../components/base/Badge.js?v=20260807a';
+import { Modal } from '../../../components/base/Modal.js?v=20260807a';
+import { showToast, setPageLoading } from '../../../core/store.js?v=20260807a';
+import { router } from '../../../core/router.js?v=20260807a';
+import { api } from '../../../api/client.js?v=20260807a';
+import { formatDate } from '../../../utils/date.js?v=20260807a';
 
 export default class AdminNewsViewPage extends AdminLayout {
-  static styles = '/pages/admin/app/NewsViews.css?v=20260806h';
+  static styles = '/pages/admin/app/NewsViews.css?v=20260807a';
 
   constructor(props) {
     super({

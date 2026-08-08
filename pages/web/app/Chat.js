@@ -8,12 +8,12 @@
  * Unread separator + mark-as-read on open.
  */
 
-import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260806h';
-import { Avatar } from '../../../components/base/UI.js?v=20260806h';
-import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260806h';
-import { api } from '../../../api/client.js?v=20260806h';
-import { sseClient } from '../../../core/sseClient.js?v=20260806h';
-import { t } from '../../../core/i18n.js?v=20260806h';
+import { WebLayout } from '../../../components/layout/BaseLayout.js?v=20260807a';
+import { Avatar } from '../../../components/base/UI.js?v=20260807a';
+import { store, showToast, setPageLoading } from '../../../core/store.js?v=20260807a';
+import { api } from '../../../api/client.js?v=20260807a';
+import { sseClient } from '../../../core/sseClient.js?v=20260807a';
+import { t } from '../../../core/i18n.js?v=20260807a';
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -164,7 +164,7 @@ function humanSize(bytes) {
 // ──────────────────────────────────────────────────────────────────────────
 
 export default class ChatPage extends WebLayout {
-  static styles = '/pages/web/app/Chat.css?v=20260806h';
+  static styles = '/pages/web/app/Chat.css?v=20260807a';
 
   constructor(props) {
     super({ title: t('chat.title'), ...props });

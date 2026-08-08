@@ -23,8 +23,8 @@
  * @version 2.0.0
  */
 
-import { LanguageSwitcher } from '../../../components/feature/LanguageSwitcher.js?v=20260806h';
-import { t }                from '../../../core/i18n.js?v=20260806h';
+import { LanguageSwitcher } from '../../../components/feature/LanguageSwitcher.js?v=20260807a';
+import { t }                from '../../../core/i18n.js?v=20260807a';
 
 /* ── Region constants ───────────────────────────────────────────────────── */
 
@@ -444,7 +444,7 @@ export class PublicLayout {
 
   /**
    * Mounts the language switcher into the already-rendered layout.
-   * @param {import('../../../core/component.js?v=20260806h').Component} host
+   * @param {import('../../../core/component.js?v=20260807a').Component} host
    * @returns {LanguageSwitcher|null}
    */
   static mountLanguageSwitcher(host) {
@@ -460,7 +460,7 @@ export class PublicLayout {
 
   /**
    * Wires the mobile hamburger toggle.
-   * @param {import('../../../core/component.js?v=20260806h').Component} host
+   * @param {import('../../../core/component.js?v=20260807a').Component} host
    */
   static bindMobileMenu(host) {
     const toggle = host?.$('.landing__nav-toggle');
@@ -495,7 +495,7 @@ export class PublicLayout {
    * Adds a stronger shadow to the nav once the page is scrolled.
    * Provides extra depth when a hero image sits directly below.
    *
-   * @param {import('../../../core/component.js?v=20260806h').Component} host
+   * @param {import('../../../core/component.js?v=20260807a').Component} host
    */
   static bindScroll(host) {
     const nav = host?.$('#landing-nav');
@@ -511,7 +511,7 @@ export class PublicLayout {
 
   /**
    * Binds the footer newsletter form.
-   * @param {import('../../../core/component.js?v=20260806h').Component} host
+   * @param {import('../../../core/component.js?v=20260807a').Component} host
    * @param {(email: string) => void}                        onSubscribe
    */
   static bindNewsletter(host, onSubscribe) {

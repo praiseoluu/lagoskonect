@@ -29,12 +29,12 @@
  * @version 2.0.0
  */
 
-import { AdminLayout }                        from '../../../components/layout/BaseLayout.js?v=20260806h';
-import { store, setPageLoading, showToast }   from '../../../core/store.js?v=20260806h';
-import { router }                             from '../../../core/router.js?v=20260806h';
-import { api }                                from '../../../api/client.js?v=20260806h';
-import { timeAgo }                            from '../../../utils/date.js?v=20260806h';
-import { ClusterBarChart, SparklineChart }    from '../../../components/charts/Charts.js?v=20260806h';
+import { AdminLayout }                        from '../../../components/layout/BaseLayout.js?v=20260807a';
+import { store, setPageLoading, showToast }   from '../../../core/store.js?v=20260807a';
+import { router }                             from '../../../core/router.js?v=20260807a';
+import { api }                                from '../../../api/client.js?v=20260807a';
+import { timeAgo }                            from '../../../utils/date.js?v=20260807a';
+import { ClusterBarChart, SparklineChart }    from '../../../components/charts/Charts.js?v=20260807a';
 
 /* ── Chart series configuration ─────────────────────────────────────────── */
 
@@ -166,7 +166,7 @@ function formatRegionBadge(region) {
    ══════════════════════════════════════════════════════════════════════════ */
 
 export default class DashboardPage extends AdminLayout {
-  static styles = '/pages/admin/app/Dashboard.css?v=20260806h';
+  static styles = '/pages/admin/app/Dashboard.css?v=20260807a';
 
   constructor(props) {
     super({ title: 'Dashboard', ...props });

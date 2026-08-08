@@ -541,6 +541,9 @@ export default {
         reelCommented: {
             title: '{actorName} fi ọ̀rọ̀ sílẹ̀ lórí reel rẹ',
         },
+        reelReplied: {
+            title: '{actorName} dáhùn ọ̀rọ̀ rẹ',
+        },
         newReel: {
             title: '@{actorName} ti gbe reel tuntun kalẹ̀',
         },

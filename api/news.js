@@ -5,8 +5,8 @@
  * Admin methods    → real PHP backend
  */
 
-import { _fetch, BASE_URL } from './_fetch.js?v=20260806h';
-import { compressImage } from '../utils/media.js?v=20260806h';
+import { _fetch, BASE_URL } from './_fetch.js?v=20260807a';
+import { compressImage } from '../utils/media.js?v=20260807a';
 
 export const news = {
 
