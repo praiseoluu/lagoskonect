@@ -722,3 +722,115 @@
   .rf-item__btn--liked { color: #ff3040; }
   .rf-item__btn--liked .rf-item__btn-count { color: #ff3040; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THREADED COMMENTS (TikTok-style)
+   ───────────────────────────────────────────────────────────────────────────
+   Each top-level comment carries a Reply button and, when it has answers, a
+   "View N replies" toggle that expands an indented thread below it. Replies to
+   a reply are flattened onto the same thread (two levels only, like TikTok),
+   with the person being answered named in the composer chip.
+   Rendered by utils/reelComments.js into .rf-item__comments-list.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.rf-cmt {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+}
+.rf-cmt + .rf-cmt { border-top: 1px solid var(--color-border-light, #f3f4f6); }
+
+.rf-cmt__avatar {
+  width: 34px; height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-primary, #068927);
+  color: #fff;
+  font-size: 12px; font-weight: 700;
+  font-family: inherit;
+}
+.rf-cmt__avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.rf-cmt__main { flex: 1; min-width: 0; }
+
+.rf-cmt__author {
+  font-size: 13px; font-weight: 700;
+  color: var(--color-text-primary, #111827);
+  margin-bottom: 2px;
+}
+.rf-cmt__text {
+  font-size: 14px;
+  color: var(--color-text-primary, #111827);
+  line-height: 1.45;
+  margin: 0;
+  word-break: break-word;
+}
+
+.rf-cmt__meta {
+  display: flex; align-items: center; gap: 16px;
+  margin-top: 5px;
+}
+.rf-cmt__time {
+  font-size: 12px;
+  color: var(--color-text-tertiary, #9ca3af);
+}
+.rf-cmt__reply-btn {
+  background: none; border: none; padding: 0;
+  font-family: inherit;
+  font-size: 12px; font-weight: 700;
+  color: var(--color-text-secondary, #6b7280);
+  cursor: pointer;
+}
+.rf-cmt__reply-btn:hover { color: var(--color-primary, #068927); }
+
+/* ── "View N replies" toggle ─────────────────────────────────────────────── */
+
+.rf-cmt__replies-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: none; padding: 0;
+  margin-top: 8px;
+  font-family: inherit;
+  font-size: 12px; font-weight: 700;
+  color: var(--color-primary, #068927);
+  cursor: pointer;
+}
+.rf-cmt__replies-toggle svg { transition: transform 0.15s; }
+.rf-cmt__replies-toggle--open svg { transform: rotate(180deg); }
+
+.rf-cmt__replies {
+  margin-top: 6px;
+  padding-left: 4px;
+}
+.rf-cmt__replies-loading {
+  font-size: 12px;
+  color: var(--color-text-tertiary, #9ca3af);
+  padding: 6px 0;
+}
+
+/* Replies sit tighter and slightly smaller than their parent. */
+.rf-cmt--reply { padding: 8px 0; gap: 8px; border: none; }
+.rf-cmt--reply .rf-cmt__avatar { width: 26px; height: 26px; font-size: 10px; }
+.rf-cmt--reply .rf-cmt__author { font-size: 12px; }
+.rf-cmt--reply .rf-cmt__text   { font-size: 13px; }
+
+/* ── Reply composer chip ─────────────────────────────────────────────────── */
+
+.rf-cmt-reply-chip {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--color-bg, #f9fafb);
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+}
+.rf-cmt-reply-chip__label strong { color: var(--color-primary, #068927); }
+.rf-cmt-reply-chip__cancel {
+  background: none; border: none; cursor: pointer;
+  color: var(--color-text-tertiary, #9ca3af);
+  display: flex; align-items: center;
+  padding: 2px;
+}
+.rf-cmt-reply-chip__cancel:hover { color: var(--color-text-primary, #111827); }

@@ -1,7 +1,7 @@
 /**
  * LagKonnect — Admin Management API
  */
-import { _fetch } from './_fetch.js?v=20260806h';
+import { _fetch } from './_fetch.js?v=20260807a';
 
 export const adminTeam = {
 

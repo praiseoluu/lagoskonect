@@ -11,8 +11,8 @@
  * @version 2.0.0
  */
 
-import { LandingBase } from './_LandingBase.js?v=20260806h';
-import { t }           from '../../../core/i18n.js?v=20260806h';
+import { LandingBase } from './_LandingBase.js?v=20260807a';
+import { t }           from '../../../core/i18n.js?v=20260807a';
 
 export default class CentralLandingPage extends LandingBase {
 

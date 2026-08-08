@@ -6,7 +6,7 @@
  * — same contract as the old mock layer.
  */
 
-import { showToast } from '../core/store.js?v=20260806h';
+import { showToast } from '../core/store.js?v=20260807a';
 
 // Derive the API base from the current origin instead of hardcoding a single
 // domain. This means the frontend always talks to the backend it was actually

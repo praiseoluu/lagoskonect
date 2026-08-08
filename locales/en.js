@@ -594,6 +594,9 @@ export default {
         reelCommented: {
             title: '{actorName} commented on your reel',
         },
+        reelReplied: {
+            title: '{actorName} replied to your comment',
+        },
         newReel: {
             title: '@{actorName} posted a new reel',
         },

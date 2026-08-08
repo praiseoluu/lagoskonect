@@ -27,10 +27,10 @@
  * @version 2.0.0
  */
 
-import { Component }   from '../../../core/component.js?v=20260806h';
-import { PublicLayout } from './_PublicLayout.js?v=20260806h';
-import { api }         from '../../../api/client.js?v=20260806h';
-import { showToast }   from '../../../core/store.js?v=20260806h';
+import { Component }   from '../../../core/component.js?v=20260807a';
+import { PublicLayout } from './_PublicLayout.js?v=20260807a';
+import { api }         from '../../../api/client.js?v=20260807a';
+import { showToast }   from '../../../core/store.js?v=20260807a';
 
 /* ── Marquee constants ──────────────────────────────────────────────────── */
 
@@ -72,7 +72,7 @@ const ZOOM_EDGE_MARGIN = 8;
    ══════════════════════════════════════════════════════════════════════════ */
 
 export class LandingBase extends Component {
-    static styles       = '/pages/web/auth/_PublicLayout.css?v=20260806h';
+    static styles       = '/pages/web/auth/_PublicLayout.css?v=20260807a';
     // ?v= must match the version used to import this module — Landing.css and
     // this file are a matched pair and assets carry a one-year max-age.
     static dependencies = ['/pages/web/auth/Landing.css?v=20260721b'];

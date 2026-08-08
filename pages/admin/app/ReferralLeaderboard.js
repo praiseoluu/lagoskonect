@@ -11,11 +11,11 @@
  * @version 1.0.0
  */
 
-import { AdminLayout }                      from '../../../components/layout/BaseLayout.js?v=20260806h';
-import { Modal }                             from '../../../components/base/Modal.js?v=20260806h';
-import { store, setPageLoading, showToast } from '../../../core/store.js?v=20260806h';
-import { api }                              from '../../../api/client.js?v=20260806h';
-import { timeAgo }                          from '../../../utils/date.js?v=20260806h';
+import { AdminLayout }                      from '../../../components/layout/BaseLayout.js?v=20260807a';
+import { Modal }                             from '../../../components/base/Modal.js?v=20260807a';
+import { store, setPageLoading, showToast } from '../../../core/store.js?v=20260807a';
+import { api }                              from '../../../api/client.js?v=20260807a';
+import { timeAgo }                          from '../../../utils/date.js?v=20260807a';
 
 /* ── Medal SVGs for top-3 positions ─────────────────────────────────────── */
 const MEDAL = {
@@ -44,7 +44,7 @@ function initials(name = '') {
 }
 
 export default class ReferralLeaderboardPage extends AdminLayout {
-  static styles = '/pages/admin/app/ReferralLeaderboard.css?v=20260806h';
+  static styles = '/pages/admin/app/ReferralLeaderboard.css?v=20260807a';
 
   constructor(props) {
     super({

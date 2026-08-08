@@ -2,7 +2,7 @@
  * LagKonnect — Admin LGA API
  */
 
-import { _fetch, BASE_URL } from './_fetch.js?v=20260806h';
+import { _fetch, BASE_URL } from './_fetch.js?v=20260807a';
 
 export const lgasAdmin = {
 

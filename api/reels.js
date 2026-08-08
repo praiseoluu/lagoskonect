@@ -2,7 +2,7 @@
  * LagKonnect — Reels API
  */
 
-import { _fetch, BASE_URL } from './_fetch.js?v=20260806h';
+import { _fetch, BASE_URL } from './_fetch.js?v=20260807a';
 
 export const reels = {
 
@@ -28,12 +28,15 @@ export const reels = {
     const params = new URLSearchParams();
     if (opts.page) params.set('page', opts.page);
     if (opts.perPage) params.set('perPage', opts.perPage);
+    if (opts.parentId != null) params.set('parentId', opts.parentId);
     const qs = params.toString() ? '?' + params : '';
     return await _fetch('GET', '/reels/' + reelId + '/comments' + qs);
   },
 
-  async addComment(reelId, text) {
-    return await _fetch('POST', '/reels/' + reelId + '/comments', { text });
+  async addComment(reelId, text, parentId = null) {
+    const body = { text };
+    if (parentId != null) body.parentId = parentId;
+    return await _fetch('POST', '/reels/' + reelId + '/comments', body);
   },
 
   // Alias used by some Reels page components

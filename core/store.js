@@ -12,7 +12,7 @@
  *     trigger reactivity. See note on deep reactivity below.
  *
  * Usage:
- *   import { store } from './store.js?v=20260806h';
+ *   import { store } from './store.js?v=20260807a';
  *
  *   // Read
  *   const user = store.user;
@@ -39,8 +39,8 @@
  *   store.user = { ...store.user, name: 'Ada' };
  */
 
-import { loadPrefs } from '../utils/storage.js?v=20260806h';
-import { onLanguageChange } from './i18n.js?v=20260806h';
+import { loadPrefs } from '../utils/storage.js?v=20260807a';
+import { onLanguageChange } from './i18n.js?v=20260807a';
 
 // ─── Initial State Schema ─────────────────────────────────────────────────
 //

@@ -9,12 +9,13 @@
  * Guards:  requireAuth + requireCitizen
  */
 
-import { WebLayout }                          from '../../../components/layout/BaseLayout.js?v=20260806h';
-import { store, showToast, setPageLoading }   from '../../../core/store.js?v=20260806h';
-import { router }                             from '../../../core/router.js?v=20260806h';
-import { api }                                from '../../../api/client.js?v=20260806h';
-import { timeAgo }                            from '../../../utils/date.js?v=20260806h';
-import { t }                                  from '../../../core/i18n.js?v=20260806h';
+import { WebLayout }                          from '../../../components/layout/BaseLayout.js?v=20260807a';
+import { store, showToast, setPageLoading }   from '../../../core/store.js?v=20260807a';
+import { router }                             from '../../../core/router.js?v=20260807a';
+import { api }                                from '../../../api/client.js?v=20260807a';
+import { timeAgo }                            from '../../../utils/date.js?v=20260807a';
+import { createCommentDrawer }                from '../../../utils/reelComments.js?v=20260807a';
+import { t }                                  from '../../../core/i18n.js?v=20260807a';
 
 const REGION_PREFIX = '/east';
 
@@ -26,7 +27,7 @@ function fmtCount(n) {
 }
 
 export default class ReelsPage extends WebLayout {
-  static styles = '/pages/web/app/Reels.css?v=20260806h';
+  static styles = '/pages/web/app/Reels.css?v=20260807a';
 
   constructor(props) {
     super({ title: t('reels.title'), ...props });
@@ -310,12 +311,28 @@ export default class ReelsPage extends WebLayout {
   async _toggleCommentDrawer(item, reelId) {
     const drawer = item.querySelector(`#cd-${reelId}`);
     if (!drawer) return;
-    if (drawer.classList.contains('rf-item__comment-drawer--open')) { this._closeCommentDrawer(item); }
-    else {
-      drawer.classList.add('rf-item__comment-drawer--open'); drawer.setAttribute('aria-hidden', 'false');
-      if (!drawer.dataset.loaded) { await this._loadComments(item, reelId); drawer.dataset.loaded = '1'; }
-      item.querySelector(`#ci-${reelId}`)?.focus();
+    if (drawer.classList.contains('rf-item__comment-drawer--open')) { this._closeCommentDrawer(item); return; }
+    drawer.classList.add('rf-item__comment-drawer--open'); drawer.setAttribute('aria-hidden', 'false');
+    if (!drawer._commentCtl) {
+      drawer._commentCtl = createCommentDrawer(drawer, {
+        reelId,
+        onCountDelta: (d) => this._bumpCommentCount(item, reelId, d),
+      });
+      drawer._commentCtl.load();
     }
+    item.querySelector(`#ci-${reelId}`)?.focus();
+  }
+
+  /* Update the reel's comment tally on both the tab badge and the action bar. */
+  _bumpCommentCount(item, reelId, delta) {
+    const reel = this._reels.find(r => r.reelId === reelId);
+    if (!reel) return;
+    reel.commentCount = Math.max(0, (reel.commentCount ?? 0) + delta);
+    const c = fmtCount(reel.commentCount);
+    const cntEl = item.querySelector('[data-action="comment"] .rf-item__btn-count');
+    const badge = item.querySelector('[data-comment-count]');
+    if (cntEl) cntEl.textContent = c;
+    if (badge) badge.textContent = `(${c})`;
   }
 
   _closeCommentDrawer(item) {

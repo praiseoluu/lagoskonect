@@ -24,7 +24,7 @@
  * @version 2.0.0
  */
 
-import { Component } from '../../core/component.js?v=20260806h';
+import { Component } from '../../core/component.js?v=20260807a';
 
 /* ── Valid prop values ──────────────────────────────────────────────────── */
 const VALID_SIZES = Object.freeze(['sm', 'md']);
@@ -58,7 +58,7 @@ const VARIANT_MAP = Object.freeze({
    Component
    ══════════════════════════════════════════════════════════════════════════ */
 export class Badge extends Component {
-  static styles = '/components/base/Badge.css?v=20260806h';
+  static styles = '/components/base/Badge.css?v=20260807a';
 
   constructor(props = {}) {
     super({

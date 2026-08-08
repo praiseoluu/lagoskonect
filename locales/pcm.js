@@ -541,6 +541,9 @@ export default {
         reelCommented: {
             title: '{actorName} don drop comment on your reel',
         },
+        reelReplied: {
+            title: '{actorName} don reply your comment',
+        },
         newReel: {
             title: '@{actorName} don post new reel',
         },
